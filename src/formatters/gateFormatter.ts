@@ -53,6 +53,15 @@ const _formatGate = (metadata: Metadata): string => {
 };
 
 /**
+ * Groups SVG elements into a gate SVG group.
+ *
+ * @param svgElems Array of SVG elements.
+ *
+ * @returns SVG representation of a gate.
+ */
+const createGate = (svgElems: (string | string[])[]): string => group(svgElems, 'gate');
+
+/**
  * Creates a measurement gate at position (x, y).
  *
  * @param x  x coord of measurement gate.
@@ -68,7 +77,7 @@ const _measure = (x: number, y: number): string => {
     const mBox: string = box(x, y - height / 2, width, height, 'gate-measure');
     const mArc: string = arc(x + 5, y + 2, width / 2 - 5, height / 2 - 8);
     const meter: string = line(x + width / 2, y + 8, x + width - 8, y - height / 2 + 8);
-    const svg: string = group(mBox, mArc, meter);
+    const svg: string = createGate([mBox, mArc, meter]);
     return svg;
 };
 
@@ -156,7 +165,7 @@ const _unitaryBox = (
         const argText: string = text(displayArgs, x, argStrY, argsFontSize);
         elems.push(argText);
     }
-    const svg: string = group(elems);
+    const svg: string = createGate(elems);
     return svg;
 };
 
@@ -172,7 +181,7 @@ const _swap = (x: number, targetsY: number[]): string => {
     // Get SVGs of crosses
     const crosses: string[] = targetsY.map((y) => _cross(x, y));
     const vertLine: string = line(x, targetsY[0], x, targetsY[1]);
-    const svg: string = group(crosses, vertLine);
+    const svg: string = group([crosses, vertLine]);
     return svg;
 };
 
@@ -188,7 +197,7 @@ const _cross = (x: number, y: number): string => {
     const radius = 8;
     const line1: string = line(x - radius, y - radius, x + radius, y + radius);
     const line2: string = line(x - radius, y + radius, x + radius, y - radius);
-    return [line1, line2].join('\n');
+    return createGate([line1, line2]);
 };
 
 /**
@@ -221,7 +230,7 @@ const _controlledGate = (metadata: Metadata): string => {
     const maxY: number = Math.max(...controlsY, ...targetsY);
     const minY: number = Math.min(...controlsY, ...targetsY);
     const vertLine: string = line(x, minY, x, maxY);
-    const svg: string = group(vertLine, controlledDotsSvg, targetGateSvgs);
+    const svg: string = group([vertLine, controlledDotsSvg, targetGateSvgs]);
     return svg;
 };
 
@@ -238,7 +247,7 @@ const _oplus = (x: number, y: number, r = 15): string => {
     const circle = `<circle class="oplus" cx="${x}" cy="${y}" r="${r}"></circle>`;
     const vertLine: string = line(x, y - r, x, y + r);
     const horLine: string = line(x - r, y, x + r, y);
-    const svg: string = group(circle, vertLine, horLine);
+    const svg: string = group([circle, vertLine, horLine]);
     return svg;
 };
 
@@ -284,14 +293,8 @@ const _classicalControlled = (metadata: Metadata, padding: number = classicalBox
 
     // Display controlled operation in initial "unknown" state
     const svg: string = group(
-        `<g class="${htmlClass}-group classically-controlled-unknown">`,
-        horLine,
-        vertLine,
-        controlCircle,
-        childrenZero,
-        childrenOne,
-        box,
-        '</g>',
+        [horLine, vertLine, controlCircle, childrenZero, childrenOne, box],
+        `${htmlClass}-group classically-controlled-unknown`,
     );
 
     return svg;
