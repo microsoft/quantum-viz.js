@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node lib/index.js",
+    "start": "tsc -w",
     "test": "jest",
     "coverage": "jest --coverage"
   },
