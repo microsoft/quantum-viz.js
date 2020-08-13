@@ -111,7 +111,7 @@ export const style = (customStyle: StyleConfig = {}) => {
         stroke-width: ${styleConfig.lineWidth};
     }
     .register-classical {
-        stroke-width: ${styleConfig.lineWidth / 2};
+        stroke-width: ${(styleConfig.lineWidth || 0) / 2};
     }
     <!-- Classically controlled gates -->
     .hidden {
@@ -124,12 +124,12 @@ export const style = (customStyle: StyleConfig = {}) => {
     .classically-controlled-one .classical-container,
     .classically-controlled-one .classical-line {
         stroke: ${styleConfig.classicalOne};
-        stroke-width: ${styleConfig.lineWidth + 0.3};
+        stroke-width: ${(styleConfig.lineWidth || 0) + 0.3};
     }
     .classically-controlled-zero .classical-container,
     .classically-controlled-zero .classical-line {
         stroke: ${styleConfig.classicalZero};
-        stroke-width: ${styleConfig.lineWidth + 0.3};
+        stroke-width: ${(styleConfig.lineWidth || 0) + 0.3};
     }
     <!-- Control button -->
     .classically-controlled-btn {

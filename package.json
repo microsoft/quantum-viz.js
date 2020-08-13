@@ -1,0 +1,31 @@
+{
+  "name": "sqore",
+  "version": "0.0.1",
+  "description": "Sqore is a configurable tool for visualizing quantum circuits.",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node lib/index.js",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://t-rkoh@dev.azure.com/t-rkoh/CircuitViz/_git/sqore"
+  },
+  "keywords": [
+    "quantum",
+    "circuits",
+    "visualization"
+  ],
+  "author": "Microsoft Quantum",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^26.0.4",
+    "canvas": "^2.6.1",
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.2",
+    "typescript": "^3.9.6"
+  }
+}

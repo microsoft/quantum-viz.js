@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "lib": [
+            "DOM",
+            "ES2019",
+        ],
+        "declaration": true,                /* Generates corresponding '.d.ts' file. */
+        "strict": true,
+        "outDir": "lib",
+        "removeComments": true,             /* Do not emit comments to output. */
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
