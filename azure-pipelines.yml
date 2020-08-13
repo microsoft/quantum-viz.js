@@ -27,3 +27,7 @@ steps:
 - script: |
     npm run lint:ci
   displayName: 'Lint project with ESLint'
+
+- script: |
+    npm run build:prod
+  displayName: 'Build package with Webpack'

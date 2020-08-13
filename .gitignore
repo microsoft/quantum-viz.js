@@ -7,8 +7,10 @@
 .idea/
 .vscode
 
-# compiles
+# compiled files
+/dist
 /lib
+*.tgz
 
 # tests
 coverage/

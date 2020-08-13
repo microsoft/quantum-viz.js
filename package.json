@@ -3,14 +3,23 @@
   "version": "0.0.1",
   "description": "Sqore is a configurable tool for visualizing quantum circuits.",
   "main": "lib/index.js",
+  "types": "lib/index.d.js",
+  "unpkg": "dist/sqore.min.js",
   "scripts": {
     "build": "tsc",
+    "build:prod": "webpack",
     "coverage": "jest --coverage",
     "lint": "eslint . --fix",
     "lint:ci": "eslint .",
     "start": "tsc -w",
     "test": "jest"
   },
+  "files": [
+    "README.md",
+    "LICENSE.txt",
+    "lib",
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://t-rkoh@dev.azure.com/t-rkoh/CircuitViz/_git/sqore"
@@ -34,7 +43,12 @@
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^26.1.0",
     "prettier": "^2.0.5",
+    "terser-webpack-plugin": "^4.1.0",
     "ts-jest": "^26.1.2",
-    "typescript": "^3.9.6"
-  }
+    "ts-loader": "^8.0.2",
+    "typescript": "^3.9.6",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "homepage": "https://dev.azure.com/t-rkoh/CircuitViz/_git/sqore?path=README.md"
 }
