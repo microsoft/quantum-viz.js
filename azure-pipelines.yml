@@ -25,7 +25,7 @@ steps:
   displayName: 'Run tests with Jest'
 
 - script: |
-    npm run lint:ci
+    npm run lint
   displayName: 'Lint project with ESLint'
 
 - script: |

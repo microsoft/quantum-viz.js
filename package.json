@@ -9,8 +9,9 @@
     "build": "tsc",
     "build:prod": "webpack",
     "coverage": "jest --coverage",
-    "lint": "eslint . --fix",
-    "lint:ci": "eslint .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "npm run lint && npm run test && npm run build:prod",
     "start": "tsc -w",
     "test": "jest"
   },
