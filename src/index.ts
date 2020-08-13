@@ -69,3 +69,6 @@ export const executionPathToHtml = (json: ExecutionPath, userStyleConfig?: Style
     </svg>
 </html>`;
 };
+
+// Export types
+export type { ExecutionPath, StyleConfig };
