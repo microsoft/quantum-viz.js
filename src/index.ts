@@ -1,17 +1,17 @@
-import { formatInputs } from "./formatters/inputFormatter";
-import { formatGates } from "./formatters/gateFormatter";
-import { formatRegisters } from "./formatters/registerFormatter";
-import { processOperations } from "./process";
-import { ExecutionPath } from "./executionPath";
-import { Metadata } from "./metadata";
-import { GateType } from "./constants";
-import { StyleConfig, style } from "./styles";
+import { formatInputs } from './formatters/inputFormatter';
+import { formatGates } from './formatters/gateFormatter';
+import { formatRegisters } from './formatters/registerFormatter';
+import { processOperations } from './process';
+import { ExecutionPath } from './executionPath';
+import { Metadata } from './metadata';
+import { GateType } from './constants';
+import { StyleConfig, style } from './styles';
 
 /**
  * Custom JavaScript code to be injected into visualization HTML string.
  * Handles interactive elements, such as classically-controlled operations.
  */
-const script: string = `
+const script = `
 <script type="text/JavaScript">
     function toggleClassicalBtn(cls) {
         const textSvg = document.querySelector(\`.\${cls} text\`);
@@ -46,10 +46,10 @@ const script: string = `
 
 /**
  * Converts JSON representing an execution path of a Q# program given by the simulator and returns its HTML visualization.
- * 
+ *
  * @param json            JSON received from simulator.
  * @param userStyleConfig Custom CSS style config for visualization.
- * 
+ *
  * @returns HTML representation of circuit.
  */
 export const executionPathToHtml = (json: ExecutionPath, userStyleConfig?: StyleConfig): string => {

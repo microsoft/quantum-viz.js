@@ -23,39 +23,39 @@ export interface StyleConfig {
 }
 
 const defaultStyle: StyleConfig = {
-    lineStroke: "#000000",
+    lineStroke: '#000000',
     lineWidth: 1,
-    textColour: "#000000",
-    unitary: "#D9F1FA",
-    oplus: "#FFFFFF",
-    measure: "#FFDE86",
-    classicalUnknown: "#E5E5E5",
-    classicalZero: "#C40000",
-    classicalOne: "#4059BD",
+    textColour: '#000000',
+    unitary: '#D9F1FA',
+    oplus: '#FFFFFF',
+    measure: '#FFDE86',
+    classicalUnknown: '#E5E5E5',
+    classicalZero: '#C40000',
+    classicalOne: '#4059BD',
 };
 
 const blackAndWhiteStyle: StyleConfig = {
-    lineStroke: "#000000",
+    lineStroke: '#000000',
     lineWidth: 1,
-    textColour: "#000000",
-    unitary: "#FFFFFF",
-    oplus: "#FFFFFF",
-    measure: "#FFFFFF",
-    classicalUnknown: "#FFFFFF",
-    classicalZero: "#FFFFFF",
-    classicalOne: "#FFFFFF",
+    textColour: '#000000',
+    unitary: '#FFFFFF',
+    oplus: '#FFFFFF',
+    measure: '#FFFFFF',
+    classicalUnknown: '#FFFFFF',
+    classicalZero: '#FFFFFF',
+    classicalOne: '#FFFFFF',
 };
 
 const invertedStyle: StyleConfig = {
-    lineStroke: "#FFFFFF",
+    lineStroke: '#FFFFFF',
     lineWidth: 1,
-    textColour: "#FFFFFF",
-    unitary: "#000000",
-    oplus: "#000000",
-    measure: "#000000",
-    classicalUnknown: "#000000",
-    classicalZero: "#000000",
-    classicalOne: "#000000",
+    textColour: '#FFFFFF',
+    unitary: '#000000',
+    oplus: '#000000',
+    measure: '#000000',
+    classicalUnknown: '#000000',
+    classicalZero: '#000000',
+    classicalOne: '#000000',
 };
 
 /**
@@ -63,21 +63,21 @@ const invertedStyle: StyleConfig = {
  */
 export const STYLES: { [name: string]: StyleConfig } = {
     /** Default style with coloured gates. */
-    "Default": defaultStyle,
+    Default: defaultStyle,
     /** Black and white style. */
-    "BlackAndWhite": blackAndWhiteStyle,
+    BlackAndWhite: blackAndWhiteStyle,
     /** Inverted black and white style (for black backgrounds). */
-    "Inverted": invertedStyle,
+    Inverted: invertedStyle,
 };
 
 /**
  * CSS style script to be injected into visualization HTML string.
- * 
+ *
  * @param customStyle Custom style configuration.
- * 
+ *
  * @returns String containing CSS style script.
  */
-export const style = (customStyle: StyleConfig = {}) => {
+export const style = (customStyle: StyleConfig = {}): string => {
     const styleConfig = { ...defaultStyle, ...customStyle };
     return `
 <style>
@@ -155,5 +155,5 @@ export const style = (customStyle: StyleConfig = {}) => {
         stroke: none;
     }
 </style>
-`
+`;
 };
