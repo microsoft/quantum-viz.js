@@ -19,14 +19,12 @@ const config = {
     },
     // The output defines how and where we want the bundles. The special
     // value `[name]` in `filename` tell Webpack to use the name we defined above.
-    // We target a UMD and name it Sqore. When including the bundle in the browser
-    // it will be accessible at `window.Sqore`
+    // The bundled script will be available as a global variable `Sqore`.
     output: {
         path: PATHS.bundles,
         filename: '[name].js',
         library: 'Sqore',
-        libraryTarget: 'umd',
-        umdNamedDefine: true,
+        libraryTarget: 'var',
     },
     // Add resolve for `tsx` and `ts` files, otherwise Webpack would
     // only look for common JavaScript file extension (.js)
