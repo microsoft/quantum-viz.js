@@ -7,12 +7,14 @@ import { labelFontSize } from '../constants';
  *
  * @param svgElems  Array of SVG elements.
  * @param className Class name of element.
+ * @param id        ID of element.
  *
  * @returns SVG string for grouped elements.
  */
-export const group = (svgElems: (string | string[])[], className?: string): string => {
+export const group = (svgElems: string[], className?: string, id?: string): string => {
     const clsString: string = className != null ? ` class="${className}"` : '';
-    return [`<g${clsString}>`, ...svgElems.flat(), '</g>'].join('\n');
+    const idString: string = id != null ? ` id="${id}"` : '';
+    return [`<g${clsString}${idString}>`, ...svgElems.flat(), '</g>'].join('\n');
 };
 
 /**

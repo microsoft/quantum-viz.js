@@ -17,6 +17,8 @@ export interface Metadata {
     label: string;
     /** Gate arguments as string. */
     displayArgs?: string;
+    /** HTML element ID. */
+    id?: string;
     /** Gate width. */
     width: number;
     /** Classically-controlled gates.
