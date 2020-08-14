@@ -6,7 +6,20 @@
 Sqore is a configurable tool for rendering quantum circuits. With the increasing demand for quantum libraries and educational tools, quantum circuits provide an intuitive way to visualize and understand quantum algorithms. Sqore is a lightweight library that can be easily integrated into any project. It aims to be easily configurable while allowing complex user interactions, such as toggling between different measurement outcomes.
 
 # Getting Started
+## Embedding in browser
+To use Sqore in the browser, perform the following steps:
+1. Run `npm build:prod` to build to minified JS files.
+2. Include `dist/sqore.js` or `dist/sqore.min.js` as a `<script>` in your HTML.
+3. You can now use `Sqore` in your JavaScript files! (e.g. `Sqore.executionPathToSvg(executionPath, Sqore.STYLES['Default'])`)
 
+## Using with TypeScript
+To import Sqore into your TypeScript project, perform the following steps:
+1. Run `npm build` to compile TypeScript source files with the type declaration files.
+2. You can now import the files from `lib/index.js`!
+
+Refer to the example project in the [`example`](./example) folder for an example on how to use Sqore.
+
+# Development
 ## Installation
 To build this project, run the following commands:
 ```bash
@@ -16,7 +29,7 @@ To build this project, run the following commands:
 > npm start
 ```
 
-# Running tests
+## Running tests
 To run tests for this project, run the following commands:
 ```bash
 # Installs dependencies (run this step if you haven't)
