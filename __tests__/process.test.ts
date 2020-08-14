@@ -1,4 +1,4 @@
-import { Operation } from '../src/executionPath';
+import { Operation } from '../src/circuit';
 import { RegisterMap, RegisterType, Register } from '../src/register';
 import { Metadata } from '../src/metadata';
 import {

@@ -1,4 +1,4 @@
-import { Qubit } from '../src/executionPath';
+import { Qubit } from '../src/circuit';
 import { RegisterMap, RegisterType } from '../src/register';
 import { formatInputs, _qubitInput } from '../src/formatters/inputFormatter';
 import { startY, registerHeight, classicalRegHeight } from '../src/constants';

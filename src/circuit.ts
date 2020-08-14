@@ -1,9 +1,9 @@
 import { Register } from './register';
 
 /**
- * Structure of JSON representation of the execution path of a Q# operation.
+ * Circuit to be visualized.
  */
-export interface ExecutionPath {
+export interface Circuit {
     /** Array of qubit resources. */
     qubits: Qubit[];
     operations: Operation[];

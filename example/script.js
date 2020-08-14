@@ -188,6 +188,6 @@ const exampleJSON = {
     ],
 };
 
-const svg = Sqore.executionPathToSvg(exampleJSON, Sqore.STYLES['Default']);
+const svg = Sqore.circuitToSvg(exampleJSON, Sqore.STYLES['Default']);
 const div = document.getElementById('circuit');
 if (div != null) div.innerHTML = svg;

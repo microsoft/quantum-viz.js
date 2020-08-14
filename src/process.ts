@@ -1,5 +1,5 @@
 import { minGateWidth, startX, gatePadding, GateType, controlBtnOffset, classicalBoxPadding } from './constants';
-import { Operation } from './executionPath';
+import { Operation } from './circuit';
 import { Metadata } from './metadata';
 import { Register, RegisterMap, RegisterType } from './register';
 import { getGateWidth } from './utils';
