@@ -182,7 +182,7 @@ const _opToMetadata = (op: Operation | null, registers: RegisterMap): Metadata =
 
     if (op == null) return metadata;
 
-    const { gate, displayArgs, isMeasurement, isControlled, isAdjoint, controls, targets, children } = op;
+    const { gate, id, displayArgs, isMeasurement, isControlled, isAdjoint, controls, targets, children } = op;
 
     // Set y coords
     metadata.controlsY = controls.map((reg) => _getRegY(reg, registers));
@@ -234,6 +234,9 @@ const _opToMetadata = (op: Operation | null, registers: RegisterMap): Metadata =
 
     // Set gate width
     metadata.width = getGateWidth(metadata);
+
+    // Set custom gate ID
+    metadata.id = id;
 
     return metadata;
 };

@@ -26,6 +26,16 @@ const formatGates = (opsMetadata: Metadata[]): string => {
 };
 
 /**
+ * Groups SVG elements into a gate SVG group.
+ *
+ * @param svgElems Array of SVG elements.
+ * @param id       Custom element ID of SVG group.
+ *
+ * @returns SVG representation of a gate.
+ */
+const _createGate = (svgElems: string[], id?: string): string => group(svgElems, 'gate', id);
+
+/**
  * Takes in an operation's metadata and formats it into SVG.
  *
  * @param metadata Metadata object representation of gate.
@@ -33,15 +43,14 @@ const formatGates = (opsMetadata: Metadata[]): string => {
  * @returns SVG representation of gate.
  */
 const _formatGate = (metadata: Metadata): string => {
-    const { type, x, controlsY, targetsY, label, displayArgs, width } = metadata;
+    const { type, x, controlsY, targetsY, label, displayArgs, id, width } = metadata;
     switch (type) {
         case GateType.Measure:
-            return _measure(x, controlsY[0]);
+            return _createGate([_measure(x, controlsY[0])], id);
         case GateType.Unitary:
-            return _unitary(label, x, targetsY, width, displayArgs);
+            return _createGate([_unitary(label, x, targetsY, width, displayArgs)], id);
         case GateType.Swap:
-            if (controlsY.length > 0) return _controlledGate(metadata);
-            else return _swap(x, targetsY);
+            return controlsY.length > 0 ? _controlledGate(metadata) : _createGate([_swap(x, targetsY)], id);
         case GateType.Cnot:
         case GateType.ControlledUnitary:
             return _controlledGate(metadata);
@@ -68,8 +77,7 @@ const _measure = (x: number, y: number): string => {
     const mBox: string = box(x, y - height / 2, width, height, 'gate-measure');
     const mArc: string = arc(x + 5, y + 2, width / 2 - 5, height / 2 - 8);
     const meter: string = line(x + width / 2, y + 8, x + width - 8, y - height / 2 + 8);
-    const svg: string = group(mBox, mArc, meter);
-    return svg;
+    return [mBox, mArc, meter].join('\n');
 };
 
 /**
@@ -156,8 +164,7 @@ const _unitaryBox = (
         const argText: string = text(displayArgs, x, argStrY, argsFontSize);
         elems.push(argText);
     }
-    const svg: string = group(elems);
-    return svg;
+    return elems.join('\n');
 };
 
 /**
@@ -172,8 +179,7 @@ const _swap = (x: number, targetsY: number[]): string => {
     // Get SVGs of crosses
     const crosses: string[] = targetsY.map((y) => _cross(x, y));
     const vertLine: string = line(x, targetsY[0], x, targetsY[1]);
-    const svg: string = group(crosses, vertLine);
-    return svg;
+    return [crosses, vertLine].join('\n');
 };
 
 /**
@@ -200,7 +206,7 @@ const _cross = (x: number, y: number): string => {
  */
 const _controlledGate = (metadata: Metadata): string => {
     const targetGateSvgs: string[] = [];
-    const { type, x, controlsY, targetsY, label, displayArgs, width } = metadata;
+    const { type, x, controlsY, targetsY, label, displayArgs, id, width } = metadata;
     // Get SVG for target gates
     switch (type) {
         case GateType.Cnot:
@@ -221,7 +227,7 @@ const _controlledGate = (metadata: Metadata): string => {
     const maxY: number = Math.max(...controlsY, ...targetsY);
     const minY: number = Math.min(...controlsY, ...targetsY);
     const vertLine: string = line(x, minY, x, maxY);
-    const svg: string = group(vertLine, controlledDotsSvg, targetGateSvgs);
+    const svg: string = _createGate([vertLine, ...controlledDotsSvg, ...targetGateSvgs], id);
     return svg;
 };
 
@@ -238,8 +244,7 @@ const _oplus = (x: number, y: number, r = 15): string => {
     const circle = `<circle class="oplus" cx="${x}" cy="${y}" r="${r}"></circle>`;
     const vertLine: string = line(x, y - r, x, y + r);
     const horLine: string = line(x - r, y, x + r, y);
-    const svg: string = group(circle, vertLine, horLine);
-    return svg;
+    return [circle, vertLine, horLine].join('\n');
 };
 
 /**
@@ -252,7 +257,7 @@ const _oplus = (x: number, y: number, r = 15): string => {
  */
 const _classicalControlled = (metadata: Metadata, padding: number = classicalBoxPadding): string => {
     let { x, width, htmlClass } = metadata;
-    const { controlsY, targetsY, children } = metadata;
+    const { controlsY, targetsY, children, id } = metadata;
 
     const controlY = controlsY[0];
     if (htmlClass == null) htmlClass = 'classically-controlled';
@@ -284,14 +289,9 @@ const _classicalControlled = (metadata: Metadata, padding: number = classicalBox
 
     // Display controlled operation in initial "unknown" state
     const svg: string = group(
-        `<g class="${htmlClass}-group classically-controlled-unknown">`,
-        horLine,
-        vertLine,
-        controlCircle,
-        childrenZero,
-        childrenOne,
-        box,
-        '</g>',
+        [horLine, vertLine, controlCircle, childrenZero, childrenOne, box],
+        `${htmlClass}-group classically-controlled-unknown`,
+        id,
     );
 
     return svg;

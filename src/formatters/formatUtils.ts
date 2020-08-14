@@ -5,11 +5,17 @@ import { labelFontSize } from '../constants';
 /**
  * Given an array of SVG elements, group them as an SVG group using the `<g>` tag.
  *
- * @param svgElems Array of SVG elements.
+ * @param svgElems  Array of SVG elements.
+ * @param className Class name of element.
+ * @param id        ID of element.
  *
  * @returns SVG string for grouped elements.
  */
-export const group = (...svgElems: (string | string[])[]): string => ['<g>', ...svgElems.flat(), '</g>'].join('\n');
+export const group = (svgElems: string[], className?: string, id?: string): string => {
+    const clsString: string = className != null ? ` class="${className}"` : '';
+    const idString: string = id != null ? ` id="${id}"` : '';
+    return [`<g${clsString}${idString}>`, ...svgElems.flat(), '</g>'].join('\n');
+};
 
 /**
  * Generate the SVG representation of a control dot used for controlled operations.

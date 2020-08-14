@@ -25,6 +25,8 @@ export interface Qubit {
 export interface Operation {
     /** Gate label. */
     gate: string;
+    /** HTML element ID. */
+    id?: string;
     /** Formatted gate arguments to be displayed. */
     displayArgs?: string;
     /** Classically-controlled gates.
