@@ -6,6 +6,7 @@ import { Circuit } from './circuit';
 import { Metadata } from './metadata';
 import { GateType } from './constants';
 import { StyleConfig, style } from './styles';
+import { createUUID } from './utils';
 
 /**
  * Custom JavaScript code to be injected into visualization HTML string.
@@ -59,7 +60,9 @@ export const circuitToSvg = (circuit: Circuit, userStyleConfig?: StyleConfig): s
     const formattedGates: string = formatGates(metadataList);
     const measureGates: Metadata[] = metadataList.filter(({ type }) => type === GateType.Measure);
     const formattedRegs: string = formatRegisters(registers, measureGates, svgWidth);
-    return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${svgWidth}" height="${svgHeight}">
+    const uuid: string = createUUID();
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" width="${svgWidth}" height="${svgHeight}">
     ${script}
     ${style(userStyleConfig)}
     ${qubitWires}

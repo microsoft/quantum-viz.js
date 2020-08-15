@@ -1,5 +1,10 @@
-import { getGateWidth, _getStringWidth } from '../src/utils';
+import { getGateWidth, _getStringWidth, createUUID } from '../src/utils';
 import { GateType, minGateWidth, labelPadding } from '../src/constants';
+
+describe('Testing createUUID', () => {
+    test('no x in uuid', () => expect(createUUID()).not.toContain('x'));
+    test('no y in uuid', () => expect(createUUID()).not.toContain('y'));
+});
 
 describe('Testing getGateWidth', () => {
     test('measure gate', () =>
