@@ -13,6 +13,7 @@ module.exports = {
     rules: {
         // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
         // e.g. "@typescript-eslint/explicit-function-return-type": "off",
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '_' }],
         'jest/no-disabled-tests': 'warn',
         'jest/no-focused-tests': 'error',
         'jest/no-identical-title': 'error',
