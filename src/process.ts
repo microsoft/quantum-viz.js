@@ -26,12 +26,12 @@ const processOperations = (
     // Align operations on multiple registers
     const alignedOps: (number | null)[][] = _alignOps(groupedOps);
 
-    // Keep track of starting index of leftmost classical register at each qubit register
-    const classicalRegStart: number[] = _getClassicalRegStart(operations, alignedOps);
-
     // Maintain widths of each column to account for variable-sized gates
     const numColumns: number = Math.max(0, ...alignedOps.map((ops) => ops.length));
     const columnsWidths: number[] = new Array(numColumns).fill(minGateWidth);
+
+    // Get classical registers and their starting column index
+    const classicalRegs: [number, Register][] = _getClassicalRegStart(operations, alignedOps);
 
     // Keep track of which ops are already seen to avoid duplicate rendering
     const visited: { [opIdx: number]: boolean } = {};
@@ -56,9 +56,17 @@ const processOperations = (
             } else if (op != null && [GateType.Unitary, GateType.ControlledUnitary].includes(metadata.type)) {
                 // If gate is a unitary type, split targetsY into groups if there
                 // is a classical register between them for rendering
-                const classicalRegY: number[] = classicalRegStart
-                    .filter((regCol) => regCol != -1 && regCol <= col)
-                    .map((_, row) => registers[row].y);
+
+                // Get y coordinates of classical registers in the same column as this operation
+                const classicalRegY: number[] = classicalRegs
+                    .filter(([regCol, _]) => regCol <= col)
+                    .map(([_, reg]) => {
+                        if (reg.cId == null) throw new Error('Could not find cId for classical register.');
+                        const { children } = registers[reg.qId];
+                        if (children == null)
+                            throw new Error(`Failed to find classical registers for qubit ID ${reg.qId}.`);
+                        return children[reg.cId].y;
+                    });
 
                 metadata.groupedTargetsY = _splitTargetsY(op.targets, classicalRegY, registers);
             }
@@ -154,21 +162,28 @@ const _alignOps = (ops: number[][]): (number | null)[][] => {
 };
 
 /**
- * Retrieves the starting index of the leftmost classical register for each qubit register.
+ * Retrieves the starting index of each classical register.
  *
  * @param ops     Array of operations.
  * @param idxList 2D array of aligned operation indices.
  *
- * @returns Array of classical register start indices or -1 if none in that row.
+ * @returns Array of classical register and their starting column indices in the form [[column, register]].
  */
-const _getClassicalRegStart = (ops: Operation[], idxList: (number | null)[][]): number[] =>
-    idxList.map((reg) => {
-        for (let i = 0; i < reg.length; i++) {
-            const opIdx: number | null = reg[i];
-            if (opIdx != null && ops[opIdx].isMeasurement) return i;
+const _getClassicalRegStart = (ops: Operation[], idxList: (number | null)[][]): [number, Register][] => {
+    const clsRegs: [number, Register][] = [];
+    idxList.forEach((reg) => {
+        for (let col = 0; col < reg.length; col++) {
+            const opIdx: number | null = reg[col];
+            if (opIdx != null && ops[opIdx].isMeasurement) {
+                const targetClsRegs: Register[] = ops[opIdx].targets.filter(
+                    (reg) => reg.type === RegisterType.Classical,
+                );
+                targetClsRegs.forEach((reg) => clsRegs.push([col, reg]));
+            }
         }
-        return -1;
     });
+    return clsRegs;
+};
 
 /**
  * Maps operation to metadata (e.g. gate type, position, dimensions, text)

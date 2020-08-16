@@ -766,7 +766,7 @@ describe('Testing _getClassicalRegStart', () => {
             },
         ];
         const idxList: number[][] = [[0, 1]];
-        expect(_getClassicalRegStart(ops, idxList)).toEqual([-1]);
+        expect(_getClassicalRegStart(ops, idxList)).toEqual([]);
     });
     test('one measurement gate', () => {
         const ops: Operation[] = [
@@ -788,7 +788,7 @@ describe('Testing _getClassicalRegStart', () => {
             },
         ];
         const idxList: number[][] = [[0, 1]];
-        expect(_getClassicalRegStart(ops, idxList)).toEqual([1]);
+        expect(_getClassicalRegStart(ops, idxList)).toEqual([[1, { type: RegisterType.Classical, qId: 0, cId: 0 }]]);
     });
     test('multiple measurement gates', () => {
         const ops: Operation[] = [
@@ -826,7 +826,12 @@ describe('Testing _getClassicalRegStart', () => {
             },
         ];
         const idxList: number[][] = [[0, 2, 3], [1]];
-        expect(_getClassicalRegStart(ops, idxList)).toEqual([1, 0]);
+        const clsRegs: [number, Register][] = [
+            [1, { type: RegisterType.Classical, qId: 0, cId: 0 }],
+            [2, { type: RegisterType.Classical, qId: 0, cId: 0 }],
+            [0, { type: RegisterType.Classical, qId: 1, cId: 0 }],
+        ];
+        expect(_getClassicalRegStart(ops, idxList)).toEqual(clsRegs);
     });
 });
 
