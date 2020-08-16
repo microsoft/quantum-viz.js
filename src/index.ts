@@ -86,4 +86,5 @@ export const circuitToHtml = (circuit: Circuit, userStyleConfig?: StyleConfig): 
 
 // Export types
 export type { Circuit, StyleConfig };
+export type { Qubit, Operation } from './circuit';
 export { STYLES } from './styles';

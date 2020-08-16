@@ -9,7 +9,7 @@ import { getGateWidth } from './utils';
  * contains information for formatting the corresponding SVG.
  *
  * @param operations Array of operations.
- * @param registers  Array of registers.
+ * @param registers  Mapping from qubit IDs to register metadata.
  *
  * @returns An object containing `metadataList` (Array of Metadata objects) and
  *          `svgWidth` which is the width of the entire SVG.
@@ -26,9 +26,13 @@ const processOperations = (
     // Align operations on multiple registers
     const alignedOps: (number | null)[][] = _alignOps(groupedOps);
 
+    // Keep track of starting index of leftmost classical register at each qubit register
+    const classicalRegStart: number[] = _getClassicalRegStart(operations, alignedOps);
+
     // Maintain widths of each column to account for variable-sized gates
     const numColumns: number = Math.max(0, ...alignedOps.map((ops) => ops.length));
     const columnsWidths: number[] = new Array(numColumns).fill(minGateWidth);
+
     // Keep track of which ops are already seen to avoid duplicate rendering
     const visited: { [opIdx: number]: boolean } = {};
     // Unique HTML class for each classically-controlled group of gates.
@@ -46,9 +50,17 @@ const processOperations = (
 
             const metadata: Metadata = _opToMetadata(op, registers);
 
-            // Add HTML class attribute if classically controlled
             if (metadata.type === GateType.ClassicalControlled) {
+                // Add HTML class attribute if classically controlled
                 _addClass(metadata, `classically-controlled-${cls++}`);
+            } else if (op != null && [GateType.Unitary, GateType.ControlledUnitary].includes(metadata.type)) {
+                // If gate is a unitary type, split targetsY into groups if there
+                // is a classical register between them for rendering
+                const classicalRegY: number[] = classicalRegStart
+                    .filter((regCol) => regCol != -1 && regCol <= col)
+                    .map((_, row) => registers[row].y);
+
+                metadata.groupedTargetsY = _splitTargetsY(op.targets, classicalRegY, registers);
             }
 
             // Expand column size, if needed
@@ -142,24 +154,21 @@ const _alignOps = (ops: number[][]): (number | null)[][] => {
 };
 
 /**
- * Given an array of column widths, calculate the middle x coord of each column.
- * This will be used to centre the gates within each column.
+ * Retrieves the starting index of the leftmost classical register for each qubit register.
  *
- * @param columnWidths Array of column widths where `columnWidths[i]` is the
- *                     width of the `i`th column.
+ * @param ops     Array of operations.
+ * @param idxList 2D array of aligned operation indices.
  *
- * @returns Object containing the middle x coords of each column (`columnsX`) and the width
- * of the corresponding SVG (`svgWidth`).
+ * @returns Array of classical register start indices or -1 if none in that row.
  */
-const _getColumnsX = (columnWidths: number[]): { columnsX: number[]; svgWidth: number } => {
-    const columnsX: number[] = new Array(columnWidths.length).fill(0);
-    let x: number = startX;
-    columnWidths.forEach((width, i) => {
-        columnsX[i] = x + width / 2;
-        x += width + gatePadding * 2;
+const _getClassicalRegStart = (ops: Operation[], idxList: (number | null)[][]): number[] =>
+    idxList.map((reg) => {
+        for (let i = 0; i < reg.length; i++) {
+            const opIdx: number | null = reg[i];
+            if (opIdx != null && ops[opIdx].isMeasurement) return i;
+        }
+        return -1;
     });
-    return { columnsX, svgWidth: x };
-};
 
 /**
  * Maps operation to metadata (e.g. gate type, position, dimensions, text)
@@ -246,7 +255,7 @@ const _opToMetadata = (op: Operation | null, registers: RegisterMap): Metadata =
     metadata.width = getGateWidth(metadata);
 
     // Set custom user-provided gate metadata
-    metadata.customMetadata = customMetadata;
+    if (customMetadata != null) metadata.customMetadata = customMetadata;
 
     return metadata;
 };
@@ -292,6 +301,59 @@ const _addClass = (metadata: Metadata, cls: string): void => {
         metadata.children[0].forEach((child) => _addClass(child, cls));
         metadata.children[1].forEach((child) => _addClass(child, cls));
     }
+};
+
+/**
+ * Splits `targets` if non-adjacent or intersected by classical registers.
+ *
+ * @param targets       Target qubit registers.
+ * @param classicalRegY y coords of classical registers overlapping current column.
+ * @param registers     Mapping from register qubit IDs to register metadata.
+ *
+ * @returns Groups of target qubit y coords.
+ */
+const _splitTargetsY = (targets: Register[], classicalRegY: number[], registers: RegisterMap): number[][] => {
+    if (targets.length === 0) return [];
+
+    // Get qIds sorted by ascending y value
+    const orderedQIds: number[] = Object.keys(registers).map(Number);
+    orderedQIds.sort((a, b) => registers[a].y - registers[b].y);
+    const qIdPosition: { [qId: number]: number } = {};
+    orderedQIds.forEach((qId, i) => (qIdPosition[qId] = i));
+
+    // Sort targets and classicalRegY by ascending y value
+    targets = targets.slice();
+    targets.sort((a, b) => {
+        const posDiff: number = qIdPosition[a.qId] - qIdPosition[b.qId];
+        if (posDiff === 0 && a.cId != null && b.cId != null) return a.cId - b.cId;
+        else return posDiff;
+    });
+    classicalRegY = classicalRegY.slice();
+    classicalRegY.sort((a, b) => a - b);
+
+    let prevPos = 0;
+    let prevY = 0;
+
+    return targets.reduce((groups: number[][], target: Register) => {
+        const y = _getRegY(target, registers);
+        const pos = qIdPosition[target.qId];
+
+        // Split into new group if one of the following holds:
+        //      1. First target register
+        //      2. Non-adjacent qubit registers
+        //      3. There is a classical register between current and previous register
+        if (groups.length === 0 || pos > prevPos + 1 || (classicalRegY[0] > prevY && classicalRegY[0] < y))
+            groups.push([y]);
+        else groups[groups.length - 1].push(y);
+
+        prevPos = pos;
+        prevY = y;
+
+        // Remove classical registers that are higher than current y
+        while (classicalRegY.length > 0 && classicalRegY[0] <= y) classicalRegY.shift();
+
+        return groups;
+    }, []);
 };
 
 /**
@@ -354,10 +416,11 @@ export {
     processOperations,
     _groupOperations,
     _alignOps,
-    _getColumnsX,
+    _getClassicalRegStart,
     _opToMetadata,
     _getRegY,
     _addClass,
+    _splitTargetsY,
     _fillMetadataX,
     _offsetChildrenX,
 };
