@@ -92,7 +92,9 @@ class ComposedSqore {
             script = `<script type="text/JavaScript">${this.script}</script>`;
         }
 
-        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" width="${this.width}" height="${this.height}">
+        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" width="${this.width}" height="${
+            this.height
+        }">
     ${script}
     ${style(this.style)}
     ${this.elements.join('\n')}
@@ -118,7 +120,7 @@ class ComposedSqore {
 /**
  * Entrypoint class for rendering circuit visualizations.
  */
-export default class Sqore {
+class Sqore {
     style: StyleConfig;
 
     /**
@@ -172,7 +174,10 @@ export default class Sqore {
     }
 }
 
-// Export types
-export type { Circuit, StyleConfig };
-export type { Qubit, Operation } from './circuit';
+/** Exported function for creating a new Sqore class. */
+export const createSqore = (): Sqore => new Sqore();
 export { STYLES } from './styles';
+
+// Export types
+export type { Circuit, StyleConfig, Sqore, ComposedSqore };
+export type { Qubit, Operation } from './circuit';

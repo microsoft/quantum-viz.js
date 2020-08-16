@@ -25,7 +25,6 @@ const config = {
         filename: '[name].js',
         library: 'Sqore',
         libraryTarget: 'var',
-        libraryExport: 'default',
     },
     // Add resolve for `tsx` and `ts` files, otherwise Webpack would
     // only look for common JavaScript file extension (.js)

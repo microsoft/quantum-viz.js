@@ -1,4 +1,4 @@
-const exampleJSON = {
+const exampleCircuit = {
     qubits: [{ id: 0, numChildren: 1 }, { id: 1 }, { id: 2 }, { id: 3 }],
     operations: [
         {
@@ -188,6 +188,9 @@ const exampleJSON = {
     ],
 };
 
-const svg = Sqore.circuitToSvg(exampleJSON, Sqore.STYLES['Default']);
+const svg = Sqore.createSqore()
+    .stylize(Sqore.STYLES['Default'])
+    .compose(exampleCircuit)
+    .asSvg((injectScript = true));
 const div = document.getElementById('circuit');
 if (div != null) div.innerHTML = svg;
