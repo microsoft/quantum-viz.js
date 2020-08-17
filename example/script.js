@@ -6,6 +6,7 @@ const exampleCircuit = {
             isControlled: false,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [],
             targets: [{ type: 0, qId: 1 }],
         },
@@ -15,6 +16,7 @@ const exampleCircuit = {
             isControlled: true,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [{ type: 0, qId: 1 }],
             targets: [{ type: 0, qId: 0 }],
         },
@@ -23,6 +25,7 @@ const exampleCircuit = {
             isControlled: true,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [{ type: 0, qId: 1 }],
             targets: [
                 { type: 0, qId: 2 },
@@ -34,6 +37,7 @@ const exampleCircuit = {
             isControlled: true,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [
                 { type: 0, qId: 2 },
                 { type: 0, qId: 3 },
@@ -45,6 +49,7 @@ const exampleCircuit = {
             isControlled: true,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [
                 { type: 0, qId: 1 },
                 { type: 0, qId: 3 },
@@ -56,6 +61,7 @@ const exampleCircuit = {
             isControlled: true,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [{ type: 0, qId: 2 }],
             targets: [
                 { type: 0, qId: 1 },
@@ -71,49 +77,50 @@ const exampleCircuit = {
             targets: [{ type: 1, qId: 0, cId: 0 }],
         },
         {
-            gate: 'if',
+            gate: 'ApplyIfElseR',
             isControlled: false,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: true,
             controls: [{ type: 1, qId: 0, cId: 0 }],
             targets: [],
             children: [
-                [
-                    {
-                        gate: 'H',
-                        isControlled: false,
-                        isAdjoint: false,
-                        isMeasurement: false,
-                        controls: [],
-                        targets: [{ type: 0, qId: 1 }],
-                    },
-                    {
-                        gate: 'X',
-                        isControlled: false,
-                        isAdjoint: false,
-                        isMeasurement: false,
-                        controls: [],
-                        targets: [{ type: 0, qId: 1 }],
-                    },
-                ],
-                [
-                    {
-                        gate: 'X',
-                        isControlled: true,
-                        isAdjoint: false,
-                        isMeasurement: false,
-                        controls: [{ type: 0, qId: 0 }],
-                        targets: [{ type: 0, qId: 1 }],
-                    },
-                    {
-                        gate: 'Foo',
-                        isControlled: false,
-                        isAdjoint: false,
-                        isMeasurement: false,
-                        controls: [],
-                        targets: [{ type: 0, qId: 3 }],
-                    },
-                ],
+                {
+                    gate: 'H',
+                    isControlled: false,
+                    isAdjoint: false,
+                    isMeasurement: false,
+                    controls: [],
+                    targets: [{ type: 0, qId: 1 }],
+                    conditionalRender: 1,
+                },
+                {
+                    gate: 'X',
+                    isControlled: false,
+                    isAdjoint: false,
+                    isMeasurement: false,
+                    controls: [],
+                    targets: [{ type: 0, qId: 1 }],
+                    conditionalRender: 1,
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    isAdjoint: false,
+                    isMeasurement: false,
+                    controls: [{ type: 0, qId: 0 }],
+                    targets: [{ type: 0, qId: 1 }],
+                    conditionalRender: 2,
+                },
+                {
+                    gate: 'Foo',
+                    isControlled: false,
+                    isAdjoint: false,
+                    isMeasurement: false,
+                    controls: [],
+                    targets: [{ type: 0, qId: 3 }],
+                    conditionalRender: 2,
+                },
             ],
         },
         {
@@ -121,6 +128,7 @@ const exampleCircuit = {
             isControlled: false,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [],
             targets: [
                 { type: 0, qId: 0 },
@@ -132,6 +140,7 @@ const exampleCircuit = {
             isControlled: false,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [],
             targets: [
                 { type: 0, qId: 1 },
@@ -143,6 +152,7 @@ const exampleCircuit = {
             isControlled: false,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [],
             targets: [
                 { type: 0, qId: 0 },
@@ -154,6 +164,7 @@ const exampleCircuit = {
             isControlled: true,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [{ type: 0, qId: 0 }],
             targets: [
                 { type: 0, qId: 1 },
@@ -165,6 +176,7 @@ const exampleCircuit = {
             isControlled: true,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [{ type: 0, qId: 2 }],
             targets: [
                 { type: 0, qId: 1 },
@@ -176,6 +188,7 @@ const exampleCircuit = {
             isControlled: true,
             isAdjoint: false,
             isMeasurement: false,
+            isConditional: false,
             controls: [
                 { type: 0, qId: 0 },
                 { type: 0, qId: 2 },

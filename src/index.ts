@@ -180,4 +180,4 @@ export { STYLES } from './styles';
 
 // Export types
 export type { Circuit, StyleConfig, Sqore, ComposedSqore };
-export type { Qubit, Operation } from './circuit';
+export type { Qubit, Operation, ConditionalRender } from './circuit';
