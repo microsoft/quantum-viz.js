@@ -21,11 +21,18 @@ export interface Qubit {
 
 export enum ConditionalRender {
     /** Always rendered. */
-    None,
+    Always,
     /** Render classically-controlled operation when measurement is a zero. */
     OnZero,
     /** Render classically-controlled operation when measurement is a one. */
     OnOne,
+}
+
+/**
+ * Custom data attributes (e.g. data-{attr}="{val}")
+ */
+export interface DataAttributes {
+    [attr: string]: string;
 }
 
 /**
@@ -52,6 +59,6 @@ export interface Operation {
     targets: Register[];
     /** Specify conditions on when to render operation. */
     conditionalRender?: ConditionalRender;
-    /** Custom user metadata. */
-    customMetadata?: Record<string, unknown>;
+    /** Custom data attributes to attach to gate element. */
+    dataAttributes?: DataAttributes;
 }
