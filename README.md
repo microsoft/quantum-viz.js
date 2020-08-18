@@ -3,6 +3,8 @@
 [![PR's Welcome](https://img.shields.io/badge/PRs%20-welcome-brightgreen.svg)](#contribute)
 [![Build Status](https://dev.azure.com/t-rkoh/CircuitViz/_apis/build/status/sqore?branchName=master)](https://dev.azure.com/t-rkoh/CircuitViz/_build/latest?definitionId=3&branchName=master)
 
+<p align="center"><img src="assets/sqore-anim.gif" width="80%"/></p>
+
 Sqore is a configurable tool for rendering quantum circuits. With the increasing demand for quantum libraries and educational tools, quantum circuits provide an intuitive way to visualize and understand quantum algorithms. Sqore is a lightweight library that can be easily integrated into any project. It aims to be easily configurable while allowing complex user interactions, such as toggling between different measurement outcomes.
 
 # Getting Started
