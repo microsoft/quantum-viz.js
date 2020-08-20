@@ -3,7 +3,7 @@
 [![PR's Welcome](https://img.shields.io/badge/PRs%20-welcome-brightgreen.svg)](#contribute)
 [![Build Status](https://dev.azure.com/ms-hiddenfalls-interns-20/KohRaphael2020/_apis/build/status/KohRaphael2020?branchName=master)](https://dev.azure.com/ms-hiddenfalls-interns-20/KohRaphael2020/_build/latest?definitionId=2&branchName=master)
 
-<p align="center"><img src="https://dev.azure.com/ms-hiddenfalls-interns-20/9a27a273-a6ca-4047-83ea-161c1c14b461/_apis/git/repositories/596d0289-b25e-4f28-9e4a-0a0302f13634/items?path=%2Fassets%2Fsqore-anim.gif&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0" width="80%"/></p>
+<p align="center"><img src="https://ms-quantum.visualstudio.com/0f61c693-2177-4bf7-93c1-fc144937372f/_apis/git/repositories/0347df86-8c0d-4e2c-8932-04c485c747c1/items?path=%2Fassets%2Fsqore-anim.gif&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0" width="80%"/></p>
 
 Sqore is a configurable tool for rendering quantum circuits. With the increasing demand for quantum libraries and educational tools, quantum circuits provide an intuitive way to visualize and understand quantum algorithms. Sqore is a lightweight library that can be easily integrated into any project. It aims to be easily configurable while allowing complex user interactions, such as toggling between different measurement outcomes.
 
