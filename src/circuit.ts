@@ -19,6 +19,9 @@ export interface Qubit {
     numChildren?: number;
 }
 
+/**
+ * Conditions on when to render the given operation.
+ */
 export enum ConditionalRender {
     /** Always rendered. */
     Always,
