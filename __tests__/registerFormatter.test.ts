@@ -1,7 +1,7 @@
 import { formatRegisters, _classicalRegister, _qubitRegister } from '../src/formatters/registerFormatter';
 import { RegisterMap, RegisterType } from '../src/register';
-import { Metadata } from '../src/metadata';
-import { startY, registerHeight, classicalRegHeight, GateType, startX, minGateWidth } from '../src/constants';
+import { Metadata, GateType } from '../src/metadata';
+import { startY, registerHeight, classicalRegHeight, startX, minGateWidth } from '../src/constants';
 
 describe('Testing _classicalRegister', () => {
     test('register with normal width', () => {

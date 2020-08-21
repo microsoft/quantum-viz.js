@@ -29,6 +29,8 @@ export enum ConditionalRender {
     OnZero,
     /** Render classically-controlled operation when measurement is a one. */
     OnOne,
+    /** Render operation as a group of its nested operations. */
+    AsGroup,
 }
 
 /**
