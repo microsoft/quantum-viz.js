@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { minGateWidth, startX, gatePadding, controlBtnOffset, groupBoxPadding } from './constants';
 import { Operation, ConditionalRender } from './circuit';
 import { Metadata, GateType } from './metadata';

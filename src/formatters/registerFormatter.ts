@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { RegisterMap } from '../register';
 import { regLineStart } from '../constants';
 import { Metadata, GateType } from '../metadata';
