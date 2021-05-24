@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { formatInputs } from './formatters/inputFormatter';
 import { formatGates } from './formatters/gateFormatter';
 import { formatRegisters } from './formatters/registerFormatter';
