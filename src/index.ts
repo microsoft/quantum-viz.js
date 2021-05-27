@@ -115,14 +115,10 @@ export class Visualizer {
                 const id: string | null = gate.getAttribute('data-id');
                 if (id == null) return;
 
-                // Don't handle clicks on an expanded container
-                const isExpanded = gate.getAttribute('data-expanded') === 'true';
-                if (isExpanded) return;
-
                 const canZoomIn = gate.getAttribute('data-zoom-in') === 'true';
                 const canZoomOut = gate.getAttribute('data-zoom-out') === 'true';
 
-                if ((ev as MouseEvent).ctrlKey && canZoomOut) {
+                if ((ev as MouseEvent).shiftKey && canZoomOut) {
                     const parentId: string = (id.match(/(.*)-\d/) || ['', ''])[1];
                     this.collapseOperation(this.displayedCircuit.operations, parentId);
                 } else if (canZoomIn) {
