@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { labelFontSize } from '../constants';
 
 // Helper functions for basic SVG components

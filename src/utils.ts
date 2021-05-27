@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Metadata, GateType } from './metadata';
 import { minGateWidth, labelPadding, labelFontSize, argsFontSize } from './constants';
 
