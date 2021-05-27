@@ -157,4 +157,10 @@ export class Visualizer {
     }
 }
 
+// Export methods/values from other modules:
+export { createExecutionPathVisualizer } from './composer';
 export { STYLES } from './styles';
+
+// Export types from other modules:
+export type { Circuit, StyleConfig, ExecutionPathVisualizer, ComposedCircuit, ConditionalRender } from './composer';
+export type { Qubit, Operation } from './circuit';
