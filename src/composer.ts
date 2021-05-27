@@ -12,34 +12,36 @@ import { createUUID } from './utils';
  * Handles interactive elements, such as classically-controlled operations.
  */
 const script = `
-    function toggleClassicalBtn(cls) {
-        const textSvg = document.querySelector(\`.\${cls} text\`);
-        const group = document.querySelector(\`.\${cls}-group\`);
-        const currValue = textSvg.childNodes[0].nodeValue;
-        const zeroGates = document.querySelector(\`.\${cls}-zero\`);
-        const oneGates = document.querySelector(\`.\${cls}-one\`);
-        switch (currValue) {
-            case '?':
-                textSvg.childNodes[0].nodeValue = '1';
-                group.classList.remove('classically-controlled-unknown');
-                group.classList.add('classically-controlled-one');
-                break;
-            case '1':
-                textSvg.childNodes[0].nodeValue = '0';
-                group.classList.remove('classically-controlled-one');
-                group.classList.add('classically-controlled-zero');
-                oneGates.classList.toggle('hidden');
-                zeroGates.classList.toggle('hidden');
-                break;
-            case '0':
-                textSvg.childNodes[0].nodeValue = '?';
-                group.classList.remove('classically-controlled-zero');
-                group.classList.add('classically-controlled-unknown');
-                zeroGates.classList.toggle('hidden');
-                oneGates.classList.toggle('hidden');
-                break;
-        }
+function toggleClassicalBtn(evt, btn) {
+    const textSvg = btn.querySelector('text');
+    const group = btn.parentNode;
+    const currValue = textSvg.firstChild.nodeValue;
+    const zeroGates = group.querySelector('.classically-controlled-zero');
+    const oneGates = group.querySelector('.classically-controlled-one');
+    switch (currValue) {
+        case '?':
+            textSvg.childNodes[0].nodeValue = '1';
+            group.classList.remove('classically-controlled-unknown');
+            group.classList.add('classically-controlled-one');
+            break;
+        case '1':
+            textSvg.childNodes[0].nodeValue = '0';
+            group.classList.remove('classically-controlled-one');
+            group.classList.add('classically-controlled-zero');
+            oneGates.classList.toggle('hidden');
+            zeroGates.classList.toggle('hidden');
+            break;
+        case '0':
+            textSvg.childNodes[0].nodeValue = '?';
+            group.classList.remove('classically-controlled-zero');
+            group.classList.add('classically-controlled-unknown');
+            zeroGates.classList.toggle('hidden');
+            oneGates.classList.toggle('hidden');
+            break;
     }
+
+    evt.stopPropagation();
+}
 `;
 
 /**

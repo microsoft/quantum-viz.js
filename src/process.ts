@@ -38,8 +38,6 @@ const processOperations = (
 
     // Keep track of which ops are already seen to avoid duplicate rendering
     const visited: { [opIdx: number]: boolean } = {};
-    // Unique HTML class for each classically-controlled group of gates.
-    let cls = 1;
 
     // Map operation index to gate metadata for formatting later
     const opsMetadata: Metadata[][] = alignedOps.map((regOps) =>
@@ -55,7 +53,7 @@ const processOperations = (
 
             if (metadata.type === GateType.ClassicalControlled) {
                 // Add HTML class attribute if classically controlled
-                _addClass(metadata, `classically-controlled-${cls++}`);
+                _addClass(metadata, 'classically-controlled');
             } else if (op != null && [GateType.Unitary, GateType.ControlledUnitary].includes(metadata.type)) {
                 // If gate is a unitary type, split targetsY into groups if there
                 // is a classical register between them for rendering
