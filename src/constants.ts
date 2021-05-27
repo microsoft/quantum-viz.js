@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 // Display attributes
 /** Left padding of SVG. */
 export const leftPadding = 20;

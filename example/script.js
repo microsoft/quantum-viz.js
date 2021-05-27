@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 
 const div1 = document.getElementById('example');
 const viz1 = new Sqore.Visualizer(div1, Sqore.STYLES['Default']);
