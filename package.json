@@ -7,7 +7,7 @@
   "unpkg": "dist/sqore.min.js",
   "scripts": {
     "build": "tsc",
-    "build:prod": "webpack",
+    "build:prod": "tsc && webpack",
     "coverage": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
