@@ -112,9 +112,6 @@ export const style = (customStyle: StyleConfig = {}): string => {
     .oplus {
         fill: ${styleConfig.oplus};
     }
-    [data-zoom-in="true"] {
-        cursor: zoom-in;
-    }
     .gate-unitary {
         fill: ${styleConfig.unitary};
     }
@@ -175,6 +172,30 @@ export const style = (customStyle: StyleConfig = {}): string => {
     }
     .classically-controlled-zero .classically-controlled-text {
         fill: ${styleConfig.classicalZeroText};
+    }
+
+    .collapse, .expand {
+        visibility: hidden;
+    }
+
+    .expand, .collapse {
+        cursor: pointer;
+    }
+
+    .collapse circle,
+    .expand circle {
+        fill: white;
+        stroke-width: 2px;
+        stroke: black;
+    }
+    .collapse path,
+    .expand path {
+        stroke-width: 4px;
+        stroke: black;
+    }
+
+    .gate:hover > .collapse > :not(.collapse), .gate:hover > .expand {
+        visibility: visible;
     }
 </style>
 `;

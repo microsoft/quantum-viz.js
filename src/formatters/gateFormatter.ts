@@ -29,6 +29,35 @@ const formatGates = (opsMetadata: Metadata[], nestedDepth = 0): string => {
     return formattedGates.flat().join('\n');
 };
 
+const _gateControls = (metadata: Metadata, nestedDepth : number): string[] => {
+    const [ x1, y1 ] = _gatePosition(metadata, nestedDepth);
+    const { dataAttributes } = metadata;
+    const atts = dataAttributes || {};
+    const ctrls : string[] = [];
+    
+    const expanded = "expanded" in atts;
+    
+    // Add collapse if expanded.
+    if (expanded) {
+        ctrls.push(
+            group(
+                [ '<circle cx="0" cy="0" r="10" />', '<path d="M-7,0 H7" />' ],
+                { class: "gate-control collapse", transform: `translate(${x1}, ${y1})` }
+            )
+        );
+    } else if (atts["zoom-in"] == "true") {
+        ctrls.push(
+            group(
+                [ '<circle cx="0" cy="0" r="10" />', '<path d="M0,-7 V7 M-7,0 H7" />' ],
+                { class: "gate-control expand", transform: `translate(${x1}, ${y1})` }
+            )
+        );
+    }
+    
+    return ctrls;
+}
+
+
 /**
  * Groups SVG elements into a gate SVG group.
  *
@@ -37,10 +66,13 @@ const formatGates = (opsMetadata: Metadata[], nestedDepth = 0): string => {
  *
  * @returns SVG representation of a gate.
  */
-const _createGate = (svgElems: string[], dataAttributes: DataAttributes = {}): string => {
+const _createGate = (body: string[], metadata: Metadata, nestedDepth : number): string => {
+    const ctrls = _gateControls(metadata, nestedDepth);
+    const { dataAttributes } = metadata;
     const attributes: { [attr: string]: string } = { class: 'gate' };
-    Object.entries(dataAttributes).forEach(([attr, val]) => (attributes[`data-${attr}`] = val));
-    return group(svgElems, attributes);
+    Object.entries(dataAttributes || {}).forEach(([attr, val]) => (attributes[`data-${attr}`] = val));
+
+    return group(body.concat(ctrls), attributes);
 };
 
 /**
@@ -51,20 +83,20 @@ const _createGate = (svgElems: string[], dataAttributes: DataAttributes = {}): s
  *
  * @returns SVG representation of gate.
  */
-const _formatGate = (metadata: Metadata, nestedDepth = 0): string => {
+ const _formatGate = (metadata: Metadata, nestedDepth = 0): string => {
     const { type, x, controlsY, targetsY, label, displayArgs, dataAttributes, width } = metadata;
     switch (type) {
         case GateType.Measure:
-            return _createGate([_measure(x, controlsY[0])], dataAttributes);
+            return _createGate([_measure(x, controlsY[0])], metadata, nestedDepth);
         case GateType.Unitary:
-            return _createGate([_unitary(label, x, targetsY as number[][], width, displayArgs)], dataAttributes);
+            return _createGate([_unitary(label, x, targetsY as number[][], width, displayArgs)], metadata, nestedDepth);
         case GateType.Swap:
             return controlsY.length > 0
-                ? _controlledGate(metadata)
-                : _createGate([_swap(x, targetsY as number[])], dataAttributes);
+                ? _controlledGate(metadata, nestedDepth)
+                : _createGate([_swap(x, targetsY as number[])], metadata, nestedDepth);
         case GateType.Cnot:
         case GateType.ControlledUnitary:
-            return _controlledGate(metadata);
+            return _controlledGate(metadata, nestedDepth);
         case GateType.Group:
             return _groupedOperations(metadata, nestedDepth);
         case GateType.ClassicalControlled:
@@ -204,7 +236,7 @@ const _cross = (x: number, y: number): string => {
  *
  * @returns SVG representation of controlled gate.
  */
-const _controlledGate = (metadata: Metadata): string => {
+const _controlledGate = (metadata: Metadata, nestedDepth : number): string => {
     const targetGateSvgs: string[] = [];
     const { type, x, controlsY, label, displayArgs, dataAttributes, width } = metadata;
     let { targetsY } = metadata;
@@ -231,7 +263,7 @@ const _controlledGate = (metadata: Metadata): string => {
     const maxY: number = Math.max(...controlsY, ...(targetsY as number[]));
     const minY: number = Math.min(...controlsY, ...(targetsY as number[]));
     const vertLine: string = line(x, minY, x, maxY);
-    const svg: string = _createGate([vertLine, ...controlledDotsSvg, ...targetGateSvgs], dataAttributes);
+    const svg: string = _createGate([vertLine, ...controlledDotsSvg, ...targetGateSvgs], metadata, nestedDepth);
     return svg;
 };
 
@@ -251,6 +283,38 @@ const _oplus = (x: number, y: number, r = 15): string => {
     return [circle, vertLine, horLine].join('\n');
 };
 
+const _gatePosition = (metadata: Metadata, nestedDepth : number) : [number, number, number, number] => {
+    const { x, width, type, targetsY } = metadata;
+
+    const ys = targetsY.flatMap(y => y as number[]);
+    var x1 : number, y1 : number, x2 : number, y2 : number;
+    
+    switch (type) {
+        case GateType.Group:
+            const padding = groupBoxPadding - nestedDepth * nestedGroupPadding;
+            const targetsY: number[] = metadata.targetsY as number[];
+            const maxY: number = Math.max(...(targetsY as number[])) + gateHeight / 2 + padding;
+            const minY: number = Math.min(...(targetsY as number[])) - gateHeight / 2 - padding;
+            const height: number = maxY - minY;
+        
+            x1 = x - 2 * padding;
+            y1 = minY;
+            x2 = width + 2 * padding;
+            y2 = height;
+        
+            return [x1, y1, x2, y2];
+
+        default:
+            x1 = x - width / 2;
+            y1 = Math.min(...ys) - gateHeight / 2;
+            x2 = x + width;
+            y2 = Math.max(...ys) + gateHeight / 2;
+    }
+
+    return [x1, y1, x2, y2];
+}
+
+
 /**
  * Generates the SVG for a group of nested operations.
  *
@@ -259,19 +323,14 @@ const _oplus = (x: number, y: number, r = 15): string => {
  *
  * @returns SVG representation of gate.
  */
-const _groupedOperations = (metadata: Metadata, nestedDepth = 0): string => {
-    const { x, children, width, dataAttributes } = metadata;
-    const padding = groupBoxPadding - nestedDepth * nestedGroupPadding;
-    if ((children?.length || 0) === 0) throw new Error('No children found for grouped operation.');
-    const targetsY: number[] = metadata.targetsY as number[];
+const _groupedOperations = (metadata: Metadata, nestedDepth : number): string => {
+    const { children } = metadata;
+    const [ x1, y1, x2, y2 ] = _gatePosition(metadata, nestedDepth);
     const childrenGates: string = children != null ? formatGates(children as Metadata[], nestedDepth + 1) : '';
-    const maxY: number = Math.max(...(targetsY as number[])) + gateHeight / 2 + padding;
-    const minY: number = Math.min(...(targetsY as number[])) - gateHeight / 2 - padding;
-    const height: number = maxY - minY;
 
     // Draw dashed box around children gates
-    const box: string = dashedBox(x + groupBoxPadding - padding, minY, width + (padding - groupBoxPadding) * 2, height);
-    return _createGate([box, childrenGates], dataAttributes);
+    const box: string = dashedBox(x1, y1, x2, y2);
+    return _createGate([box, childrenGates], metadata, nestedDepth);
 };
 
 /**
