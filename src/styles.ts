@@ -109,8 +109,9 @@ export const style = (customStyle: StyleConfig = {}): string => {
     .control-dot {
         fill: ${styleConfig.lineStroke};
     }
-    .oplus {
+    .oplus line, .oplus circle {
         fill: ${styleConfig.oplus};
+        stroke-width: 2;
     }
     .gate-unitary {
         fill: ${styleConfig.unitary};

@@ -300,7 +300,7 @@ const _oplus = (x: number, y: number, r = 15): string => {
     const circle = `<circle class="oplus" cx="${x}" cy="${y}" r="${r}"></circle>`;
     const vertLine: string = line(x, y - r, x, y + r);
     const horLine: string = line(x - r, y, x + r, y);
-    return [circle, vertLine, horLine].join('\n');
+    return group([circle, vertLine, horLine], { class: "oplus" });
 };
 
 const _gatePosition = (metadata: Metadata, nestedDepth : number) : [number, number, number, number] => {
