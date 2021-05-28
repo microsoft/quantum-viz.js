@@ -13,6 +13,8 @@ export enum GateType {
     Cnot,
     /** SWAP gate. */
     Swap,
+    /** X gate. */
+    X,
     /** Single/multi qubit unitary gate. */
     Unitary,
     /** Single/multi controlled unitary gate. */

@@ -389,13 +389,13 @@ const random = {
             ],
         },
         {
-            gate: 'H',
+            gate: 'X',
             isControlled: false,
             isAdjoint: false,
             isMeasurement: false,
             isConditional: false,
             controls: [],
-            targets: [{ type: 0, qId: 2 }],
+            targets: [{ type: 0, qId: 3 }],
         },
         {
             gate: 'X',
@@ -511,6 +511,12 @@ const random = {
                 { type: 0, qId: 0 },
                 { type: 0, qId: 2 },
             ],
+            children: 
+            [
+              { gate: 'X', isControlled: true, controls: [ { type: 0, qId: 0 } ], targets: [ { type: 0, qId: 2 } ] },
+              { gate: 'X', isControlled: true, controls: [ { type: 0, qId: 2 } ], targets: [ { type: 0, qId: 0 } ] },
+              { gate: 'X', isControlled: true, controls: [ { type: 0, qId: 0 } ], targets: [ { type: 0, qId: 2 } ] }          
+            ]
         },
         {
             gate: 'ZZ',

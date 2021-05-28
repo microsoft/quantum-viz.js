@@ -90,6 +90,8 @@ const _createGate = (body: string[], metadata: Metadata, nestedDepth : number): 
             return _createGate([_measure(x, controlsY[0])], metadata, nestedDepth);
         case GateType.Unitary:
             return _createGate([_unitary(label, x, targetsY as number[][], width, displayArgs)], metadata, nestedDepth);
+        case GateType.X:
+            return _createGate([_x(metadata, nestedDepth)], metadata, nestedDepth);
         case GateType.Swap:
             return controlsY.length > 0
                 ? _controlledGate(metadata, nestedDepth)
@@ -218,6 +220,18 @@ const _swap = (metadata: Metadata, nestedDepth : number) : string => {
     const crosses: string[] = ys.map((y) => _cross(x, y));
     const vertLine: string = line(x, ys[0], x, ys[1]);
     return [bg, crosses, vertLine].join('\n');
+};
+
+/**
+ * Creates the SVG for an X gate
+ *
+ * @returns SVG representation of X gate.
+ */
+ const _x = (metadata: Metadata, nestedDepth : number) : string => {
+    const { type, x, controlsY, targetsY, children, displayArgs, width } = metadata;
+    const ys = targetsY.flatMap(y => y as number[]);
+    const circle: string = _oplus(x, ys[0]);
+    return circle;
 };
 
 /**
