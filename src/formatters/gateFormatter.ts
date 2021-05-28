@@ -42,14 +42,14 @@ const _gateControls = (metadata: Metadata, nestedDepth : number): string[] => {
         ctrls.push(
             group(
                 [ '<circle cx="0" cy="0" r="10" />', '<path d="M-7,0 H7" />' ],
-                { class: "gate-control collapse", transform: `translate(${x1}, ${y1})` }
+                { class: "gate-control collapse", transform: `translate(${x1 + 2}, ${y1 + 2})` }
             )
         );
     } else if (atts["zoom-in"] == "true") {
         ctrls.push(
             group(
                 [ '<circle cx="0" cy="0" r="10" />', '<path d="M0,-7 V7 M-7,0 H7" />' ],
-                { class: "gate-control expand", transform: `translate(${x1}, ${y1})` }
+                { class: "gate-control expand", transform: `translate(${x1 + 2}, ${y1 + 2})` }
             )
         );
     }
@@ -84,7 +84,7 @@ const _createGate = (body: string[], metadata: Metadata, nestedDepth : number): 
  * @returns SVG representation of gate.
  */
  const _formatGate = (metadata: Metadata, nestedDepth = 0): string => {
-    const { type, x, controlsY, targetsY, label, displayArgs, dataAttributes, width } = metadata;
+    const { type, x, controlsY, targetsY, label, displayArgs, width } = metadata;
     switch (type) {
         case GateType.Measure:
             return _createGate([_measure(x, controlsY[0])], metadata, nestedDepth);
@@ -93,7 +93,7 @@ const _createGate = (body: string[], metadata: Metadata, nestedDepth : number): 
         case GateType.Swap:
             return controlsY.length > 0
                 ? _controlledGate(metadata, nestedDepth)
-                : _createGate([_swap(x, targetsY as number[])], metadata, nestedDepth);
+                : _createGate([_swap(metadata, nestedDepth)], metadata, nestedDepth);
         case GateType.Cnot:
         case GateType.ControlledUnitary:
             return _controlledGate(metadata, nestedDepth);
@@ -207,11 +207,17 @@ const _unitaryBox = (
  *
  * @returns SVG representation of SWAP gate.
  */
-const _swap = (x: number, targetsY: number[]): string => {
+const _swap = (metadata: Metadata, nestedDepth : number) : string => {
+    const { type, x, controlsY, targetsY, children, displayArgs, width } = metadata;
+
     // Get SVGs of crosses
-    const crosses: string[] = targetsY.map((y) => _cross(x, y));
-    const vertLine: string = line(x, targetsY[0], x, targetsY[1]);
-    return [crosses, vertLine].join('\n');
+    const [ x1, y1, x2, y2 ] = _gatePosition(metadata, nestedDepth);
+    const ys = targetsY.flatMap(y => y as number[]);
+    
+    const bg: string = box(x1, y1, x2, y2, 'gate-swap');
+    const crosses: string[] = ys.map((y) => _cross(x, y));
+    const vertLine: string = line(x, ys[0], x, ys[1]);
+    return [bg, crosses, vertLine].join('\n');
 };
 
 /**
@@ -287,28 +293,27 @@ const _gatePosition = (metadata: Metadata, nestedDepth : number) : [number, numb
     const { x, width, type, targetsY } = metadata;
 
     const ys = targetsY.flatMap(y => y as number[]);
+    const maxY = Math.max(...ys);
+    const minY = Math.min(...ys);
+
     var x1 : number, y1 : number, x2 : number, y2 : number;
     
     switch (type) {
         case GateType.Group:
             const padding = groupBoxPadding - nestedDepth * nestedGroupPadding;
-            const targetsY: number[] = metadata.targetsY as number[];
-            const maxY: number = Math.max(...(targetsY as number[])) + gateHeight / 2 + padding;
-            const minY: number = Math.min(...(targetsY as number[])) - gateHeight / 2 - padding;
-            const height: number = maxY - minY;
         
             x1 = x - 2 * padding;
-            y1 = minY;
+            y1 = (minY - gateHeight / 2 - padding);
             x2 = width + 2 * padding;
-            y2 = height;
+            y2 = (maxY +  + gateHeight / 2 + padding) - (minY - gateHeight / 2 - padding);
         
             return [x1, y1, x2, y2];
 
         default:
             x1 = x - width / 2;
-            y1 = Math.min(...ys) - gateHeight / 2;
+            y1 = minY - gateHeight / 2;
             x2 = x + width;
-            y2 = Math.max(...ys) + gateHeight / 2;
+            y2 = maxY + gateHeight / 2;
     }
 
     return [x1, y1, x2, y2];
@@ -350,9 +355,9 @@ const _classicalControlled = (metadata: Metadata, padding: number = groupBoxPadd
     const controlY = controlsY[0];
     if (htmlClass == null) htmlClass = 'classically-controlled';
 
-    // Get SVG for gates controlled on 0 and make them hidden initially
+    // Get SVG for gates controlled on 0
     let childrenZero: string = children != null ? formatGates(children[0]) : '';
-    childrenZero = `<g class="${htmlClass}-zero hidden">\r\n${childrenZero}</g>`;
+    childrenZero = `<g class="${htmlClass}-zero">\r\n${childrenZero}</g>`;
 
     // Get SVG for gates controlled on 1
     let childrenOne: string = children != null ? formatGates(children[1]) : '';
