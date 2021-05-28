@@ -1,8 +1,5 @@
-# Build package
+name: CI
 
-name: Build
-
-# Controls when the action will run. 
 on:
   # Triggers the workflow on all PRs and push events to the main branch
   pull_request:
@@ -12,26 +9,44 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# Runs jobs in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Installs package depencies
       - name: Install dependencies
         run: npm install
 
-      # Build TypeScript
-      - name: Dev build
+      - name: Build TypeScript
         run: npm run build
         
-      # Build package for production with Webpack
-      - name: Prod build
+      - name: Build package for production with Webpack
         run: npm run build:prod
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests with Jest
+        run: npm test
+        
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint project with ESLint
+        run: npm run lint
