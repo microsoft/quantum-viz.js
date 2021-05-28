@@ -1,0 +1,36 @@
+# Run package test
+
+name: Test
+
+on:
+  # Triggers the workflow on all PRs and push events to the main branch
+  pull_request:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests with Jest
+        run: npm test
+        
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint project with ESLint
+        run: npm run lint
