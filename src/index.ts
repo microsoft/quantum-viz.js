@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { createExecutionPathVisualizer, Circuit, StyleConfig, Operation, ConditionalRender } from './composer';
+import { createExecutionPathVisualizer, addGateClickHandlers, Circuit, StyleConfig, Operation, ConditionalRender } from './composer';
 
 type GateRegistry = {
     [id: string]: Operation;
@@ -88,9 +88,7 @@ export class Visualizer {
         const html: string = createExecutionPathVisualizer()
             .stylize(this.userStyleConfig)
             .compose(circuit)
-            .asHtml(!isScriptInjected);
-
-        isScriptInjected = true;
+            .asSvg();
 
         // Inject into div
         if (this.container == null) throw new Error(`Container not provided.`);
@@ -106,6 +104,9 @@ export class Visualizer {
     }
 
     private addGateClickHandlers(): void {
+        // Add handlers from container:
+        addGateClickHandlers(this.container);
+
         this.container?.querySelectorAll(`.gate`).forEach((gate) => {
             // Zoom in on clicked gate
             gate.addEventListener('click', (ev: Event) => {
@@ -158,7 +159,7 @@ export class Visualizer {
 }
 
 // Export methods/values from other modules:
-export { createExecutionPathVisualizer } from './composer';
+export { createExecutionPathVisualizer, addGateClickHandlers } from './composer';
 export { STYLES } from './styles';
 
 // Export types from other modules:

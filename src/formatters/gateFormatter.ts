@@ -336,7 +336,7 @@ const _classicalControlled = (metadata: Metadata, padding: number = groupBoxPadd
  * @returns SVG representation of control circle.
  */
 const _controlCircle = (x: number, y: number, cls: string, r: number = controlBtnRadius): string =>
-    `<g class="classically-controlled-btn ${cls}" onClick="toggleClassicalBtn(event, this)">
+    `<g class="classically-controlled-btn ${cls}">
 <circle class="${cls}" cx="${x}" cy="${y}" r="${r}"></circle>
 <text class="${cls} classically-controlled-text" font-size="${labelFontSize}" x="${x}" y="${y}">?</text>
 </g>`;
