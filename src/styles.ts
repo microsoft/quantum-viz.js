@@ -178,8 +178,18 @@ export const style = (customStyle: StyleConfig = {}): string => {
         fill: ${styleConfig.classicalZeroText};
     }
 
-    .collapse, .expand {
-        visibility: hidden;
+    .qviz .collapse,
+    .qviz .expand {
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+    .qviz:hover .collapse,
+    .qviz:hover .expand {
+        visibility: visible;
+        opacity: 0.2;
+        transition: visibility 1s;
+        transition: opacity 1s;
     }
 
     .expand, .collapse {
@@ -198,8 +208,11 @@ export const style = (customStyle: StyleConfig = {}): string => {
         stroke: black;
     }
 
-    .gate:hover > .collapse > :not(.collapse), .gate:hover > .expand {
+    .gate:hover > .collapse,
+    .gate:hover > .expand {
         visibility: visible;
+        opacity: 1;
+        transition: opacity 1s;
     }
 </style>
 `;
