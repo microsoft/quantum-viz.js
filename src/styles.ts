@@ -118,6 +118,10 @@ export const style = (customStyle: StyleConfig = {}): string => {
     .gate-measure {
         fill: ${styleConfig.measure};
     }
+    rect.gate-swap {
+        fill: transparent;
+        stroke: transparent;
+    }
     .arc-measure {
         stroke: ${styleConfig.lineStroke};
         fill: none;
