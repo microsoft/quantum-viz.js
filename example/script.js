@@ -19,5 +19,4 @@ if (div2 != null) {
     viz2.visualize(teleport);
 }
 
-
 console.log(JSON.stringify(teleport));

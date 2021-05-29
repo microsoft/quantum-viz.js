@@ -152,20 +152,20 @@ class ExecutionPathVisualizer {
      * @returns `ComposedCircuit` object containing metadata for visualization.
      */
     compose(circuit: Circuit): ComposedCircuit {
-        const flatten = (gates: Metadata[]) : Metadata[] => {
-            const result : Metadata[] = [];
-            function add(acc : Metadata[], gate : (Metadata | Metadata[])) {
+        const flatten = (gates: Metadata[]): Metadata[] => {
+            const result: Metadata[] = [];
+            function add(acc: Metadata[], gate: Metadata | Metadata[]) {
                 if (Array.isArray(gate)) {
-                    gate.forEach(g => add(acc, g));
+                    gate.forEach((g) => add(acc, g));
                 } else {
                     acc.push(gate);
-                    gate.children?.forEach(g => add(acc, g));
+                    gate.children?.forEach((g) => add(acc, g));
                 }
             }
             add(result, gates);
             return result;
         };
-        
+
         const { qubits, operations } = circuit;
         const { qubitWires, registers, svgHeight } = formatInputs(qubits);
         const { metadataList, svgWidth } = processOperations(operations, registers);

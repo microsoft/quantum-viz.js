@@ -24,9 +24,11 @@ window.addEventListener('keyup', (ev) => {
 
 // Adds default cursor styles (i.e. zoom in on hover)
 const addDefaultStyles = () => {
-    document.querySelectorAll('[data-zoom-out="true"]:not([data-zoom-in="true"]),[data-expanded="true"]').forEach((el: Element) => {
-        (el as HTMLElement).style.cursor = 'default';
-    });
+    document
+        .querySelectorAll('[data-zoom-out="true"]:not([data-zoom-in="true"]),[data-expanded="true"]')
+        .forEach((el: Element) => {
+            (el as HTMLElement).style.cursor = 'default';
+        });
     document.querySelectorAll('[data-zoom-in="true"]:not([data-expanded="true"])').forEach((el: Element) => {
         (el as HTMLElement).style.cursor = 'zoom-in';
     });
@@ -42,7 +44,7 @@ const addCtrlClickStyles = () => {
 export class Visualizer {
     userStyleConfig: StyleConfig = {};
     displayedCircuit: Circuit | null = null;
-    container: HTMLElement | null  = null;
+    container: HTMLElement | null = null;
     gateRegistry: GateRegistry = {};
 
     constructor(container: HTMLElement, userStyleConfig: StyleConfig) {
