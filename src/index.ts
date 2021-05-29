@@ -1,7 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { createExecutionPathVisualizer, addGateClickHandlers, Circuit, StyleConfig, Operation, ConditionalRender } from './composer';
+import {
+    createExecutionPathVisualizer,
+    addGateClickHandlers,
+    Circuit,
+    StyleConfig,
+    Operation,
+    ConditionalRender,
+} from './composer';
 
 type GateRegistry = {
     [id: string]: Operation;
@@ -10,7 +17,7 @@ type GateRegistry = {
 export class Visualizer {
     userStyleConfig: StyleConfig = {};
     displayedCircuit: Circuit | null = null;
-    container: HTMLElement | null  = null;
+    container: HTMLElement | null = null;
     gateRegistry: GateRegistry = {};
 
     constructor(container: HTMLElement, userStyleConfig: StyleConfig) {
@@ -53,10 +60,7 @@ export class Visualizer {
 
     private renderCircuit(circuit: Circuit): void {
         // Generate HTML visualization
-        const html: string = createExecutionPathVisualizer()
-            .stylize(this.userStyleConfig)
-            .compose(circuit)
-            .asSvg();
+        const html: string = createExecutionPathVisualizer().stylize(this.userStyleConfig).compose(circuit).asSvg();
 
         // Inject into div
         if (this.container == null) throw new Error(`Container not provided.`);
@@ -80,17 +84,17 @@ export class Visualizer {
                 if (this.displayedCircuit == null) return;
 
                 const gateId: string | null | undefined = ctrl.parentElement?.getAttribute('data-id');
-                if (typeof(gateId) == "string") {
-                    if (ctrl.classList.contains("collapse")) {
+                if (typeof gateId == 'string') {
+                    if (ctrl.classList.contains('collapse')) {
                         this.collapseOperation(this.displayedCircuit.operations, gateId);
-                    } else if (ctrl.classList.contains("expand")) {
+                    } else if (ctrl.classList.contains('expand')) {
                         this.expandOperation(this.displayedCircuit.operations, gateId);
                     }
                     this.renderCircuit(this.displayedCircuit);
 
                     ev.stopPropagation();
                 }
-            })
+            });
         });
     }
 
