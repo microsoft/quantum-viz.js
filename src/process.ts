@@ -38,8 +38,6 @@ const processOperations = (
 
     // Keep track of which ops are already seen to avoid duplicate rendering
     const visited: { [opIdx: number]: boolean } = {};
-    // Unique HTML class for each classically-controlled group of gates.
-    let cls = 1;
 
     // Map operation index to gate metadata for formatting later
     const opsMetadata: Metadata[][] = alignedOps.map((regOps) =>
@@ -53,10 +51,7 @@ const processOperations = (
 
             const metadata: Metadata = _opToMetadata(op, registers);
 
-            if (metadata.type === GateType.ClassicalControlled) {
-                // Add HTML class attribute if classically controlled
-                _addClass(metadata, `classically-controlled-${cls++}`);
-            } else if (op != null && [GateType.Unitary, GateType.ControlledUnitary].includes(metadata.type)) {
+            if (op != null && [GateType.Unitary, GateType.ControlledUnitary].includes(metadata.type)) {
                 // If gate is a unitary type, split targetsY into groups if there
                 // is a classical register between them for rendering
 
@@ -320,18 +315,6 @@ const _getRegY = (reg: Register, registers: RegisterMap): number => {
 };
 
 /**
- * Adds HTML class to metadata and its nested children.
- *
- * @param metadata Metadata assigned to class.
- * @param cls      HTML class name.
- */
-const _addClass = (metadata: Metadata, cls: string): void => {
-    metadata.htmlClass = cls;
-    if (metadata.children == null) return;
-    metadata.children.flat().forEach((child) => _addClass(child, cls));
-};
-
-/**
  * Splits `targets` if non-adjacent or intersected by classical registers.
  *
  * @param targets       Target qubit registers.
@@ -452,7 +435,6 @@ export {
     _getClassicalRegStart,
     _opToMetadata,
     _getRegY,
-    _addClass,
     _splitTargetsY,
     _fillMetadataX,
     _offsetChildrenX,

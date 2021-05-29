@@ -1,14 +1,18 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { createExecutionPathVisualizer, Circuit, StyleConfig, Operation, ConditionalRender } from './composer';
+import {
+    createExecutionPathVisualizer,
+    addGateClickHandlers,
+    Circuit,
+    StyleConfig,
+    Operation,
+    ConditionalRender,
+} from './composer';
 
 type GateRegistry = {
     [id: string]: Operation;
 };
-
-// Flag to ensure that we only inject custom JS into browser once
-let isScriptInjected = false;
 
 // Event handler to visually signal to user that the gate can be zoomed out on ctrl-click
 window.addEventListener('keydown', (ev) => {
@@ -24,9 +28,11 @@ window.addEventListener('keyup', (ev) => {
 
 // Adds default cursor styles (i.e. zoom in on hover)
 const addDefaultStyles = () => {
-    document.querySelectorAll('[data-zoom-out="true"]:not([data-zoom-in="true"]),[data-expanded="true"]').forEach((el: Element) => {
-        (el as HTMLElement).style.cursor = 'default';
-    });
+    document
+        .querySelectorAll('[data-zoom-out="true"]:not([data-zoom-in="true"]),[data-expanded="true"]')
+        .forEach((el: Element) => {
+            (el as HTMLElement).style.cursor = 'default';
+        });
     document.querySelectorAll('[data-zoom-in="true"]:not([data-expanded="true"])').forEach((el: Element) => {
         (el as HTMLElement).style.cursor = 'zoom-in';
     });
@@ -42,7 +48,7 @@ const addCtrlClickStyles = () => {
 export class Visualizer {
     userStyleConfig: StyleConfig = {};
     displayedCircuit: Circuit | null = null;
-    container: HTMLElement | null  = null;
+    container: HTMLElement | null = null;
     gateRegistry: GateRegistry = {};
 
     constructor(container: HTMLElement, userStyleConfig: StyleConfig) {
@@ -85,12 +91,7 @@ export class Visualizer {
 
     private renderCircuit(circuit: Circuit): void {
         // Generate HTML visualization
-        const html: string = createExecutionPathVisualizer()
-            .stylize(this.userStyleConfig)
-            .compose(circuit)
-            .asHtml(!isScriptInjected);
-
-        isScriptInjected = true;
+        const html: string = createExecutionPathVisualizer().stylize(this.userStyleConfig).compose(circuit).asSvg();
 
         // Inject into div
         if (this.container == null) throw new Error(`Container not provided.`);
@@ -106,6 +107,9 @@ export class Visualizer {
     }
 
     private addGateClickHandlers(): void {
+        // Add handlers from container:
+        addGateClickHandlers(this.container);
+
         this.container?.querySelectorAll(`.gate`).forEach((gate) => {
             // Zoom in on clicked gate
             gate.addEventListener('click', (ev: Event) => {
@@ -158,7 +162,7 @@ export class Visualizer {
 }
 
 // Export methods/values from other modules:
-export { createExecutionPathVisualizer } from './composer';
+export { createExecutionPathVisualizer, addGateClickHandlers } from './composer';
 export { STYLES } from './styles';
 
 // Export types from other modules:

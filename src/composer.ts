@@ -11,36 +11,49 @@ import { createUUID } from './utils';
  * Custom JavaScript code to be injected into visualization HTML string.
  * Handles interactive elements, such as classically-controlled operations.
  */
-const script = `
-    function toggleClassicalBtn(cls) {
-        const textSvg = document.querySelector(\`.\${cls} text\`);
-        const group = document.querySelector(\`.\${cls}-group\`);
-        const currValue = textSvg.childNodes[0].nodeValue;
-        const zeroGates = document.querySelector(\`.\${cls}-zero\`);
-        const oneGates = document.querySelector(\`.\${cls}-one\`);
-        switch (currValue) {
-            case '?':
-                textSvg.childNodes[0].nodeValue = '1';
-                group.classList.remove('classically-controlled-unknown');
-                group.classList.add('classically-controlled-one');
-                break;
-            case '1':
-                textSvg.childNodes[0].nodeValue = '0';
-                group.classList.remove('classically-controlled-one');
-                group.classList.add('classically-controlled-zero');
-                oneGates.classList.toggle('hidden');
-                zeroGates.classList.toggle('hidden');
-                break;
-            case '0':
-                textSvg.childNodes[0].nodeValue = '?';
-                group.classList.remove('classically-controlled-zero');
-                group.classList.add('classically-controlled-unknown');
-                zeroGates.classList.toggle('hidden');
-                oneGates.classList.toggle('hidden');
-                break;
-        }
-    }
-`;
+export const addGateClickHandlers = (container: Element | null): Element | null => {
+    container?.querySelectorAll('.classically-controlled-btn').forEach((btn) => {
+        // Zoom in on clicked gate
+        btn.addEventListener('click', (evt: Event) => {
+            const textSvg = btn.querySelector('text');
+            const group = btn.parentElement;
+            if (textSvg == null || group == null) return;
+
+            const currValue = textSvg.firstChild?.nodeValue;
+            const zeroGates = group?.querySelector('.gates-zero');
+            const oneGates = group?.querySelector('.gates-one');
+            switch (currValue) {
+                case '?':
+                    textSvg.childNodes[0].nodeValue = '1';
+                    group.classList.remove('classically-controlled-unknown');
+                    group.classList.remove('classically-controlled-zero');
+                    group.classList.add('classically-controlled-one');
+                    zeroGates?.classList.add('hidden');
+                    oneGates?.classList.remove('hidden');
+                    break;
+                case '1':
+                    textSvg.childNodes[0].nodeValue = '0';
+                    group.classList.remove('classically-controlled-unknown');
+                    group.classList.add('classically-controlled-zero');
+                    group.classList.remove('classically-controlled-one');
+                    zeroGates?.classList.remove('hidden');
+                    oneGates?.classList.add('hidden');
+                    break;
+                case '0':
+                    textSvg.childNodes[0].nodeValue = '?';
+                    group.classList.add('classically-controlled-unknown');
+                    group.classList.remove('classically-controlled-zero');
+                    group.classList.remove('classically-controlled-one');
+                    zeroGates?.classList.remove('hidden');
+                    oneGates?.classList.remove('hidden');
+                    break;
+            }
+            evt.stopPropagation();
+        });
+    });
+
+    return container;
+};
 
 /**
  * Contains all metadata required to generate final output.
@@ -48,7 +61,6 @@ const script = `
 class ComposedCircuit {
     width: number;
     height: number;
-    script: string;
     style: StyleConfig;
     elements: string[];
 
@@ -57,14 +69,12 @@ class ComposedCircuit {
      *
      * @param width Width of SVG element.
      * @param height Height of SVG element.
-     * @param script Script for interactivity.
      * @param style Visualization style.
      * @param elements SVG elements the make up circuit visualization.
      */
-    constructor(width: number, height: number, script: string, style: StyleConfig, elements: string[]) {
+    constructor(width: number, height: number, style: StyleConfig, elements: string[]) {
         this.width = width;
         this.height = height;
-        this.script = script;
         this.style = style;
         this.elements = elements;
     }
@@ -77,24 +87,12 @@ class ComposedCircuit {
      *
      * @returns SVG representation of circuit visualization.
      */
-    asSvg(injectScript = false): string {
+    asSvg(): string {
         const uuid: string = createUUID();
-        let script = '';
 
-        // Insert script into browser for interactivity
-        if (injectScript) {
-            const s = document.createElement('script');
-            s.type = 'text/javascript';
-            s.appendChild(document.createTextNode(this.script));
-            document.documentElement.appendChild(s);
-        } else {
-            script = `<script type="text/JavaScript">${this.script}</script>`;
-        }
-
-        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" width="${this.width}" height="${
-            this.height
-        }">
-    ${script}
+        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" class="qviz" width="${
+            this.width
+        }" height="${this.height}">
     ${style(this.style)}
     ${this.elements.join('\n')}
 </svg>`;
@@ -103,13 +101,10 @@ class ComposedCircuit {
     /**
      * Generates visualization as an HTML string and optionally injects the custom script into the browser.
      *
-     * @param injectScript Injects custom script into document manually. This is used when the visualization
-     *                     is injected into the document via `innerHtml`.
-     *
      * @returns HTML representation of circuit visualization.
      */
-    asHtml(injectScript = false): string {
-        const svg: string = this.asSvg(injectScript);
+    asHtml(): string {
+        const svg: string = this.asSvg();
         return `<html>
     ${svg}
 </html>`;
@@ -157,20 +152,20 @@ class ExecutionPathVisualizer {
      * @returns `ComposedCircuit` object containing metadata for visualization.
      */
     compose(circuit: Circuit): ComposedCircuit {
-        const flatten = (gates: Metadata[]) : Metadata[] => {
-            const result : Metadata[] = [];
-            function add(acc : Metadata[], gate : (Metadata | Metadata[])) {
+        const flatten = (gates: Metadata[]): Metadata[] => {
+            const result: Metadata[] = [];
+            function add(acc: Metadata[], gate: Metadata | Metadata[]) {
                 if (Array.isArray(gate)) {
-                    gate.forEach(g => add(acc, g));
+                    gate.forEach((g) => add(acc, g));
                 } else {
                     acc.push(gate);
-                    gate.children?.forEach(g => add(acc, g));
+                    gate.children?.forEach((g) => add(acc, g));
                 }
             }
             add(result, gates);
             return result;
         };
-        
+
         const { qubits, operations } = circuit;
         const { qubitWires, registers, svgHeight } = formatInputs(qubits);
         const { metadataList, svgWidth } = processOperations(operations, registers);
@@ -178,7 +173,7 @@ class ExecutionPathVisualizer {
         const measureGates: Metadata[] = flatten(metadataList).filter(({ type }) => type === GateType.Measure);
         const formattedRegs: string = formatRegisters(registers, measureGates, svgWidth);
 
-        const composition: ComposedCircuit = new ComposedCircuit(svgWidth, svgHeight, script, this.style, [
+        const composition: ComposedCircuit = new ComposedCircuit(svgWidth, svgHeight, this.style, [
             qubitWires,
             formattedRegs,
             formattedGates,
