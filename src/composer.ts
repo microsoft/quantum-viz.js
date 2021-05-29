@@ -20,13 +20,13 @@ export const addGateClickHandlers = (container: Element | null): Element | null 
             if (textSvg == null || group == null) return;
 
             const currValue = textSvg.firstChild?.nodeValue;
-            const zeroGates = group?.querySelector('.classically-controlled-zero');
-            const oneGates = group?.querySelector('.classically-controlled-one');
+            const zeroGates = group?.querySelector('.gates-zero');
+            const oneGates = group?.querySelector('.gates-one');
             switch (currValue) {
                 case '?':
                     textSvg.childNodes[0].nodeValue = '1';
                     group.classList.remove('classically-controlled-unknown');
-                    group.classList.remove('classically-controlled-zero');
+                    group.classList.remove('.zero-gates');
                     group.classList.add('classically-controlled-one');
                     zeroGates?.classList.add('hidden');
                     oneGates?.classList.remove('hidden');
@@ -34,7 +34,7 @@ export const addGateClickHandlers = (container: Element | null): Element | null 
                 case '1':
                     textSvg.childNodes[0].nodeValue = '0';
                     group.classList.remove('classically-controlled-unknown');
-                    group.classList.add('classically-controlled-zero');
+                    group.classList.add('.zero-gates');
                     group.classList.remove('classically-controlled-one');
                     zeroGates?.classList.remove('hidden');
                     oneGates?.classList.add('hidden');
@@ -42,7 +42,7 @@ export const addGateClickHandlers = (container: Element | null): Element | null 
                 case '0':
                     textSvg.childNodes[0].nodeValue = '?';
                     group.classList.add('classically-controlled-unknown');
-                    group.classList.remove('classically-controlled-zero');
+                    group.classList.remove('.zero-gates');
                     group.classList.remove('classically-controlled-one');
                     zeroGates?.classList.remove('hidden');
                     oneGates?.classList.remove('hidden');

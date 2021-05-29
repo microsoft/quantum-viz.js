@@ -161,19 +161,19 @@ export const style = (customStyle: StyleConfig = {}): string => {
         fill: ${styleConfig.classicalZero};
     }
     <!-- Control button text -->
-    .classically-controlled-text {
+    .classically-controlled text {
         dominant-baseline: middle;
         text-anchor: middle;
         stroke: none;
         font-family: Arial;
     }
-    .classically-controlled-unknown .classically-controlled-text {
+    .classically-controlled-unknown text {
         fill: ${styleConfig.textColour};
     }
-    .classically-controlled-one .classically-controlled-text {
+    .classically-controlled-one text {
         fill: ${styleConfig.classicalOneText};
     }
-    .classically-controlled-zero .classically-controlled-text {
+    .classically-controlled-zero text {
         fill: ${styleConfig.classicalZeroText};
     }
 </style>

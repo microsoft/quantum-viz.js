@@ -286,22 +286,21 @@ const _classicalControlled = (metadata: Metadata, padding: number = groupBoxPadd
     const { controlsY, dataAttributes } = metadata;
     const targetsY: number[] = metadata.targetsY as number[];
     const children: Metadata[][] = metadata.children as Metadata[][];
-    let { x, width, htmlClass } = metadata;
+    let { x, width } = metadata;
 
     const controlY = controlsY[0];
-    if (htmlClass == null) htmlClass = 'classically-controlled';
 
     // Get SVG for gates controlled on 0 and make them hidden initially
     let childrenZero: string = children != null ? formatGates(children[0]) : '';
-    childrenZero = `<g class="${htmlClass}-zero hidden">\r\n${childrenZero}</g>`;
+    childrenZero = `<g class="gates-zero">\r\n${childrenZero}</g>`;
 
     // Get SVG for gates controlled on 1
     let childrenOne: string = children != null ? formatGates(children[1]) : '';
-    childrenOne = `<g class="${htmlClass}-one">\r\n${childrenOne}</g>`;
+    childrenOne = `<g class="gates-one">\r\n${childrenOne}</g>`;
 
     // Draw control button and attached dashed line to dashed box
     const controlCircleX: number = x + controlBtnRadius;
-    const controlCircle: string = _controlCircle(controlCircleX, controlY, htmlClass);
+    const controlCircle: string = _controlCircle(controlCircleX, controlY);
     const lineY1: number = controlY + controlBtnRadius,
         lineY2: number = controlY + classicalRegHeight / 2;
     const vertLine: string = dashedLine(controlCircleX, lineY1, controlCircleX, lineY2, 'classical-line');
@@ -317,7 +316,9 @@ const _classicalControlled = (metadata: Metadata, padding: number = groupBoxPadd
     const box: string = dashedBox(x, y, width, height, 'classical-container');
 
     // Display controlled operation in initial "unknown" state
-    const attributes: { [attr: string]: string } = { class: `${htmlClass}-group classically-controlled-unknown` };
+    const attributes: { [attr: string]: string } = {
+        class: `classically-controlled-group classically-controlled-unknown`,
+    };
     if (dataAttributes != null)
         Object.entries(dataAttributes).forEach(([attr, val]) => (attributes[`data-${attr}`] = val));
 
@@ -335,10 +336,10 @@ const _classicalControlled = (metadata: Metadata, padding: number = groupBoxPadd
  *
  * @returns SVG representation of control circle.
  */
-const _controlCircle = (x: number, y: number, cls: string, r: number = controlBtnRadius): string =>
-    `<g class="classically-controlled-btn ${cls}">
-<circle class="${cls}" cx="${x}" cy="${y}" r="${r}"></circle>
-<text class="${cls} classically-controlled-text" font-size="${labelFontSize}" x="${x}" y="${y}">?</text>
+const _controlCircle = (x: number, y: number, r: number = controlBtnRadius): string =>
+    `<g class="classically-controlled-btn">
+<circle cx="${x}" cy="${y}" r="${r}"></circle>
+<text font-size="${labelFontSize}" x="${x}" y="${y}">?</text>
 </g>`;
 
 export {
