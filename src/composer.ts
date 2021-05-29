@@ -11,7 +11,7 @@ import { createUUID } from './utils';
  * Custom JavaScript code to be injected into visualization HTML string.
  * Handles interactive elements, such as classically-controlled operations.
  */
-export const addGateClickHandlers = (container: Element | null) : Element | null => {
+export const addGateClickHandlers = (container: Element | null): Element | null => {
     container?.querySelectorAll('.classically-controlled-btn').forEach((btn) => {
         // Zoom in on clicked gate
         btn.addEventListener('click', (evt: Event) => {
@@ -20,8 +20,8 @@ export const addGateClickHandlers = (container: Element | null) : Element | null
             if (textSvg == null || group == null) return;
 
             const currValue = textSvg.firstChild?.nodeValue;
-            const zeroGates = group?.querySelector('.classically-controlled-zero');
-            const oneGates = group?.querySelector('.classically-controlled-one');
+            const zeroGates = group?.querySelector('.gates-zero');
+            const oneGates = group?.querySelector('.gates-one');
             switch (currValue) {
                 case '?':
                     textSvg.childNodes[0].nodeValue = '1';
@@ -33,7 +33,7 @@ export const addGateClickHandlers = (container: Element | null) : Element | null
                     break;
                 case '1':
                     textSvg.childNodes[0].nodeValue = '0';
-                    group.classList.remove('classically-controlled-unknown');;
+                    group.classList.remove('classically-controlled-unknown');
                     group.classList.add('classically-controlled-zero');
                     group.classList.remove('classically-controlled-one');
                     zeroGates?.classList.remove('hidden');
@@ -53,8 +53,7 @@ export const addGateClickHandlers = (container: Element | null) : Element | null
     });
 
     return container;
-}
-
+};
 
 /**
  * Contains all metadata required to generate final output.
@@ -90,9 +89,10 @@ class ComposedCircuit {
      */
     asSvg(): string {
         const uuid: string = createUUID();
-        let script = '';
 
-        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" class="qviz" width="${this.width}" height="${this.height}">
+        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" class="qviz" width="${
+            this.width
+        }" height="${this.height}">
     ${style(this.style)}
     ${this.elements.join('\n')}
 </svg>`;
@@ -152,20 +152,19 @@ class ExecutionPathVisualizer {
      * @returns `ComposedCircuit` object containing metadata for visualization.
      */
     compose(circuit: Circuit): ComposedCircuit {
-        const flatten = (gates: Metadata[]) : Metadata[] => {
-            const result : Metadata[] = [];
-            function add(acc : Metadata[], gate : (Metadata | Metadata[])) {
+        const flatten = (gates: Metadata[]): Metadata[] => {
+            const result: Metadata[] = [];
+            function add(acc: Metadata[], gate: Metadata | Metadata[]) {
                 if (Array.isArray(gate)) {
-                    gate.forEach(g => add(acc, g));
+                    gate.forEach((g) => add(acc, g));
                 } else {
                     acc.push(gate);
-                    gate.children?.forEach(g => add(acc, g));
+                    gate.children?.forEach((g) => add(acc, g));
                 }
             }
             add(result, gates);
             return result;
         };
-        
         const { qubits, operations } = circuit;
         const { qubitWires, registers, svgHeight } = formatInputs(qubits);
         const { metadataList, svgWidth } = processOperations(operations, registers);

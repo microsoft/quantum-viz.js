@@ -8,7 +8,6 @@ import {
     _getClassicalRegStart,
     _opToMetadata,
     _getRegY,
-    _addClass,
     _splitTargetsY,
     _fillMetadataX,
     _offsetChildrenX,
@@ -1594,240 +1593,6 @@ describe('Testing _getRegY', () => {
     });
 });
 
-describe('Testing _addClass', () => {
-    test('No children', () => {
-        const cls = 'classname';
-        const metadata: Metadata = {
-            type: GateType.Unitary,
-            x: 0,
-            controlsY: [],
-            targetsY: [],
-            children: [[], []],
-            label: 'X',
-            width: minGateWidth,
-        };
-        const expected: Metadata = {
-            type: GateType.Unitary,
-            x: 0,
-            controlsY: [],
-            targetsY: [],
-            children: [[], []],
-            label: 'X',
-            width: minGateWidth,
-            htmlClass: 'classname',
-        };
-
-        _addClass(metadata, cls);
-        expect(metadata).toEqual(expected);
-    });
-    test('Undefined children', () => {
-        const cls = 'classname';
-        const metadata: Metadata = {
-            type: GateType.Unitary,
-            x: 0,
-            controlsY: [],
-            targetsY: [],
-            label: 'X',
-            width: minGateWidth,
-        };
-        const expected: Metadata = {
-            type: GateType.Unitary,
-            x: 0,
-            controlsY: [],
-            targetsY: [],
-            label: 'X',
-            width: minGateWidth,
-            htmlClass: 'classname',
-        };
-        _addClass(metadata, cls);
-        expect(metadata).toEqual(expected);
-    });
-    test('depth-1 children', () => {
-        const cls = 'classname';
-        const metadata: Metadata = {
-            type: GateType.Unitary,
-            x: 0,
-            controlsY: [],
-            targetsY: [],
-            children: [
-                [
-                    {
-                        type: GateType.Unitary,
-                        x: 0,
-                        controlsY: [],
-                        targetsY: [],
-                        label: 'X',
-                        width: minGateWidth,
-                    },
-                ],
-                [
-                    {
-                        type: GateType.Unitary,
-                        x: 0,
-                        controlsY: [],
-                        targetsY: [],
-                        label: 'X',
-                        width: minGateWidth,
-                    },
-                ],
-            ],
-            label: 'X',
-            width: minGateWidth,
-        };
-        const expected: Metadata = {
-            type: GateType.Unitary,
-            x: 0,
-            controlsY: [],
-            targetsY: [],
-            children: [
-                [
-                    {
-                        type: GateType.Unitary,
-                        x: 0,
-                        controlsY: [],
-                        targetsY: [],
-                        label: 'X',
-                        width: minGateWidth,
-                        htmlClass: 'classname',
-                    },
-                ],
-                [
-                    {
-                        type: GateType.Unitary,
-                        x: 0,
-                        controlsY: [],
-                        targetsY: [],
-                        label: 'X',
-                        width: minGateWidth,
-                        htmlClass: 'classname',
-                    },
-                ],
-            ],
-            label: 'X',
-            width: minGateWidth,
-            htmlClass: 'classname',
-        };
-
-        _addClass(metadata, cls);
-        expect(metadata).toEqual(expected);
-    });
-    test('depth-2 children', () => {
-        const cls = 'classname';
-        const metadata: Metadata = {
-            type: GateType.Unitary,
-            x: 0,
-            controlsY: [],
-            targetsY: [],
-            children: [
-                [
-                    {
-                        type: GateType.Unitary,
-                        x: 0,
-                        controlsY: [],
-                        targetsY: [],
-                        children: [
-                            [
-                                {
-                                    type: GateType.Unitary,
-                                    x: 0,
-                                    controlsY: [],
-                                    targetsY: [],
-                                    label: 'X',
-                                    width: minGateWidth,
-                                },
-                            ],
-                            [
-                                {
-                                    type: GateType.Unitary,
-                                    x: 0,
-                                    controlsY: [],
-                                    targetsY: [],
-                                    label: 'X',
-                                    width: minGateWidth,
-                                },
-                            ],
-                        ],
-                        label: 'X',
-                        width: minGateWidth,
-                    },
-                ],
-                [
-                    {
-                        type: GateType.Unitary,
-                        x: 0,
-                        controlsY: [],
-                        targetsY: [],
-                        label: 'X',
-                        width: minGateWidth,
-                    },
-                ],
-            ],
-            label: 'X',
-            width: minGateWidth,
-        };
-        const expected: Metadata = {
-            type: GateType.Unitary,
-            x: 0,
-            controlsY: [],
-            targetsY: [],
-            children: [
-                [
-                    {
-                        type: GateType.Unitary,
-                        x: 0,
-                        controlsY: [],
-                        targetsY: [],
-                        children: [
-                            [
-                                {
-                                    type: GateType.Unitary,
-                                    x: 0,
-                                    controlsY: [],
-                                    targetsY: [],
-                                    label: 'X',
-                                    width: minGateWidth,
-                                    htmlClass: 'classname',
-                                },
-                            ],
-                            [
-                                {
-                                    type: GateType.Unitary,
-                                    x: 0,
-                                    controlsY: [],
-                                    targetsY: [],
-                                    label: 'X',
-                                    width: minGateWidth,
-                                    htmlClass: 'classname',
-                                },
-                            ],
-                        ],
-                        label: 'X',
-                        width: minGateWidth,
-                        htmlClass: 'classname',
-                    },
-                ],
-                [
-                    {
-                        type: GateType.Unitary,
-                        x: 0,
-                        controlsY: [],
-                        targetsY: [],
-                        label: 'X',
-                        width: minGateWidth,
-                        htmlClass: 'classname',
-                    },
-                ],
-            ],
-            label: 'X',
-            width: minGateWidth,
-            htmlClass: 'classname',
-        };
-
-        _addClass(metadata, cls);
-        expect(metadata).toEqual(expected);
-    });
-});
-
 describe('Testing _splitTargetsY', () => {
     const registers: RegisterMap = {
         0: {
@@ -2503,7 +2268,6 @@ describe('Testing processOperations', () => {
             targetsY: [startY, startY + classicalRegHeight * 2],
             label: '',
             width: minGateWidth * 2 + gatePadding * 2 + controlBtnOffset + groupBoxPadding * 2,
-            htmlClass: 'classically-controlled-1',
             children: [
                 [
                     {
@@ -2513,7 +2277,6 @@ describe('Testing processOperations', () => {
                         targetsY: [[startY]],
                         label: 'X',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                     {
                         type: GateType.Unitary,
@@ -2528,7 +2291,6 @@ describe('Testing processOperations', () => {
                         targetsY: [[startY]],
                         label: 'Z',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
                 [
@@ -2539,7 +2301,6 @@ describe('Testing processOperations', () => {
                         targetsY: [[startY + classicalRegHeight * 2]],
                         label: 'H',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
             ],

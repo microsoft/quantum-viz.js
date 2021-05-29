@@ -39,12 +39,10 @@ describe('Testing _classicalControlled', () => {
                         controlsY: [],
                         targetsY: [[startY]],
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
                 [],
             ],
-            htmlClass: 'classically-controlled-1',
         };
         expect(_classicalControlled(metadata)).toMatchSnapshot();
     });
@@ -66,11 +64,9 @@ describe('Testing _classicalControlled', () => {
                         controlsY: [],
                         targetsY: [[startY]],
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
             ],
-            htmlClass: 'classically-controlled-1',
         };
         expect(_classicalControlled(metadata)).toMatchSnapshot();
     });
@@ -82,7 +78,6 @@ describe('Testing _classicalControlled', () => {
             targetsY: [startY, startY + classicalRegHeight * 2],
             label: '',
             width: minGateWidth + controlBtnOffset + groupBoxPadding * 2,
-            htmlClass: 'classically-controlled-1',
             children: [
                 [
                     {
@@ -92,7 +87,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY]],
                         label: 'X',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
                 [
@@ -103,7 +97,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY + classicalRegHeight * 2]],
                         label: 'H',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
             ],
@@ -118,7 +111,6 @@ describe('Testing _classicalControlled', () => {
             targetsY: [startY, startY + classicalRegHeight * 2],
             label: '',
             width: minGateWidth * 2 + gatePadding * 2 + controlBtnOffset + groupBoxPadding * 2,
-            htmlClass: 'classically-controlled-1',
             children: [
                 [
                     {
@@ -128,7 +120,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY]],
                         label: 'X',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                     {
                         type: GateType.Unitary,
@@ -143,7 +134,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY]],
                         label: 'Z',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
                 [
@@ -154,7 +144,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY + classicalRegHeight * 2]],
                         label: 'H',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
             ],
@@ -169,7 +158,6 @@ describe('Testing _classicalControlled', () => {
             targetsY: [startY, startY + registerHeight],
             width: minGateWidth * 2 + gatePadding * 6,
             label: 'if',
-            htmlClass: 'classically-controlled-1',
             children: [
                 [],
                 [
@@ -188,7 +176,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [startY, startY + registerHeight],
                         width: minGateWidth + gatePadding * 2,
                         label: 'if',
-                        htmlClass: 'classically-controlled-1',
                         children: [
                             [],
                             [
@@ -253,7 +240,6 @@ describe('Testing _classicalControlled', () => {
                     },
                 ],
             ],
-            htmlClass: 'classically-controlled-1',
         };
         expect(_classicalControlled(metadata, 20)).toMatchSnapshot();
     });

@@ -1,7 +1,7 @@
 # Sqore
 [![Licensed under the MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
 [![PR's Welcome](https://img.shields.io/badge/PRs%20-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Build Status](https://dev.azure.com/rcykoh/Sqore/_apis/build/status/microsoft.sqore?branchName=main)](https://dev.azure.com/rcykoh/Sqore/_build/latest?definitionId=1&branchName=main)
+[![Build Status](https://github.com/microsoft/quantum-viz.js/actions/workflows/main.yml/badge.svg)](https://github.com/microsoft/quantum-viz.js/actions)
 
 <p align="center"><img src="https://raw.githubusercontent.com/microsoft/quantum-viz.js/main/assets/sqore-anim.gif?token=AES5QW6SRPGZIXO6F4V4N23AW7XFI" width="80%"/></p>
 
