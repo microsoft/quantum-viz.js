@@ -112,6 +112,9 @@ export const style = (customStyle: StyleConfig = {}): string => {
     .oplus {
         fill: ${styleConfig.oplus};
     }
+    [data-zoom-in="true"] {
+        cursor: zoom-in;
+    }
     .gate-unitary {
         fill: ${styleConfig.unitary};
     }

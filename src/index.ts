@@ -1,185 +1,166 @@
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+// Licensed under the MIT License.
 
-import { formatInputs } from './formatters/inputFormatter';
-import { formatGates } from './formatters/gateFormatter';
-import { formatRegisters } from './formatters/registerFormatter';
-import { processOperations } from './process';
-import { Circuit } from './circuit';
-import { Metadata, GateType } from './metadata';
-import { StyleConfig, style, STYLES } from './styles';
-import { createUUID } from './utils';
+import { createExecutionPathVisualizer, Circuit, StyleConfig, Operation, ConditionalRender } from './composer';
 
-/**
- * Custom JavaScript code to be injected into visualization HTML string.
- * Handles interactive elements, such as classically-controlled operations.
- */
-const script = `
-    function toggleClassicalBtn(cls) {
-        const textSvg = document.querySelector(\`.\${cls} text\`);
-        const group = document.querySelector(\`.\${cls}-group\`);
-        const currValue = textSvg.childNodes[0].nodeValue;
-        const zeroGates = document.querySelector(\`.\${cls}-zero\`);
-        const oneGates = document.querySelector(\`.\${cls}-one\`);
-        switch (currValue) {
-            case '?':
-                textSvg.childNodes[0].nodeValue = '1';
-                group.classList.remove('classically-controlled-unknown');
-                group.classList.add('classically-controlled-one');
-                break;
-            case '1':
-                textSvg.childNodes[0].nodeValue = '0';
-                group.classList.remove('classically-controlled-one');
-                group.classList.add('classically-controlled-zero');
-                oneGates.classList.toggle('hidden');
-                zeroGates.classList.toggle('hidden');
-                break;
-            case '0':
-                textSvg.childNodes[0].nodeValue = '?';
-                group.classList.remove('classically-controlled-zero');
-                group.classList.add('classically-controlled-unknown');
-                zeroGates.classList.toggle('hidden');
-                oneGates.classList.toggle('hidden');
-                break;
-        }
-    }
-`;
+type GateRegistry = {
+    [id: string]: Operation;
+};
 
-/**
- * Contains all metadata required to generate final output.
- */
-class ComposedSqore {
-    width: number;
-    height: number;
-    script: string;
-    style: StyleConfig;
-    elements: string[];
+// Flag to ensure that we only inject custom JS into browser once
+let isScriptInjected = false;
 
-    /**
-     * Initializes `ComposedSqore` with metadata required for visualization.
-     *
-     * @param width Width of SVG element.
-     * @param height Height of SVG element.
-     * @param script Script for interactivity.
-     * @param style Visualization style.
-     * @param elements SVG elements the make up circuit visualization.
-     */
-    constructor(width: number, height: number, script: string, style: StyleConfig, elements: string[]) {
-        this.width = width;
-        this.height = height;
-        this.script = script;
-        this.style = style;
-        this.elements = elements;
+// Event handler to visually signal to user that the gate can be zoomed out on ctrl-click
+window.addEventListener('keydown', (ev) => {
+    if (ev.key !== 'Shift') return;
+    addCtrlClickStyles();
+});
+
+// Event handler to visually signal to user that the gate can be zoomed in on click
+window.addEventListener('keyup', (ev) => {
+    if (ev.key !== 'Shift') return;
+    addDefaultStyles();
+});
+
+// Adds default cursor styles (i.e. zoom in on hover)
+const addDefaultStyles = () => {
+    document.querySelectorAll('[data-zoom-out="true"]:not([data-zoom-in="true"]),[data-expanded="true"]').forEach((el: Element) => {
+        (el as HTMLElement).style.cursor = 'default';
+    });
+    document.querySelectorAll('[data-zoom-in="true"]:not([data-expanded="true"])').forEach((el: Element) => {
+        (el as HTMLElement).style.cursor = 'zoom-in';
+    });
+};
+
+// Adds cursor styles on control-click (i.e. zoom out on hover)
+const addCtrlClickStyles = () => {
+    document.querySelectorAll('[data-zoom-out="true"]:not([data-expanded="true"])').forEach((el: Element) => {
+        (el as HTMLElement).style.cursor = 'zoom-out';
+    });
+};
+
+export class Visualizer {
+    userStyleConfig: StyleConfig = {};
+    displayedCircuit: Circuit | null = null;
+    container: HTMLElement | null  = null;
+    gateRegistry: GateRegistry = {};
+
+    constructor(container: HTMLElement, userStyleConfig: StyleConfig) {
+        this.container = container;
+        this.userStyleConfig = userStyleConfig;
     }
 
-    /**
-     * Generates visualization as an SVG string and optionally injects the custom script into the browser.
-     *
-     * @param injectScript Injects custom script into document manually. This is used when the visualization
-     *                     is injected into the document via `innerHtml`.
-     *
-     * @returns SVG representation of circuit visualization.
-     */
-    asSvg(injectScript = false): string {
-        const uuid: string = createUUID();
-        let script = '';
+    visualize(circuit: Circuit, renderDepth = 0): void {
+        // Assign unique IDs to each operation
+        circuit.operations.forEach((op, i) => this.fillGateRegistry(op, i.toString()));
 
-        // Insert script into browser for interactivity
-        if (injectScript) {
-            const s = document.createElement('script');
-            s.type = 'text/javascript';
-            s.appendChild(document.createTextNode(this.script));
-            document.documentElement.appendChild(s);
-        } else {
-            script = `<script type="text/JavaScript">${this.script}</script>`;
-        }
-
-        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" width="${this.width}" height="${
-            this.height
-        }">
-    ${script}
-    ${style(this.style)}
-    ${this.elements.join('\n')}
-</svg>`;
+        // Render operations at starting at given depth
+        circuit.operations = this.selectOpsAtDepth(circuit.operations, renderDepth);
+        this.renderCircuit(circuit);
     }
 
-    /**
-     * Generates visualization as an HTML string and optionally injects the custom script into the browser.
-     *
-     * @param injectScript Injects custom script into document manually. This is used when the visualization
-     *                     is injected into the document via `innerHtml`.
-     *
-     * @returns HTML representation of circuit visualization.
-     */
-    asHtml(injectScript = false): string {
-        const svg: string = this.asSvg(injectScript);
-        return `<html>
-    ${svg}
-</html>`;
-    }
-}
-
-/**
- * Entrypoint class for rendering circuit visualizations.
- */
-class Sqore {
-    style: StyleConfig;
-
-    /**
-     * Initializes Sqore object with custom styles.
-     *
-     * @param style Custom styles for visualization.
-     */
-    constructor(style: StyleConfig = {}) {
-        this.style = style;
+    // Depth-first traversal to assign unique ID to operation.
+    // The operation is assigned the id `id` and its `i`th child is recursively given
+    // the id `${id}-${i}`.
+    fillGateRegistry(operation: Operation, id: string): void {
+        if (operation.dataAttributes == null) operation.dataAttributes = {};
+        operation.dataAttributes['id'] = id;
+        operation.dataAttributes['zoom-out'] = 'false';
+        this.gateRegistry[id] = operation;
+        operation.children?.forEach((childOp, i) => {
+            this.fillGateRegistry(childOp, `${id}-${i}`);
+            if (childOp.dataAttributes == null) childOp.dataAttributes = {};
+            childOp.dataAttributes['zoom-out'] = 'true';
+        });
+        operation.dataAttributes['zoom-in'] = (operation.children != null).toString();
     }
 
-    /**
-     * Sets custom style for visualization.
-     *
-     * @param style Custom `StyleConfig` for visualization.
-     */
-    stylize(style: StyleConfig | string = {}): Sqore {
-        if (typeof style === 'string' || style instanceof String) {
-            const styleName: string = style as string;
-            if (!STYLES.hasOwnProperty(styleName)) {
-                console.error(`No style ${styleName} found in STYLES.`);
-                return this;
+    private selectOpsAtDepth(operations: Operation[], renderDepth: number): Operation[] {
+        if (renderDepth < 0) throw new Error(`Invalid renderDepth of ${renderDepth}. Needs to be >= 0.`);
+        if (renderDepth === 0) return operations;
+        return operations
+            .map((op) => (op.children != null ? this.selectOpsAtDepth(op.children, renderDepth - 1) : op))
+            .flat();
+    }
+
+    private renderCircuit(circuit: Circuit): void {
+        // Generate HTML visualization
+        const html: string = createExecutionPathVisualizer()
+            .stylize(this.userStyleConfig)
+            .compose(circuit)
+            .asHtml(!isScriptInjected);
+
+        isScriptInjected = true;
+
+        // Inject into div
+        if (this.container == null) throw new Error(`Container not provided.`);
+        this.container.innerHTML = html;
+        this.displayedCircuit = circuit;
+
+        // Handle click events
+        this.addGateClickHandlers();
+
+        // Add styles
+        addDefaultStyles();
+        //container.querySelector('svg').style.maxWidth = 'none';
+    }
+
+    private addGateClickHandlers(): void {
+        this.container?.querySelectorAll(`.gate`).forEach((gate) => {
+            // Zoom in on clicked gate
+            gate.addEventListener('click', (ev: Event) => {
+                ev.stopPropagation();
+                if (this.displayedCircuit == null) return;
+
+                const id: string | null = gate.getAttribute('data-id');
+                if (id == null) return;
+
+                const canZoomIn = gate.getAttribute('data-zoom-in') === 'true';
+                const canZoomOut = gate.getAttribute('data-zoom-out') === 'true';
+
+                if ((ev as MouseEvent).shiftKey && canZoomOut) {
+                    const parentId: string = (id.match(/(.*)-\d/) || ['', ''])[1];
+                    this.collapseOperation(this.displayedCircuit.operations, parentId);
+                } else if (canZoomIn) {
+                    this.expandOperation(this.displayedCircuit.operations, id);
+                }
+
+                this.renderCircuit(this.displayedCircuit);
+            });
+        });
+    }
+
+    private expandOperation(operations: Operation[], id: string): void {
+        operations.forEach((op) => {
+            if (op.conditionalRender === ConditionalRender.AsGroup) this.expandOperation(op.children || [], id);
+            if (op.dataAttributes == null) return op;
+            const opId: string = op.dataAttributes['id'];
+            if (opId === id && op.children != null) {
+                op.conditionalRender = ConditionalRender.AsGroup;
+                op.dataAttributes['expanded'] = 'true';
             }
-            style = STYLES[styleName] || {};
-        }
-        this.style = style;
-        return this;
+        });
     }
 
-    /**
-     * Generates the components required for visualization.
-     *
-     * @param circuit Circuit to be visualized.
-     *
-     * @returns `ComposedSqore` object containing metadata for visualization.
-     */
-    compose(circuit: Circuit): ComposedSqore {
-        const { qubits, operations } = circuit;
-        const { qubitWires, registers, svgHeight } = formatInputs(qubits);
-        const { metadataList, svgWidth } = processOperations(operations, registers);
-        const formattedGates: string = formatGates(metadataList);
-        const measureGates: Metadata[] = metadataList.filter(({ type }) => type === GateType.Measure);
-        const formattedRegs: string = formatRegisters(registers, measureGates, svgWidth);
-
-        const composition: ComposedSqore = new ComposedSqore(svgWidth, svgHeight, script, this.style, [
-            qubitWires,
-            formattedRegs,
-            formattedGates,
-        ]);
-        return composition;
+    private collapseOperation(operations: Operation[], parentId: string): void {
+        // Cannot collapse top-level operation
+        if (parentId === '0') return;
+        operations.forEach((op) => {
+            if (op.conditionalRender === ConditionalRender.AsGroup) this.collapseOperation(op.children || [], parentId);
+            if (op.dataAttributes == null) return op;
+            const opId: string = op.dataAttributes['id'];
+            // Collapse parent gate and its children
+            if (opId.startsWith(parentId)) op.conditionalRender = ConditionalRender.Always;
+            // Allow parent gate to be interactive again
+            if (opId === parentId) op.dataAttributes['expanded'] = 'false';
+        });
     }
 }
 
-/** Exported function for creating a new Sqore class. */
-export const createSqore = (): Sqore => new Sqore();
+// Export methods/values from other modules:
+export { createExecutionPathVisualizer } from './composer';
 export { STYLES } from './styles';
 
-// Export types
-export type { Circuit, StyleConfig, Sqore, ComposedSqore };
-export type { Qubit, Operation, ConditionalRender } from './circuit';
+// Export types from other modules:
+export type { Circuit, StyleConfig, ExecutionPathVisualizer, ComposedCircuit, ConditionalRender } from './composer';
+export type { Qubit, Operation } from './circuit';
