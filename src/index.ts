@@ -1,14 +1,18 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { createExecutionPathVisualizer, addGateClickHandlers, Circuit, StyleConfig, Operation, ConditionalRender } from './composer';
+import {
+    createExecutionPathVisualizer,
+    addGateClickHandlers,
+    Circuit,
+    StyleConfig,
+    Operation,
+    ConditionalRender,
+} from './composer';
 
 type GateRegistry = {
     [id: string]: Operation;
 };
-
-// Flag to ensure that we only inject custom JS into browser once
-let isScriptInjected = false;
 
 // Event handler to visually signal to user that the gate can be zoomed out on ctrl-click
 window.addEventListener('keydown', (ev) => {
@@ -87,10 +91,7 @@ export class Visualizer {
 
     private renderCircuit(circuit: Circuit): void {
         // Generate HTML visualization
-        const html: string = createExecutionPathVisualizer()
-            .stylize(this.userStyleConfig)
-            .compose(circuit)
-            .asSvg();
+        const html: string = createExecutionPathVisualizer().stylize(this.userStyleConfig).compose(circuit).asSvg();
 
         // Inject into div
         if (this.container == null) throw new Error(`Container not provided.`);
