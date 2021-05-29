@@ -2503,7 +2503,7 @@ describe('Testing processOperations', () => {
             targetsY: [startY, startY + classicalRegHeight * 2],
             label: '',
             width: minGateWidth * 2 + gatePadding * 2 + controlBtnOffset + groupBoxPadding * 2,
-            htmlClass: 'classically-controlled-1',
+            htmlClass: 'classically-controlled',
             children: [
                 [
                     {
@@ -2513,7 +2513,7 @@ describe('Testing processOperations', () => {
                         targetsY: [[startY]],
                         label: 'X',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
+                        htmlClass: 'classically-controlled',
                     },
                     {
                         type: GateType.Unitary,
@@ -2528,7 +2528,7 @@ describe('Testing processOperations', () => {
                         targetsY: [[startY]],
                         label: 'Z',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
+                        htmlClass: 'classically-controlled',
                     },
                 ],
                 [
@@ -2539,7 +2539,7 @@ describe('Testing processOperations', () => {
                         targetsY: [[startY + classicalRegHeight * 2]],
                         label: 'H',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
+                        htmlClass: 'classically-controlled',
                     },
                 ],
             ],
