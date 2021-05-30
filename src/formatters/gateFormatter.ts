@@ -90,6 +90,8 @@ const _formatGate = (metadata: Metadata, nestedDepth = 0): string => {
             return _createGate([_measure(x, controlsY[0])], metadata, nestedDepth);
         case GateType.Unitary:
             return _createGate([_unitary(label, x, targetsY as number[][], width, displayArgs)], metadata, nestedDepth);
+        case GateType.X:
+            return _createGate([_x(metadata, nestedDepth)], metadata, nestedDepth);
         case GateType.Swap:
             return controlsY.length > 0
                 ? _controlledGate(metadata, nestedDepth)
@@ -219,7 +221,17 @@ const _swap = (metadata: Metadata, nestedDepth: number): string => {
     const vertLine: string = line(x, ys[0], x, ys[1]);
     return [bg, crosses, vertLine].join('\n');
 };
-
+/**
+ * Creates the SVG for an X gate
+ *
+ * @returns SVG representation of X gate.
+ */
+const _x = (metadata: Metadata, _: number): string => {
+    const { x, targetsY } = metadata;
+    const ys = targetsY.flatMap((y) => y as number[]);
+    const circle: string = _oplus(x, ys[0]);
+    return circle;
+};
 /**
  * Generates cross for display in SWAP gate.
  *
@@ -286,7 +298,7 @@ const _oplus = (x: number, y: number, r = 15): string => {
     const circle = `<circle class="oplus" cx="${x}" cy="${y}" r="${r}"></circle>`;
     const vertLine: string = line(x, y - r, x, y + r);
     const horLine: string = line(x - r, y, x + r, y);
-    return group([circle, vertLine, horLine], { class: "oplus" });
+    return group([circle, vertLine, horLine], { class: 'oplus' });
 };
 
 const _gatePosition = (metadata: Metadata, nestedDepth: number): [number, number, number, number] => {
