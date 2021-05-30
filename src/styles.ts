@@ -143,11 +143,15 @@ export const style = (customStyle: StyleConfig = {}): string => {
     .classically-controlled-one .classical-line {
         stroke: ${styleConfig.classicalOne};
         stroke-width: ${(styleConfig.lineWidth || 0) + 0.3};
+        fill: ${styleConfig.classicalOne};
+        fill-opacity: 0.1;
     }
     .classically-controlled-zero .classical-container,
     .classically-controlled-zero .classical-line {
         stroke: ${styleConfig.classicalZero};
         stroke-width: ${(styleConfig.lineWidth || 0) + 0.3};
+        fill: ${styleConfig.classicalZero};
+        fill-opacity: 0.1;
     }
     <!-- Control button -->
     .classically-controlled-btn {
@@ -163,19 +167,19 @@ export const style = (customStyle: StyleConfig = {}): string => {
         fill: ${styleConfig.classicalZero};
     }
     <!-- Control button text -->
-    .classically-controlled-text {
+    .classically-controlled-btn text {
         dominant-baseline: middle;
         text-anchor: middle;
         stroke: none;
         font-family: Arial;
     }
-    .classically-controlled-unknown .classically-controlled-text {
+    .classically-controlled-unknown .classically-controlled-btn text {
         fill: ${styleConfig.textColour};
     }
-    .classically-controlled-one .classically-controlled-text {
+    .classically-controlled-one .classically-controlled-btn text {
         fill: ${styleConfig.classicalOneText};
     }
-    .classically-controlled-zero .classically-controlled-text {
+    .classically-controlled-zero .classically-controlled-btn text {
         fill: ${styleConfig.classicalZeroText};
     }
 

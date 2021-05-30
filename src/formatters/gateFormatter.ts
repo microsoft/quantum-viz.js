@@ -14,7 +14,6 @@ import {
     nestedGroupPadding,
 } from '../constants';
 import { group, controlDot, line, box, text, arc, dashedLine, dashedBox } from './formatUtils';
-import { DataAttributes } from '../circuit';
 
 /**
  * Given an array of operations (in metadata format), return the SVG representation.
@@ -29,34 +28,35 @@ const formatGates = (opsMetadata: Metadata[], nestedDepth = 0): string => {
     return formattedGates.flat().join('\n');
 };
 
-const _gateControls = (metadata: Metadata, nestedDepth : number): string[] => {
-    const [ x1, y1 ] = _gatePosition(metadata, nestedDepth);
+const _gateControls = (metadata: Metadata, nestedDepth: number): string[] => {
+    if (metadata == undefined) return [];
+
+    const [x1, y1] = _gatePosition(metadata, nestedDepth);
     const { dataAttributes } = metadata;
     const atts = dataAttributes || {};
-    const ctrls : string[] = [];
-    
-    const expanded = "expanded" in atts;
-    
+    const ctrls: string[] = [];
+
+    const expanded = 'expanded' in atts;
+
     // Add collapse if expanded.
     if (expanded) {
         ctrls.push(
-            group(
-                [ '<circle cx="0" cy="0" r="10" />', '<path d="M-7,0 H7" />' ],
-                { class: "gate-control collapse", transform: `translate(${x1 + 2}, ${y1 + 2})` }
-            )
+            group(['<circle cx="0" cy="0" r="10" />', '<path d="M-7,0 H7" />'], {
+                class: 'gate-control collapse',
+                transform: `translate(${x1 + 2}, ${y1 + 2})`,
+            }),
         );
-    } else if (atts["zoom-in"] == "true") {
+    } else if (atts['zoom-in'] == 'true') {
         ctrls.push(
-            group(
-                [ '<circle cx="0" cy="0" r="10" />', '<path d="M0,-7 V7 M-7,0 H7" />' ],
-                { class: "gate-control expand", transform: `translate(${x1 + 2}, ${y1 + 2})` }
-            )
+            group(['<circle cx="0" cy="0" r="10" />', '<path d="M0,-7 V7 M-7,0 H7" />'], {
+                class: 'gate-control expand',
+                transform: `translate(${x1 + 2}, ${y1 + 2})`,
+            }),
         );
     }
-    
-    return ctrls;
-}
 
+    return ctrls;
+};
 
 /**
  * Groups SVG elements into a gate SVG group.
@@ -66,9 +66,9 @@ const _gateControls = (metadata: Metadata, nestedDepth : number): string[] => {
  *
  * @returns SVG representation of a gate.
  */
-const _createGate = (body: string[], metadata: Metadata, nestedDepth : number): string => {
+const _createGate = (body: string[], metadata: Metadata, nestedDepth: number): string => {
     const ctrls = _gateControls(metadata, nestedDepth);
-    const { dataAttributes } = metadata;
+    const { dataAttributes } = metadata || {};
     const attributes: { [attr: string]: string } = { class: 'gate' };
     Object.entries(dataAttributes || {}).forEach(([attr, val]) => (attributes[`data-${attr}`] = val));
 
@@ -83,15 +83,13 @@ const _createGate = (body: string[], metadata: Metadata, nestedDepth : number): 
  *
  * @returns SVG representation of gate.
  */
- const _formatGate = (metadata: Metadata, nestedDepth = 0): string => {
+const _formatGate = (metadata: Metadata, nestedDepth = 0): string => {
     const { type, x, controlsY, targetsY, label, displayArgs, width } = metadata;
     switch (type) {
         case GateType.Measure:
             return _createGate([_measure(x, controlsY[0])], metadata, nestedDepth);
         case GateType.Unitary:
             return _createGate([_unitary(label, x, targetsY as number[][], width, displayArgs)], metadata, nestedDepth);
-        case GateType.X:
-            return _createGate([_x(metadata, nestedDepth)], metadata, nestedDepth);
         case GateType.Swap:
             return controlsY.length > 0
                 ? _controlledGate(metadata, nestedDepth)
@@ -209,29 +207,17 @@ const _unitaryBox = (
  *
  * @returns SVG representation of SWAP gate.
  */
-const _swap = (metadata: Metadata, nestedDepth : number) : string => {
-    const { type, x, controlsY, targetsY, children, displayArgs, width } = metadata;
+const _swap = (metadata: Metadata, nestedDepth: number): string => {
+    const { x, targetsY } = metadata;
 
     // Get SVGs of crosses
-    const [ x1, y1, x2, y2 ] = _gatePosition(metadata, nestedDepth);
-    const ys = targetsY.flatMap(y => y as number[]);
-    
+    const [x1, y1, x2, y2] = _gatePosition(metadata, nestedDepth);
+    const ys = targetsY?.flatMap((y) => y as number[]) || [];
+
     const bg: string = box(x1, y1, x2, y2, 'gate-swap');
     const crosses: string[] = ys.map((y) => _cross(x, y));
     const vertLine: string = line(x, ys[0], x, ys[1]);
     return [bg, crosses, vertLine].join('\n');
-};
-
-/**
- * Creates the SVG for an X gate
- *
- * @returns SVG representation of X gate.
- */
- const _x = (metadata: Metadata, nestedDepth : number) : string => {
-    const { type, x, controlsY, targetsY, children, displayArgs, width } = metadata;
-    const ys = targetsY.flatMap(y => y as number[]);
-    const circle: string = _oplus(x, ys[0]);
-    return circle;
 };
 
 /**
@@ -256,9 +242,9 @@ const _cross = (x: number, y: number): string => {
  *
  * @returns SVG representation of controlled gate.
  */
-const _controlledGate = (metadata: Metadata, nestedDepth : number): string => {
+const _controlledGate = (metadata: Metadata, nestedDepth: number): string => {
     const targetGateSvgs: string[] = [];
-    const { type, x, controlsY, label, displayArgs, dataAttributes, width } = metadata;
+    const { type, x, controlsY, label, displayArgs, width } = metadata;
     let { targetsY } = metadata;
 
     // Get SVG for target gates
@@ -303,24 +289,24 @@ const _oplus = (x: number, y: number, r = 15): string => {
     return group([circle, vertLine, horLine], { class: "oplus" });
 };
 
-const _gatePosition = (metadata: Metadata, nestedDepth : number) : [number, number, number, number] => {
+const _gatePosition = (metadata: Metadata, nestedDepth: number): [number, number, number, number] => {
     const { x, width, type, targetsY } = metadata;
 
-    const ys = targetsY.flatMap(y => y as number[]);
+    const ys = targetsY?.flatMap((y) => y as number[]) || [];
     const maxY = Math.max(...ys);
     const minY = Math.min(...ys);
 
-    var x1 : number, y1 : number, x2 : number, y2 : number;
-    
+    let x1: number, y1: number, x2: number, y2: number;
+
     switch (type) {
         case GateType.Group:
             const padding = groupBoxPadding - nestedDepth * nestedGroupPadding;
-        
+
             x1 = x - 2 * padding;
-            y1 = (minY - gateHeight / 2 - padding);
+            y1 = minY - gateHeight / 2 - padding;
             x2 = width + 2 * padding;
-            y2 = (maxY +  + gateHeight / 2 + padding) - (minY - gateHeight / 2 - padding);
-        
+            y2 = maxY + +gateHeight / 2 + padding - (minY - gateHeight / 2 - padding);
+
             return [x1, y1, x2, y2];
 
         default:
@@ -331,8 +317,7 @@ const _gatePosition = (metadata: Metadata, nestedDepth : number) : [number, numb
     }
 
     return [x1, y1, x2, y2];
-}
-
+};
 
 /**
  * Generates the SVG for a group of nested operations.
@@ -342,9 +327,9 @@ const _gatePosition = (metadata: Metadata, nestedDepth : number) : [number, numb
  *
  * @returns SVG representation of gate.
  */
-const _groupedOperations = (metadata: Metadata, nestedDepth : number): string => {
+const _groupedOperations = (metadata: Metadata, nestedDepth: number): string => {
     const { children } = metadata;
-    const [ x1, y1, x2, y2 ] = _gatePosition(metadata, nestedDepth);
+    const [x1, y1, x2, y2] = _gatePosition(metadata, nestedDepth);
     const childrenGates: string = children != null ? formatGates(children as Metadata[], nestedDepth + 1) : '';
 
     // Draw dashed box around children gates
@@ -364,22 +349,21 @@ const _classicalControlled = (metadata: Metadata, padding: number = groupBoxPadd
     const { controlsY, dataAttributes } = metadata;
     const targetsY: number[] = metadata.targetsY as number[];
     const children: Metadata[][] = metadata.children as Metadata[][];
-    let { x, width, htmlClass } = metadata;
+    let { x, width } = metadata;
 
     const controlY = controlsY[0];
-    if (htmlClass == null) htmlClass = 'classically-controlled';
 
     // Get SVG for gates controlled on 0
     let childrenZero: string = children != null ? formatGates(children[0]) : '';
-    childrenZero = `<g class="${htmlClass}-zero">\r\n${childrenZero}</g>`;
+    childrenZero = `<g class="gates-zero">\r\n${childrenZero}</g>`;
 
     // Get SVG for gates controlled on 1
     let childrenOne: string = children != null ? formatGates(children[1]) : '';
-    childrenOne = `<g class="${htmlClass}-one">\r\n${childrenOne}</g>`;
+    childrenOne = `<g class="gates-one">\r\n${childrenOne}</g>`;
 
     // Draw control button and attached dashed line to dashed box
     const controlCircleX: number = x + controlBtnRadius;
-    const controlCircle: string = _controlCircle(controlCircleX, controlY, htmlClass);
+    const controlCircle: string = _controlCircle(controlCircleX, controlY);
     const lineY1: number = controlY + controlBtnRadius,
         lineY2: number = controlY + classicalRegHeight / 2;
     const vertLine: string = dashedLine(controlCircleX, lineY1, controlCircleX, lineY2, 'classical-line');
@@ -395,7 +379,9 @@ const _classicalControlled = (metadata: Metadata, padding: number = groupBoxPadd
     const box: string = dashedBox(x, y, width, height, 'classical-container');
 
     // Display controlled operation in initial "unknown" state
-    const attributes: { [attr: string]: string } = { class: `${htmlClass}-group classically-controlled-unknown` };
+    const attributes: { [attr: string]: string } = {
+        class: `classically-controlled-group classically-controlled-unknown`,
+    };
     if (dataAttributes != null)
         Object.entries(dataAttributes).forEach(([attr, val]) => (attributes[`data-${attr}`] = val));
 
@@ -413,10 +399,10 @@ const _classicalControlled = (metadata: Metadata, padding: number = groupBoxPadd
  *
  * @returns SVG representation of control circle.
  */
-const _controlCircle = (x: number, y: number, cls: string, r: number = controlBtnRadius): string =>
-    `<g class="classically-controlled-btn ${cls}">
-<circle class="${cls}" cx="${x}" cy="${y}" r="${r}"></circle>
-<text class="${cls} classically-controlled-text" font-size="${labelFontSize}" x="${x}" y="${y}">?</text>
+const _controlCircle = (x: number, y: number, r: number = controlBtnRadius): string =>
+    `<g class="classically-controlled-btn">
+<circle cx="${x}" cy="${y}" r="${r}"></circle>
+<text font-size="${labelFontSize}" x="${x}" y="${y}">?</text>
 </g>`;
 
 export {
@@ -429,4 +415,5 @@ export {
     _controlledGate,
     _groupedOperations,
     _classicalControlled,
+    _gateControls,
 };

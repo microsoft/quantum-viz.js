@@ -51,8 +51,6 @@ export interface Metadata {
     width: number;
     /** Children operations as part of group. */
     children?: (Metadata | Metadata[])[];
-    /** HTML element class for interactivity. */
-    htmlClass?: string;
     /** Custom data attributes to attach to gate element. */
     dataAttributes?: DataAttributes;
 }

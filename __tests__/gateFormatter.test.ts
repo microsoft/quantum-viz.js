@@ -8,6 +8,7 @@ import {
     _controlledGate,
     _groupedOperations,
     _classicalControlled,
+    _gateControls,
 } from '../src/formatters/gateFormatter';
 import { Metadata, GateType } from '../src/metadata';
 import {
@@ -39,12 +40,10 @@ describe('Testing _classicalControlled', () => {
                         controlsY: [],
                         targetsY: [[startY]],
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
                 [],
             ],
-            htmlClass: 'classically-controlled-1',
         };
         expect(_classicalControlled(metadata)).toMatchSnapshot();
     });
@@ -66,11 +65,9 @@ describe('Testing _classicalControlled', () => {
                         controlsY: [],
                         targetsY: [[startY]],
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
             ],
-            htmlClass: 'classically-controlled-1',
         };
         expect(_classicalControlled(metadata)).toMatchSnapshot();
     });
@@ -82,7 +79,6 @@ describe('Testing _classicalControlled', () => {
             targetsY: [startY, startY + classicalRegHeight * 2],
             label: '',
             width: minGateWidth + controlBtnOffset + groupBoxPadding * 2,
-            htmlClass: 'classically-controlled-1',
             children: [
                 [
                     {
@@ -92,7 +88,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY]],
                         label: 'X',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
                 [
@@ -103,7 +98,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY + classicalRegHeight * 2]],
                         label: 'H',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
             ],
@@ -118,7 +112,6 @@ describe('Testing _classicalControlled', () => {
             targetsY: [startY, startY + classicalRegHeight * 2],
             label: '',
             width: minGateWidth * 2 + gatePadding * 2 + controlBtnOffset + groupBoxPadding * 2,
-            htmlClass: 'classically-controlled-1',
             children: [
                 [
                     {
@@ -128,7 +121,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY]],
                         label: 'X',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                     {
                         type: GateType.Unitary,
@@ -143,7 +135,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY]],
                         label: 'Z',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
                 [
@@ -154,7 +145,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [[startY + classicalRegHeight * 2]],
                         label: 'H',
                         width: minGateWidth,
-                        htmlClass: 'classically-controlled-1',
                     },
                 ],
             ],
@@ -169,7 +159,6 @@ describe('Testing _classicalControlled', () => {
             targetsY: [startY, startY + registerHeight],
             width: minGateWidth * 2 + gatePadding * 6,
             label: 'if',
-            htmlClass: 'classically-controlled-1',
             children: [
                 [],
                 [
@@ -188,7 +177,6 @@ describe('Testing _classicalControlled', () => {
                         targetsY: [startY, startY + registerHeight],
                         width: minGateWidth + gatePadding * 2,
                         label: 'if',
-                        htmlClass: 'classically-controlled-1',
                         children: [
                             [],
                             [
@@ -253,7 +241,6 @@ describe('Testing _classicalControlled', () => {
                     },
                 ],
             ],
-            htmlClass: 'classically-controlled-1',
         };
         expect(_classicalControlled(metadata, 20)).toMatchSnapshot();
     });
@@ -279,7 +266,7 @@ describe('Testing _groupedOperations', () => {
                 },
             ],
         };
-        expect(_groupedOperations(metadata)).toMatchSnapshot();
+        expect(_groupedOperations(metadata, 0)).toMatchSnapshot();
     });
     test('children on consecutive registers', () => {
         const metadata: Metadata = {
@@ -308,7 +295,7 @@ describe('Testing _groupedOperations', () => {
                 },
             ],
         };
-        expect(_groupedOperations(metadata)).toMatchSnapshot();
+        expect(_groupedOperations(metadata, 0)).toMatchSnapshot();
     });
     test('children on non-consecutive registers', () => {
         const metadata: Metadata = {
@@ -337,7 +324,7 @@ describe('Testing _groupedOperations', () => {
                 },
             ],
         };
-        expect(_groupedOperations(metadata)).toMatchSnapshot();
+        expect(_groupedOperations(metadata, 0)).toMatchSnapshot();
     });
     test('children on same register', () => {
         const metadata: Metadata = {
@@ -366,7 +353,7 @@ describe('Testing _groupedOperations', () => {
                 },
             ],
         };
-        expect(_groupedOperations(metadata)).toMatchSnapshot();
+        expect(_groupedOperations(metadata, 0)).toMatchSnapshot();
     });
     test('multiple children', () => {
         const metadata: Metadata = {
@@ -403,7 +390,7 @@ describe('Testing _groupedOperations', () => {
                 },
             ],
         };
-        expect(_groupedOperations(metadata)).toMatchSnapshot();
+        expect(_groupedOperations(metadata, 0)).toMatchSnapshot();
     });
     test('nested children', () => {
         const metadata: Metadata = {
@@ -450,7 +437,7 @@ describe('Testing _groupedOperations', () => {
                 },
             ],
         };
-        expect(_groupedOperations(metadata)).toMatchSnapshot();
+        expect(_groupedOperations(metadata, 0)).toMatchSnapshot();
     });
 });
 
@@ -464,13 +451,13 @@ describe('Testing _controlledGate', () => {
             targetsY: [startY + registerHeight],
             width: minGateWidth,
         };
-        let svg: string = _controlledGate(metadata);
+        let svg: string = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Flip target and control
         metadata.controlsY = [startY + registerHeight];
         metadata.targetsY = [startY];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
     });
     test('SWAP gate', () => {
@@ -483,19 +470,19 @@ describe('Testing _controlledGate', () => {
             width: minGateWidth,
         };
         // Control on top
-        let svg: string = _controlledGate(metadata);
+        let svg: string = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Control on bottom
         metadata.controlsY = [startY + registerHeight * 2];
         metadata.targetsY = [startY, startY + registerHeight];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Control in middle
         metadata.controlsY = [startY + registerHeight];
         metadata.targetsY = [startY, startY + registerHeight * 2];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
     });
     test('Controlled U gate with 1 control + 1 target', () => {
@@ -507,13 +494,13 @@ describe('Testing _controlledGate', () => {
             targetsY: [[startY + registerHeight]],
             width: 45,
         };
-        let svg: string = _controlledGate(metadata);
+        let svg: string = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Flip target and control
         metadata.controlsY = [startY + registerHeight];
         metadata.targetsY = [[startY]];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
     });
     test('Controlled U gate with multiple controls + 1 target', () => {
@@ -526,19 +513,19 @@ describe('Testing _controlledGate', () => {
             width: 45,
         };
         // Target on bottom
-        let svg: string = _controlledGate(metadata);
+        let svg: string = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Target on top
         metadata.controlsY = [startY + registerHeight, startY + registerHeight * 2];
         metadata.targetsY = [[startY]];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Target in middle
         metadata.controlsY = [startY, startY + registerHeight * 2];
         metadata.targetsY = [[startY + registerHeight]];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
     });
     test('Controlled U gate with 1 control + 2 targets', () => {
@@ -551,19 +538,19 @@ describe('Testing _controlledGate', () => {
             width: 45,
         };
         // Control on bottom
-        let svg: string = _controlledGate(metadata);
+        let svg: string = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Control on top
         metadata.controlsY = [startY];
         metadata.targetsY = [[startY + registerHeight, startY + registerHeight * 2]];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Control in middle
         metadata.controlsY = [startY + registerHeight];
         metadata.targetsY = [[startY], [startY + registerHeight * 2]];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
     });
     test('Controlled U gate with 2 controls + 2 targets', () => {
@@ -576,25 +563,25 @@ describe('Testing _controlledGate', () => {
             width: 45,
         };
         // Controls on bottom
-        let svg: string = _controlledGate(metadata);
+        let svg: string = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Controls on top
         metadata.controlsY = [startY, startY + registerHeight];
         metadata.targetsY = [[startY + registerHeight * 2, startY + registerHeight * 3]];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Controls in middle
         metadata.controlsY = [startY + registerHeight, startY + registerHeight * 2];
         metadata.targetsY = [[startY], [startY + registerHeight * 3]];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Interleaved controls/targets
         metadata.controlsY = [startY + registerHeight, startY + registerHeight * 3];
         metadata.targetsY = [[startY], [startY + registerHeight * 2]];
-        svg = _controlledGate(metadata);
+        svg = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
     });
     test('Invalid gate', () => {
@@ -606,23 +593,38 @@ describe('Testing _controlledGate', () => {
             targetsY: [startY + registerHeight],
             width: minGateWidth,
         };
-        expect(() => _controlledGate(metadata)).toThrowError(`ERROR: Unrecognized gate: X of type ${GateType.Measure}`);
+        expect(() => _controlledGate(metadata, 0)).toThrowError(
+            `ERROR: Unrecognized gate: X of type ${GateType.Measure}`,
+        );
     });
 });
 
 describe('Testing _swap', () => {
+    const metadata: Metadata = {
+        type: GateType.Measure,
+        label: 'SWAP',
+        x: startX,
+        controlsY: [],
+        targetsY: [startY + registerHeight],
+        width: minGateWidth,
+    };
+
     test('Adjacent swap', () => {
-        let svg: string = _swap(startX, [startY, startY + registerHeight]);
+        metadata.targetsY = [startY, startY + registerHeight];
+        let svg: string = _swap(metadata, 0);
         expect(svg).toMatchSnapshot();
         // Flip target and control
-        svg = _swap(startX, [startY + registerHeight, startY]);
+        metadata.targetsY = [startY + registerHeight, startY];
+        svg = _swap(metadata, 0);
         expect(svg).toMatchSnapshot();
     });
     test('Non-adjacent swap', () => {
-        let svg: string = _swap(startX, [startY, startY + registerHeight * 2]);
+        metadata.targetsY = [startY, startY + registerHeight * 2];
+        let svg: string = _swap(metadata, 0);
         expect(svg).toMatchSnapshot();
         // Flip target and control
-        svg = _swap(startX, [startY + registerHeight * 2, startY]);
+        metadata.targetsY = [startY + registerHeight * 2, startY];
+        svg = _swap(metadata, 0);
         expect(svg).toMatchSnapshot();
     });
 });
@@ -681,13 +683,64 @@ describe('Testing _measure', () => {
 });
 
 describe('Testing _createGate', () => {
-    test('No metadata', () => {
-        expect(_createGate(['<line />'])).toEqual("<g class='gate'>\n<line />\n</g>");
-    });
-    test('With metadata', () => {
-        expect(_createGate(['<line />'], { a: '1', b: '2' })).toEqual(
+    const metadata: Metadata = {
+        type: GateType.Invalid,
+        x: 0,
+        controlsY: [],
+        targetsY: [],
+        label: '',
+        width: -1,
+        dataAttributes: { a: '1', b: '2' },
+    };
+    test('Empty gate', () => {
+        expect(_createGate(['<line />'], metadata, 0)).toEqual(
             `<g class='gate' data-a='1' data-b='2'>\n<line />\n</g>`,
         );
+    });
+    test('Expanded gate', () => {
+        if (metadata.dataAttributes) metadata.dataAttributes['expanded'] = 'true';
+        expect(_createGate(['<line />'], metadata, 0)).toMatchSnapshot();
+    });
+});
+
+describe('Testing _gateControls', () => {
+    const metadata: Metadata = {
+        type: GateType.Invalid,
+        x: 0,
+        controlsY: [],
+        targetsY: [],
+        label: '',
+        width: -1,
+        dataAttributes: { a: '1', b: '2' },
+    };
+
+    test('Expanded gate', () => {
+        if (metadata.dataAttributes) {
+            metadata.dataAttributes['expanded'] = 'true';
+            metadata.dataAttributes['zoom-in'] = 'true';
+        }
+        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+    });
+    test('Non-expanded with no children gate', () => {
+        if (metadata.dataAttributes) {
+            delete metadata.dataAttributes['expanded'];
+            delete metadata.dataAttributes['zoom-in'];
+        }
+        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+    });
+    test('Non-expanded with children gate', () => {
+        if (metadata.dataAttributes) {
+            delete metadata.dataAttributes['expanded'];
+            metadata.dataAttributes['zoom-in'] = 'true';
+        }
+        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+    });
+    test('Expanded with children gate', () => {
+        if (metadata.dataAttributes) {
+            metadata.dataAttributes['expanded'] = 'true';
+            metadata.dataAttributes['zoom-in'] = 'true';
+        }
+        expect(_gateControls(metadata, 0)).toMatchSnapshot();
     });
 });
 
