@@ -103,9 +103,13 @@ const _groupOperations = (operations: Operation[], registers: RegisterMap): numb
     const groupedOps: number[][] = Array.from(Array(numRegs), () => new Array(0));
     operations.forEach(({ targets, controls }, instrIdx) => {
         const ctrls: Register[] = controls || [];
-        const qRegs: Register[] = [...ctrls, ...targets].filter(({ type }) => (type || RegisterType.Qubit) === RegisterType.Qubit);
+        const qRegs: Register[] = [...ctrls, ...targets].filter(
+            ({ type }) => (type || RegisterType.Qubit) === RegisterType.Qubit,
+        );
         const qRegIdxList: number[] = qRegs.map(({ qId }) => qId);
-        const clsControls: Register[] = ctrls.filter(({ type }) => (type || RegisterType.Qubit) === RegisterType.Classical);
+        const clsControls: Register[] = ctrls.filter(
+            ({ type }) => (type || RegisterType.Qubit) === RegisterType.Classical,
+        );
         const isClassicallyControlled: boolean = clsControls.length > 0;
         if (!isClassicallyControlled && qRegs.length === 0) return;
         // If operation is classically-controlled, pad all qubit registers. Otherwise, only pad

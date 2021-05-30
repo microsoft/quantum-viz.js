@@ -18,67 +18,70 @@ const teleport = {
     ],
     operations: [
         {
-            gate: 'TeleportCircuit',
+            gate: 'Teleport',
             children: [
                 {
-                    gate: 'H',
+                    gate: 'Entangle',
+                    children: [
+                        {
+                            gate: 'H',
+                            targets: [
+                                {
+                                    qId: 1,
+                                },
+                            ],
+                        },
+                        {
+                            gate: 'X',
+                            isControlled: true,
+                            controls: [
+                                {
+                                    qId: 1,
+                                },
+                            ],
+                            targets: [
+                                {
+                                    qId: 2,
+                                },
+                            ],
+                        },
+                    ],
                     targets: [
                         {
                             qId: 1,
                         },
-                    ],
-                },
-                {
-                    gate: 'X',
-                    isControlled: true,
-                    controls: [
-                        {
-                            qId: 1,
-                        },
-                    ],
-                    targets: [
                         {
                             qId: 2,
                         },
                     ],
                 },
                 {
-                    gate: 'Encode',
+                    gate: 'PrepareMessage',
                     children: [
                         {
-                            gate: 'PrepareRandomMessage',
+                            gate: 'Random',
+                            displayArgs: '([0.5, 0.5])',
                             children: [
                                 {
-                                    gate: 'Random',
+                                    gate: 'DrawCategorical',
                                     displayArgs: '([0.5, 0.5])',
                                     children: [
                                         {
-                                            gate: 'DrawCategorical',
-                                            displayArgs: '([0.5, 0.5])',
-                                            children: [
-                                                {
-                                                    gate: 'DrawRandomDouble',
-                                                    displayArgs: '(0, 1)',
-                                                    targets: [],
-                                                },
-                                            ],
+                                            gate: 'DrawRandomDouble',
+                                            displayArgs: '(0, 1)',
                                             targets: [],
                                         },
                                     ],
                                     targets: [],
                                 },
+                            ],
+                            targets: [],
+                        },
+                        {
+                            gate: 'SetPlus',
+                            children: [
                                 {
-                                    gate: 'SetPlus',
-                                    children: [
-                                        {
-                                            gate: 'H',
-                                            targets: [
-                                                {
-                                                    qId: 0,
-                                                },
-                                            ],
-                                        },
-                                    ],
+                                    gate: 'H',
                                     targets: [
                                         {
                                             qId: 0,
@@ -92,6 +95,16 @@ const teleport = {
                                 },
                             ],
                         },
+                    ],
+                    targets: [
+                        {
+                            qId: 0,
+                        },
+                    ],
+                },
+                {
+                    gate: 'Encode',
+                    children: [
                         {
                             gate: 'X',
                             isControlled: true,
@@ -261,10 +274,7 @@ const random = {
         {
             gate: 'Foo',
             conditionalRender: 3,
-            targets: [
-                { qId: 0 },
-                { qId: 1 },
-            ],
+            targets: [{ qId: 0 }, { qId: 1 }],
             children: [
                 {
                     gate: 'H',
@@ -280,44 +290,32 @@ const random = {
             ],
         },
         {
-            gate: 'H',
-            targets: [{ qId: 2 }],
+            gate: 'X',
+            targets: [{ qId: 3 }],
         },
         {
             gate: 'X',
             isControlled: true,
             controls: [{ qId: 1 }],
-            targets: [
-                { qId: 2 },
-                { qId: 3 },
-            ],
+            targets: [{ qId: 2 }, { qId: 3 }],
         },
         {
             gate: 'X',
             isControlled: true,
-            controls: [
-                { qId: 2 },
-                { qId: 3 },
-            ],
+            controls: [{ qId: 2 }, { qId: 3 }],
             targets: [{ qId: 1 }],
         },
         {
             gate: 'X',
             isControlled: true,
-            controls: [
-                { qId: 1 },
-                { qId: 3 },
-            ],
+            controls: [{ qId: 1 }, { qId: 3 }],
             targets: [{ qId: 2 }],
         },
         {
             gate: 'X',
             isControlled: true,
             controls: [{ qId: 2 }],
-            targets: [
-                { qId: 1 },
-                { qId: 3 },
-            ],
+            targets: [{ qId: 1 }, { qId: 3 }],
         },
         {
             gate: 'measure',
@@ -357,53 +355,1287 @@ const random = {
         },
         {
             gate: 'SWAP',
-            targets: [
-                { qId: 0 },
-                { qId: 2 },
+            targets: [{ qId: 0 }, { qId: 2 }],
+            children: [
+                { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                { gate: 'X', isControlled: true, controls: [{ qId: 2 }], targets: [{ qId: 0 }] },
+                { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
             ],
         },
         {
             gate: 'ZZ',
-            targets: [
-                { qId: 1 },
-                { qId: 3 },
-            ],
+            targets: [{ qId: 1 }, { qId: 3 }],
         },
         {
             gate: 'ZZ',
-            targets: [
-                { qId: 0 },
-                { qId: 1 },
-            ],
+            targets: [{ qId: 0 }, { qId: 1 }],
         },
         {
             gate: 'XX',
             isControlled: true,
             controls: [{ qId: 0 }],
-            targets: [
-                { qId: 1 },
-                { qId: 3 },
-            ],
+            targets: [{ qId: 1 }, { qId: 3 }],
         },
         {
             gate: 'XX',
             isControlled: true,
             controls: [{ qId: 2 }],
-            targets: [
-                { qId: 1 },
-                { qId: 3 },
-            ],
+            targets: [{ qId: 1 }, { qId: 3 }],
         },
         {
             gate: 'XX',
             isControlled: true,
-            controls: [
-                { qId: 0 },
-                { qId: 2 },
+            controls: [{ qId: 0 }, { qId: 2 }],
+            targets: [{ qId: 1 }, { qId: 3 }],
+        },
+    ],
+};
+
+//export
+const grover = {
+    qubits: [
+        {
+            id: 0,
+            numChildren: 1,
+        },
+        {
+            id: 1,
+            numChildren: 1,
+        },
+        {
+            id: 2,
+            numChildren: 1,
+        },
+        {
+            id: 3,
+            numChildren: 1,
+        },
+        {
+            id: 4,
+        },
+    ],
+    operations: [
+        {
+            gate: 'GroverSearch',
+            children: [
+                {
+                    gate: 'PrepareSuperposition',
+                    children: [
+                        {
+                            gate: 'H',
+                            targets: [
+                                {
+                                    qId: 0,
+                                },
+                            ],
+                        },
+                        {
+                            gate: 'H',
+                            targets: [
+                                {
+                                    qId: 1,
+                                },
+                            ],
+                        },
+                        {
+                            gate: 'H',
+                            targets: [
+                                {
+                                    qId: 2,
+                                },
+                            ],
+                        },
+                        {
+                            gate: 'H',
+                            targets: [
+                                {
+                                    qId: 3,
+                                },
+                            ],
+                        },
+                    ],
+                    targets: [
+                        {
+                            qId: 0,
+                        },
+                        {
+                            qId: 1,
+                        },
+                        {
+                            qId: 2,
+                        },
+                        {
+                            qId: 3,
+                        },
+                    ],
+                },
+                {
+                    gate: 'GroverIteration',
+                    displayArgs: '(Oracle)',
+                    children: [
+                        {
+                            gate: 'Oracle',
+                            displayArgs: '(Oracle_6)',
+                            children: [
+                                {
+                                    gate: 'X',
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'Oracle_6',
+                                    children: [
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isControlled: true,
+                                            controls: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                                {
+                                                    qId: 1,
+                                                },
+                                                {
+                                                    qId: 2,
+                                                },
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                            targets: [
+                                                {
+                                                    qId: 4,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                        {
+                                            qId: 1,
+                                        },
+                                        {
+                                            qId: 2,
+                                        },
+                                        {
+                                            qId: 3,
+                                        },
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'X',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                            ],
+                            targets: [
+                                {
+                                    qId: 0,
+                                },
+                                {
+                                    qId: 1,
+                                },
+                                {
+                                    qId: 2,
+                                },
+                                {
+                                    qId: 3,
+                                },
+                                {
+                                    qId: 4,
+                                },
+                            ],
+                        },
+                        {
+                            gate: 'Diffuser',
+                            children: [
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 1,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 2,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'ConditionalPhaseFlip',
+                                    children: [
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 2,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'Z',
+                                            isControlled: true,
+                                            controls: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                                {
+                                                    qId: 2,
+                                                },
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'R',
+                                            displayArgs: '(PauliI, 3.141592653589793)',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 2,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                        {
+                                            qId: 1,
+                                        },
+                                        {
+                                            qId: 2,
+                                        },
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 2,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 1,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                    ],
+                                },
+                            ],
+                            targets: [
+                                {
+                                    qId: 0,
+                                },
+                                {
+                                    qId: 1,
+                                },
+                                {
+                                    qId: 2,
+                                },
+                                {
+                                    qId: 3,
+                                },
+                            ],
+                        },
+                    ],
+                    targets: [
+                        {
+                            qId: 0,
+                        },
+                        {
+                            qId: 1,
+                        },
+                        {
+                            qId: 2,
+                        },
+                        {
+                            qId: 3,
+                        },
+                        {
+                            qId: 4,
+                        },
+                    ],
+                },
+                {
+                    gate: 'GroverIteration',
+                    displayArgs: '(Oracle)',
+                    children: [
+                        {
+                            gate: 'Oracle',
+                            displayArgs: '(Oracle_6)',
+                            children: [
+                                {
+                                    gate: 'X',
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'Oracle_6',
+                                    children: [
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isControlled: true,
+                                            controls: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                                {
+                                                    qId: 1,
+                                                },
+                                                {
+                                                    qId: 2,
+                                                },
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                            targets: [
+                                                {
+                                                    qId: 4,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                        {
+                                            qId: 1,
+                                        },
+                                        {
+                                            qId: 2,
+                                        },
+                                        {
+                                            qId: 3,
+                                        },
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'X',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                            ],
+                            targets: [
+                                {
+                                    qId: 0,
+                                },
+                                {
+                                    qId: 1,
+                                },
+                                {
+                                    qId: 2,
+                                },
+                                {
+                                    qId: 3,
+                                },
+                                {
+                                    qId: 4,
+                                },
+                            ],
+                        },
+                        {
+                            gate: 'Diffuser',
+                            children: [
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 1,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 2,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'ConditionalPhaseFlip',
+                                    children: [
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 2,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'Z',
+                                            isControlled: true,
+                                            controls: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                                {
+                                                    qId: 2,
+                                                },
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'R',
+                                            displayArgs: '(PauliI, 3.141592653589793)',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 2,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                        {
+                                            qId: 1,
+                                        },
+                                        {
+                                            qId: 2,
+                                        },
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 2,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 1,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                    ],
+                                },
+                            ],
+                            targets: [
+                                {
+                                    qId: 0,
+                                },
+                                {
+                                    qId: 1,
+                                },
+                                {
+                                    qId: 2,
+                                },
+                                {
+                                    qId: 3,
+                                },
+                            ],
+                        },
+                    ],
+                    targets: [
+                        {
+                            qId: 0,
+                        },
+                        {
+                            qId: 1,
+                        },
+                        {
+                            qId: 2,
+                        },
+                        {
+                            qId: 3,
+                        },
+                        {
+                            qId: 4,
+                        },
+                    ],
+                },
+                {
+                    gate: 'GroverIteration',
+                    displayArgs: '(Oracle)',
+                    children: [
+                        {
+                            gate: 'Oracle',
+                            displayArgs: '(Oracle_6)',
+                            children: [
+                                {
+                                    gate: 'X',
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'Oracle_6',
+                                    children: [
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isControlled: true,
+                                            controls: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                                {
+                                                    qId: 1,
+                                                },
+                                                {
+                                                    qId: 2,
+                                                },
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                            targets: [
+                                                {
+                                                    qId: 4,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                        {
+                                            qId: 1,
+                                        },
+                                        {
+                                            qId: 2,
+                                        },
+                                        {
+                                            qId: 3,
+                                        },
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'X',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 4,
+                                        },
+                                    ],
+                                },
+                            ],
+                            targets: [
+                                {
+                                    qId: 0,
+                                },
+                                {
+                                    qId: 1,
+                                },
+                                {
+                                    qId: 2,
+                                },
+                                {
+                                    qId: 3,
+                                },
+                                {
+                                    qId: 4,
+                                },
+                            ],
+                        },
+                        {
+                            gate: 'Diffuser',
+                            children: [
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 1,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 2,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    targets: [
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'ConditionalPhaseFlip',
+                                    children: [
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 2,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'Z',
+                                            isControlled: true,
+                                            controls: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                                {
+                                                    qId: 2,
+                                                },
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'R',
+                                            displayArgs: '(PauliI, 3.141592653589793)',
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 3,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 2,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 1,
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            gate: 'X',
+                                            isAdjoint: true,
+                                            targets: [
+                                                {
+                                                    qId: 0,
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                        {
+                                            qId: 1,
+                                        },
+                                        {
+                                            qId: 2,
+                                        },
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 3,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 2,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 1,
+                                        },
+                                    ],
+                                },
+                                {
+                                    gate: 'H',
+                                    isAdjoint: true,
+                                    targets: [
+                                        {
+                                            qId: 0,
+                                        },
+                                    ],
+                                },
+                            ],
+                            targets: [
+                                {
+                                    qId: 0,
+                                },
+                                {
+                                    qId: 1,
+                                },
+                                {
+                                    qId: 2,
+                                },
+                                {
+                                    qId: 3,
+                                },
+                            ],
+                        },
+                    ],
+                    targets: [
+                        {
+                            qId: 0,
+                        },
+                        {
+                            qId: 1,
+                        },
+                        {
+                            qId: 2,
+                        },
+                        {
+                            qId: 3,
+                        },
+                        {
+                            qId: 4,
+                        },
+                    ],
+                },
+                {
+                    gate: 'M',
+                    isMeasurement: true,
+                    controls: [
+                        {
+                            qId: 0,
+                        },
+                    ],
+                    targets: [
+                        {
+                            type: 1,
+                            qId: 0,
+                            cId: 0,
+                        },
+                    ],
+                },
+                {
+                    gate: 'M',
+                    isMeasurement: true,
+                    controls: [
+                        {
+                            qId: 1,
+                        },
+                    ],
+                    targets: [
+                        {
+                            type: 1,
+                            qId: 1,
+                            cId: 0,
+                        },
+                    ],
+                },
+                {
+                    gate: 'M',
+                    isMeasurement: true,
+                    controls: [
+                        {
+                            qId: 2,
+                        },
+                    ],
+                    targets: [
+                        {
+                            type: 1,
+                            qId: 2,
+                            cId: 0,
+                        },
+                    ],
+                },
+                {
+                    gate: 'M',
+                    isMeasurement: true,
+                    controls: [
+                        {
+                            qId: 3,
+                        },
+                    ],
+                    targets: [
+                        {
+                            type: 1,
+                            qId: 3,
+                            cId: 0,
+                        },
+                    ],
+                },
             ],
             targets: [
-                { qId: 1 },
-                { qId: 3 },
+                {
+                    qId: 0,
+                },
+                {
+                    qId: 1,
+                },
+                {
+                    qId: 2,
+                },
+                {
+                    qId: 3,
+                },
+                {
+                    qId: 4,
+                },
             ],
         },
     ],
