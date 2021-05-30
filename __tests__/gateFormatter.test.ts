@@ -683,7 +683,7 @@ describe('Testing _measure', () => {
 });
 
 describe('Testing _createGate', () => {
-    const metadata = {
+    const metadata: Metadata = {
         type: GateType.Invalid,
         x: 0,
         controlsY: [],
@@ -692,14 +692,19 @@ describe('Testing _createGate', () => {
         width: -1,
         dataAttributes: { a: '1', b: '2' },
     };
-    test('Invalid gate', () => {
-        expect(_createGate(['<line />'], metadata, 0)).toEqual(`<g class='gate' data-a='1' data-b='2'>\n<line />\n</g>`);
+    test('Empty gate', () => {
+        expect(_createGate(['<line />'], metadata, 0)).toEqual(
+            `<g class='gate' data-a='1' data-b='2'>\n<line />\n</g>`,
+        );
+    });
+    test('Expanded gate', () => {
+        if (metadata.dataAttributes) metadata.dataAttributes['expanded'] = 'true';
+        expect(_createGate(['<line />'], metadata, 0)).toMatchSnapshot();
     });
 });
 
-
 describe('Testing _gateControls', () => {
-    const metadata = {
+    const metadata: Metadata = {
         type: GateType.Invalid,
         x: 0,
         controlsY: [],
@@ -709,8 +714,32 @@ describe('Testing _gateControls', () => {
         dataAttributes: { a: '1', b: '2' },
     };
 
-    test('Non-expanded gate', () => {
-        delete metadata.dataAttributes["expanded"];
+    test('Expanded gate', () => {
+        if (metadata.dataAttributes) {
+            metadata.dataAttributes['expanded'] = 'true';
+            metadata.dataAttributes['zoom-in'] = 'true';
+        }
+        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+    });
+    test('Non-expanded with no children gate', () => {
+        if (metadata.dataAttributes) {
+            delete metadata.dataAttributes['expanded'];
+            delete metadata.dataAttributes['zoom-in'];
+        }
+        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+    });
+    test('Non-expanded with children gate', () => {
+        if (metadata.dataAttributes) {
+            delete metadata.dataAttributes['expanded'];
+            metadata.dataAttributes['zoom-in'] = 'true';
+        }
+        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+    });
+    test('Expanded with children gate', () => {
+        if (metadata.dataAttributes) {
+            metadata.dataAttributes['expanded'] = 'true';
+            metadata.dataAttributes['zoom-in'] = 'true';
+        }
         expect(_gateControls(metadata, 0)).toMatchSnapshot();
     });
 });
