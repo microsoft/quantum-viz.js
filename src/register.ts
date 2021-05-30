@@ -14,7 +14,7 @@ export enum RegisterType {
  */
 export interface Register {
     /** Type of register. */
-    type: RegisterType;
+    type?: RegisterType;
     /** Qubit register ID. */
     qId: number;
     /** Classical register ID (if classical register). */
