@@ -112,14 +112,15 @@ export const style = (customStyle: StyleConfig = {}): string => {
     .oplus {
         fill: ${styleConfig.oplus};
     }
-    [data-zoom-in="true"] {
-        cursor: zoom-in;
-    }
     .gate-unitary {
         fill: ${styleConfig.unitary};
     }
     .gate-measure {
         fill: ${styleConfig.measure};
+    }
+    rect.gate-swap {
+        fill: transparent;
+        stroke: transparent;
     }
     .arc-measure {
         stroke: ${styleConfig.lineStroke};
@@ -179,6 +180,43 @@ export const style = (customStyle: StyleConfig = {}): string => {
     }
     .classically-controlled-zero .classically-controlled-btn text {
         fill: ${styleConfig.classicalZeroText};
+    }
+
+    .qviz .collapse,
+    .qviz .expand {
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+    .qviz:hover .collapse,
+    .qviz:hover .expand {
+        visibility: visible;
+        opacity: 0.2;
+        transition: visibility 1s;
+        transition: opacity 1s;
+    }
+
+    .expand, .collapse {
+        cursor: pointer;
+    }
+
+    .collapse circle,
+    .expand circle {
+        fill: white;
+        stroke-width: 2px;
+        stroke: black;
+    }
+    .collapse path,
+    .expand path {
+        stroke-width: 4px;
+        stroke: black;
+    }
+
+    .gate:hover > .collapse,
+    .gate:hover > .expand {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 1s;
     }
 </style>
 `;

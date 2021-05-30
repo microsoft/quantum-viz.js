@@ -165,7 +165,6 @@ class ExecutionPathVisualizer {
             add(result, gates);
             return result;
         };
-
         const { qubits, operations } = circuit;
         const { qubitWires, registers, svgHeight } = formatInputs(qubits);
         const { metadataList, svgWidth } = processOperations(operations, registers);

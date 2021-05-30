@@ -14,37 +14,6 @@ type GateRegistry = {
     [id: string]: Operation;
 };
 
-// Event handler to visually signal to user that the gate can be zoomed out on ctrl-click
-window.addEventListener('keydown', (ev) => {
-    if (ev.key !== 'Shift') return;
-    addCtrlClickStyles();
-});
-
-// Event handler to visually signal to user that the gate can be zoomed in on click
-window.addEventListener('keyup', (ev) => {
-    if (ev.key !== 'Shift') return;
-    addDefaultStyles();
-});
-
-// Adds default cursor styles (i.e. zoom in on hover)
-const addDefaultStyles = () => {
-    document
-        .querySelectorAll('[data-zoom-out="true"]:not([data-zoom-in="true"]),[data-expanded="true"]')
-        .forEach((el: Element) => {
-            (el as HTMLElement).style.cursor = 'default';
-        });
-    document.querySelectorAll('[data-zoom-in="true"]:not([data-expanded="true"])').forEach((el: Element) => {
-        (el as HTMLElement).style.cursor = 'zoom-in';
-    });
-};
-
-// Adds cursor styles on control-click (i.e. zoom out on hover)
-const addCtrlClickStyles = () => {
-    document.querySelectorAll('[data-zoom-out="true"]:not([data-expanded="true"])').forEach((el: Element) => {
-        (el as HTMLElement).style.cursor = 'zoom-out';
-    });
-};
-
 export class Visualizer {
     userStyleConfig: StyleConfig = {};
     displayedCircuit: Circuit | null = null;
@@ -102,7 +71,6 @@ export class Visualizer {
         this.addGateClickHandlers();
 
         // Add styles
-        addDefaultStyles();
         //container.querySelector('svg').style.maxWidth = 'none';
     }
 
@@ -110,26 +78,22 @@ export class Visualizer {
         // Add handlers from container:
         addGateClickHandlers(this.container);
 
-        this.container?.querySelectorAll(`.gate`).forEach((gate) => {
+        this.container?.querySelectorAll(`.gate .gate-control`).forEach((ctrl) => {
             // Zoom in on clicked gate
-            gate.addEventListener('click', (ev: Event) => {
-                ev.stopPropagation();
+            ctrl.addEventListener('click', (ev: Event) => {
                 if (this.displayedCircuit == null) return;
 
-                const id: string | null = gate.getAttribute('data-id');
-                if (id == null) return;
+                const gateId: string | null | undefined = ctrl.parentElement?.getAttribute('data-id');
+                if (typeof gateId == 'string') {
+                    if (ctrl.classList.contains('collapse')) {
+                        this.collapseOperation(this.displayedCircuit.operations, gateId);
+                    } else if (ctrl.classList.contains('expand')) {
+                        this.expandOperation(this.displayedCircuit.operations, gateId);
+                    }
+                    this.renderCircuit(this.displayedCircuit);
 
-                const canZoomIn = gate.getAttribute('data-zoom-in') === 'true';
-                const canZoomOut = gate.getAttribute('data-zoom-out') === 'true';
-
-                if ((ev as MouseEvent).shiftKey && canZoomOut) {
-                    const parentId: string = (id.match(/(.*)-\d/) || ['', ''])[1];
-                    this.collapseOperation(this.displayedCircuit.operations, parentId);
-                } else if (canZoomIn) {
-                    this.expandOperation(this.displayedCircuit.operations, id);
+                    ev.stopPropagation();
                 }
-
-                this.renderCircuit(this.displayedCircuit);
             });
         });
     }
@@ -147,8 +111,6 @@ export class Visualizer {
     }
 
     private collapseOperation(operations: Operation[], parentId: string): void {
-        // Cannot collapse top-level operation
-        if (parentId === '0') return;
         operations.forEach((op) => {
             if (op.conditionalRender === ConditionalRender.AsGroup) this.collapseOperation(op.children || [], parentId);
             if (op.dataAttributes == null) return op;
@@ -156,7 +118,7 @@ export class Visualizer {
             // Collapse parent gate and its children
             if (opId.startsWith(parentId)) op.conditionalRender = ConditionalRender.Always;
             // Allow parent gate to be interactive again
-            if (opId === parentId) op.dataAttributes['expanded'] = 'false';
+            if (opId === parentId) delete op.dataAttributes['expanded'];
         });
     }
 }
