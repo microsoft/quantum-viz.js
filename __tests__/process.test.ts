@@ -2002,7 +2002,7 @@ describe('Testing processOperations', () => {
                 isControlled: false,
                 isAdjoint: false,
                 controls: [],
-                targets: [{ type: RegisterType.Qubit, qId: 0 }],
+                targets: [{ qId: 0 }],
             },
             {
                 gate: 'H',
@@ -2011,7 +2011,7 @@ describe('Testing processOperations', () => {
                 isControlled: false,
                 isAdjoint: false,
                 controls: [],
-                targets: [{ type: RegisterType.Qubit, qId: 0 }],
+                targets: [{ qId: 0 }],
             },
             {
                 gate: 'H',
@@ -2020,7 +2020,7 @@ describe('Testing processOperations', () => {
                 isControlled: false,
                 isAdjoint: false,
                 controls: [],
-                targets: [{ type: RegisterType.Qubit, qId: 1 }],
+                targets: [{ qId: 1 }],
             },
             {
                 gate: 'RX',
@@ -2030,7 +2030,7 @@ describe('Testing processOperations', () => {
                 isControlled: false,
                 isAdjoint: false,
                 controls: [],
-                targets: [{ type: RegisterType.Qubit, qId: 1 }],
+                targets: [{ qId: 1 }],
             },
         ];
         const registers: RegisterMap = {
