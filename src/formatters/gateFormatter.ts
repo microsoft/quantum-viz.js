@@ -29,6 +29,8 @@ const formatGates = (opsMetadata: Metadata[], nestedDepth = 0): string => {
 };
 
 const _gateControls = (metadata: Metadata, nestedDepth: number): string[] => {
+    if (metadata == undefined) return [];
+
     const [x1, y1] = _gatePosition(metadata, nestedDepth);
     const { dataAttributes } = metadata;
     const atts = dataAttributes || {};
@@ -66,7 +68,7 @@ const _gateControls = (metadata: Metadata, nestedDepth: number): string[] => {
  */
 const _createGate = (body: string[], metadata: Metadata, nestedDepth: number): string => {
     const ctrls = _gateControls(metadata, nestedDepth);
-    const { dataAttributes } = metadata;
+    const { dataAttributes } = metadata || {};
     const attributes: { [attr: string]: string } = { class: 'gate' };
     Object.entries(dataAttributes || {}).forEach(([attr, val]) => (attributes[`data-${attr}`] = val));
 
@@ -210,7 +212,7 @@ const _swap = (metadata: Metadata, nestedDepth: number): string => {
 
     // Get SVGs of crosses
     const [x1, y1, x2, y2] = _gatePosition(metadata, nestedDepth);
-    const ys = targetsY.flatMap((y) => y as number[]);
+    const ys = targetsY?.flatMap((y) => y as number[]) || [];
 
     const bg: string = box(x1, y1, x2, y2, 'gate-swap');
     const crosses: string[] = ys.map((y) => _cross(x, y));
@@ -290,7 +292,7 @@ const _oplus = (x: number, y: number, r = 15): string => {
 const _gatePosition = (metadata: Metadata, nestedDepth: number): [number, number, number, number] => {
     const { x, width, type, targetsY } = metadata;
 
-    const ys = targetsY.flatMap((y) => y as number[]);
+    const ys = targetsY?.flatMap((y) => y as number[]) || [];
     const maxY = Math.max(...ys);
     const minY = Math.min(...ys);
 
@@ -413,4 +415,5 @@ export {
     _controlledGate,
     _groupedOperations,
     _classicalControlled,
+    _gateControls,
 };
