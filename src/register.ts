@@ -13,7 +13,7 @@ export enum RegisterType {
  * Represents a register resource.
  */
 export interface Register {
-    /** Type of register. */
+    /** Type of register. If missing defaults to Qubit. */
     type?: RegisterType;
     /** Qubit register ID. */
     qId: number;
