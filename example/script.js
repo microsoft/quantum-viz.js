@@ -1,22 +1,23 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-// This shows how to render a circuit in a div:
-const div = document.getElementById('circuit');
-if (div != null) {
-    const svg = Sqore.createExecutionPathVisualizer()
-        .stylize(Sqore.STYLES['Default'])
-        .compose(random)
-        .asSvg((injectScript = true));
-    div.innerHTML = svg;
-    Sqore.addGateClickHandlers(div);
+/* This example shows how to render a circuit manually by
+   generating the SVG. */
+const circuitDiv = document.getElementById('circuit');
+if (circuitDiv != null) {
+    const viz1 = new Sqore.Visualizer(random, Sqore.STYLES['Default']);
+
+    // Generate SVG
+    const svg = viz1.generateSvg();
+    circuitDiv.innerHTML = svg;
+    // Add interactivity for classically-controlled operations
+    Sqore.addClassicalControlHandlers(circuitDiv);
 }
 
-// This shows how to render an expandable circuit:
-const div2 = document.getElementById('teleport');
-if (div2 != null) {
-    const viz2 = new Sqore.Visualizer(div2, Sqore.STYLES['Default']);
-    viz2.visualize(teleport);
+/* This example shows how to render an expandable circuit into
+   a container. */
+const teleportDiv = document.getElementById('teleport');
+if (teleportDiv != null) {
+    const viz2 = new Sqore.Visualizer(teleport, Sqore.STYLES['Default']);
+    viz2.visualize(teleportDiv);
 }
-
-console.log(JSON.stringify(teleport));
