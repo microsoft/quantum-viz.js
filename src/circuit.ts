@@ -62,7 +62,7 @@ export interface Operation {
     /** Whether gate is an adjoint operation. */
     isAdjoint: boolean;
     /** Control registers the gate acts on. */
-    controls: Register[];
+    controls?: Register[];
     /** Target registers the gate acts on. */
     targets: Register[];
     /** Specify conditions on when to render operation. */
