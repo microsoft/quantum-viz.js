@@ -179,7 +179,14 @@ export class Visualizer {
         operation.dataAttributes['zoom-in'] = (operation.children != null).toString();
     }
 
-    // Selects operations to render
+    /**
+     * Pick out operations that are at or below `renderDepth`.
+     *
+     * @param operations List of circuit operations.
+     * @param renderDepth Initial layer depth at which to render gates.
+     *
+     * @returns List of operations at or below specifed depth.
+     */
     private selectOpsAtDepth(operations: Operation[], renderDepth: number): Operation[] {
         if (renderDepth < 0) throw new Error(`Invalid renderDepth of ${renderDepth}. Needs to be >= 0.`);
         if (renderDepth === 0) return operations;
@@ -188,15 +195,24 @@ export class Visualizer {
             .flat();
     }
 
+    /**
+     * Add interactive click handlers to circuit HTML elements.
+     *
+     * @param container HTML element containing visualized circuit.
+     * @param circuit Circuit to be visualized.
+     *
+     */
     private addGateClickHandlers(container: HTMLElement, circuit: Circuit): void {
         this.addClassicalControlHandlers(container);
         this.addZoomHandlers(container, circuit);
     }
 
     /**
-     * Implements click handlers for classically-controlled operations.
+     * Add interactive click handlers for classically-controlled operations.
+     *
+     * @param container HTML element containing visualized circuit.
+     *
      */
-    // TODO: Once `generateSvg` returns a HTMLElement, attach this directly.
     private addClassicalControlHandlers(container: Element | null): Element | null {
         container?.querySelectorAll('.classically-controlled-btn').forEach((btn) => {
             // Zoom in on clicked gate
@@ -241,6 +257,13 @@ export class Visualizer {
         return container;
     }
 
+    /**
+     * Add interactive click handlers for zoom-in/out functionality.
+     *
+     * @param container HTML element containing visualized circuit.
+     * @param circuit Circuit to be visualized.
+     *
+     */
     private addZoomHandlers(container: HTMLElement, circuit: Circuit): void {
         container.querySelectorAll(`.gate .gate-control`).forEach((ctrl) => {
             // Zoom in on clicked gate
@@ -260,6 +283,13 @@ export class Visualizer {
         });
     }
 
+    /**
+     * Expand selected operation for zoom-in interaction.
+     *
+     * @param operations List of circuit operations.
+     * @param id ID of operation to expand.
+     *
+     */
     private expandOperation(operations: Operation[], id: string): void {
         operations.forEach((op) => {
             if (op.conditionalRender === ConditionalRender.AsGroup) this.expandOperation(op.children || [], id);
@@ -272,6 +302,13 @@ export class Visualizer {
         });
     }
 
+    /**
+     * Collapse selected operation for zoom-out interaction.
+     *
+     * @param operations List of circuit operations.
+     * @param id ID of operation to collapse.
+     *
+     */
     private collapseOperation(operations: Operation[], parentId: string): void {
         operations.forEach((op) => {
             if (op.conditionalRender === ConditionalRender.AsGroup) this.collapseOperation(op.children || [], parentId);
