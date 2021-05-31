@@ -1,23 +1,22 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-/* This example shows how to render a circuit manually by
-   generating the SVG. */
-const circuitDiv = document.getElementById('circuit');
-if (circuitDiv != null) {
-    const viz1 = new Sqore.Visualizer(random, Sqore.STYLES['Default']);
-
-    // Generate SVG
-    const svg = viz1.generateSvg();
-    circuitDiv.innerHTML = svg;
-    // Add interactivity for classically-controlled operations
-    Sqore.addClassicalControlHandlers(circuitDiv);
-}
-
 /* This example shows how to render an expandable circuit into
    a container. */
+const sampleDiv = document.getElementById('sample');
+if (sampleDiv != null) {
+    const sampleViz = new Sqore.Visualizer(sample, Sqore.STYLES['Default']);
+    sampleViz.visualize(sampleDiv);
+}
+
 const teleportDiv = document.getElementById('teleport');
 if (teleportDiv != null) {
-    const viz2 = new Sqore.Visualizer(teleport, Sqore.STYLES['Default']);
-    viz2.visualize(teleportDiv);
+    const teleportViz = new Sqore.Visualizer(teleport, Sqore.STYLES['Default']);
+    teleportViz.visualize(teleportDiv);
+}
+
+const groverDiv = document.getElementById('grover');
+if (groverDiv != null) {
+    const groverViz = new Sqore.Visualizer(grover, Sqore.STYLES['Default']);
+    groverViz.visualize(groverDiv);
 }

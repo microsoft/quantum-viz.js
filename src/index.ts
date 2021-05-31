@@ -28,77 +28,31 @@ type GateRegistry = {
 };
 
 /**
- * Implements click handlers for classically-controlled operations.
- */
-// TODO: Once `generateSvg` returns a HTMLElement, attach this directly.
-const addClassicalControlHandlers = (container: Element | null): Element | null => {
-    container?.querySelectorAll('.classically-controlled-btn').forEach((btn) => {
-        // Zoom in on clicked gate
-        btn.addEventListener('click', (evt: Event) => {
-            const textSvg = btn.querySelector('text');
-            const group = btn.parentElement;
-            if (textSvg == null || group == null) return;
-
-            const currValue = textSvg.firstChild?.nodeValue;
-            const zeroGates = group?.querySelector('.gates-zero');
-            const oneGates = group?.querySelector('.gates-one');
-            switch (currValue) {
-                case '?':
-                    textSvg.childNodes[0].nodeValue = '1';
-                    group.classList.remove('classically-controlled-unknown');
-                    group.classList.remove('classically-controlled-zero');
-                    group.classList.add('classically-controlled-one');
-                    zeroGates?.classList.add('hidden');
-                    oneGates?.classList.remove('hidden');
-                    break;
-                case '1':
-                    textSvg.childNodes[0].nodeValue = '0';
-                    group.classList.remove('classically-controlled-unknown');
-                    group.classList.add('classically-controlled-zero');
-                    group.classList.remove('classically-controlled-one');
-                    zeroGates?.classList.remove('hidden');
-                    oneGates?.classList.add('hidden');
-                    break;
-                case '0':
-                    textSvg.childNodes[0].nodeValue = '?';
-                    group.classList.add('classically-controlled-unknown');
-                    group.classList.remove('classically-controlled-zero');
-                    group.classList.remove('classically-controlled-one');
-                    zeroGates?.classList.remove('hidden');
-                    oneGates?.classList.remove('hidden');
-                    break;
-            }
-            evt.stopPropagation();
-        });
-    });
-
-    return container;
-};
-
-/**
  * Entrypoint class for rendering circuit visualizations.
  */
-class Visualizer {
+export class Visualizer {
     circuit: Circuit;
     style: StyleConfig = {};
-    composedSqore: ComposedSqore;
     gateRegistry: GateRegistry = {};
 
     /**
      * Initializes Sqore object with custom styles.
      *
      * @param circuit Circuit to be visualized.
-     * @param style Custom styles for visualization.
+     * @param style Custom style for visualization.
      * @param renderDepth Depth of circuit to be visualized.
      */
-    constructor(circuit: Circuit, style: StyleConfig = {}) {
+    constructor(circuit: Circuit, style: StyleConfig | string = {}) {
         this.circuit = circuit;
-        this.stylize(style);
-
-        // Create visualization components
-        this.composedSqore = this.compose(circuit);
+        this.style = this.getStyle(style);
     }
 
+    /**
+     * Render circuit into `container` at the specified layer depth.
+     *
+     * @param container HTML element for rendering visualization into.
+     * @param renderDepth Initial layer depth at which to render gates.
+     */
     visualize(container: HTMLElement, renderDepth = 0): void {
         // Inject into container
         if (container == null) throw new Error(`Container not provided.`);
@@ -111,61 +65,38 @@ class Visualizer {
 
         // Render operations at starting at given depth
         circuit.operations = this.selectOpsAtDepth(circuit.operations, renderDepth);
-
         this.renderCircuit(container, circuit);
     }
 
     /**
-     * Generates visualization of `composedSqore` as an SVG string.
+     * Retrieve style for visualization.
      *
-     * @returns SVG representation of circuit visualization.
-     */
-    // TODO: Return an SVG node instead and attach interactivity.
-    generateSvg(): string {
-        const uuid: string = createUUID();
-
-        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" class="qviz" width="${
-            this.composedSqore.width
-        }" height="${this.composedSqore.height}">
-    ${style(this.style)}
-    ${this.composedSqore.elements.join('\n')}
-</svg>`;
-    }
-
-    /**
-     * Generates visualization as an HTML string.
+     * @param style Custom style or style name.
      *
-     * @returns HTML representation of circuit visualization.
+     * @returns Custom style.
      */
-    generateHtml(): string {
-        const svg: string = this.generateSvg();
-        return `<html>
-    ${svg}
-</html>`;
-    }
-
-    /**
-     * Sets custom style for visualization.
-     *
-     * @param style Custom `StyleConfig` for visualization.
-     */
-    private stylize(style: StyleConfig | string = {}): Visualizer {
+    private getStyle(style: StyleConfig | string = {}): StyleConfig {
         if (typeof style === 'string' || style instanceof String) {
             const styleName: string = style as string;
             if (!STYLES.hasOwnProperty(styleName)) {
                 console.error(`No style ${styleName} found in STYLES.`);
-                return this;
+                return {};
             }
-            style = STYLES[styleName] || {};
+            style = STYLES[styleName];
         }
-        this.style = style;
-        return this;
+        return style;
     }
 
+    /**
+     * Render circuit into `container`.
+     *
+     * @param container HTML element for rendering visualization into.
+     * @param circuit Circuit object to be rendered.
+     */
     private renderCircuit(container: HTMLElement, circuit: Circuit): void {
         // Create visualization components
-        this.composedSqore = this.compose(circuit);
-        container.innerHTML = this.generateSvg();
+        const composedSqore: ComposedSqore = this.compose(circuit);
+        container.innerHTML = this.generateSvg(composedSqore);
         this.addGateClickHandlers(container, circuit);
     }
 
@@ -208,6 +139,25 @@ class Visualizer {
     }
 
     /**
+     * Generates visualization of `composedSqore` as an SVG string.
+     *
+     * @param composedSqore ComposedSqore to be visualized.
+     *
+     * @returns SVG representation of circuit visualization.
+     */
+    // TODO: Return an SVG node instead and attach interactivity.
+    private generateSvg(composedSqore: ComposedSqore): string {
+        const uuid: string = createUUID();
+
+        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" class="qviz" width="${
+            composedSqore.width
+        }" height="${composedSqore.height}">
+    ${style(this.style)}
+    ${composedSqore.elements.join('\n')}
+</svg>`;
+    }
+
+    /**
      * Depth-first traversal to assign unique ID to `operation`.
      * The operation is assigned the id `id` and its `i`th child is recursively given
      * the id `${id}-${i}`.
@@ -239,11 +189,59 @@ class Visualizer {
     }
 
     private addGateClickHandlers(container: HTMLElement, circuit: Circuit): void {
-        addClassicalControlHandlers(container);
-        this.addZoomClickHandlers(container, circuit);
+        this.addClassicalControlHandlers(container);
+        this.addZoomHandlers(container, circuit);
     }
 
-    private addZoomClickHandlers(container: HTMLElement, circuit: Circuit): void {
+    /**
+     * Implements click handlers for classically-controlled operations.
+     */
+    // TODO: Once `generateSvg` returns a HTMLElement, attach this directly.
+    private addClassicalControlHandlers(container: Element | null): Element | null {
+        container?.querySelectorAll('.classically-controlled-btn').forEach((btn) => {
+            // Zoom in on clicked gate
+            btn.addEventListener('click', (evt: Event) => {
+                const textSvg = btn.querySelector('text');
+                const group = btn.parentElement;
+                if (textSvg == null || group == null) return;
+
+                const currValue = textSvg.firstChild?.nodeValue;
+                const zeroGates = group?.querySelector('.gates-zero');
+                const oneGates = group?.querySelector('.gates-one');
+                switch (currValue) {
+                    case '?':
+                        textSvg.childNodes[0].nodeValue = '1';
+                        group.classList.remove('classically-controlled-unknown');
+                        group.classList.remove('classically-controlled-zero');
+                        group.classList.add('classically-controlled-one');
+                        zeroGates?.classList.add('hidden');
+                        oneGates?.classList.remove('hidden');
+                        break;
+                    case '1':
+                        textSvg.childNodes[0].nodeValue = '0';
+                        group.classList.remove('classically-controlled-unknown');
+                        group.classList.add('classically-controlled-zero');
+                        group.classList.remove('classically-controlled-one');
+                        zeroGates?.classList.remove('hidden');
+                        oneGates?.classList.add('hidden');
+                        break;
+                    case '0':
+                        textSvg.childNodes[0].nodeValue = '?';
+                        group.classList.add('classically-controlled-unknown');
+                        group.classList.remove('classically-controlled-zero');
+                        group.classList.remove('classically-controlled-one');
+                        zeroGates?.classList.remove('hidden');
+                        oneGates?.classList.remove('hidden');
+                        break;
+                }
+                evt.stopPropagation();
+            });
+        });
+
+        return container;
+    }
+
+    private addZoomHandlers(container: HTMLElement, circuit: Circuit): void {
         container.querySelectorAll(`.gate .gate-control`).forEach((ctrl) => {
             // Zoom in on clicked gate
             ctrl.addEventListener('click', (ev: Event) => {
@@ -287,9 +285,8 @@ class Visualizer {
     }
 }
 
-export { addClassicalControlHandlers };
 export { STYLES } from './styles';
 
 // Export types
-export type { Circuit, StyleConfig, Visualizer };
+export type { Circuit, StyleConfig };
 export type { Qubit, Operation } from './circuit';
