@@ -264,6 +264,9 @@ const _opToMetadata = (op: Operation | null, registers: RegisterMap): Metadata =
     } else if (isControlled) {
         metadata.type = gate === 'X' ? GateType.Cnot : GateType.ControlledUnitary;
         metadata.label = gate;
+    } else if (gate === 'X') {
+        metadata.type = GateType.X;
+        metadata.label = gate;
     } else {
         // Any other gate treated as a simple unitary gate
         metadata.type = GateType.Unitary;

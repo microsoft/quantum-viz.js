@@ -938,7 +938,7 @@ describe('Testing _opToMetadata', () => {
             1: { type: RegisterType.Qubit, y: startY + registerHeight },
         };
         const metadata: Metadata = {
-            type: GateType.Unitary,
+            type: GateType.X,
             x: 0,
             controlsY: [],
             targetsY: [startY + registerHeight],
@@ -1067,7 +1067,7 @@ describe('Testing _opToMetadata', () => {
             0: { type: RegisterType.Qubit, y: startY },
         };
         const metadata: Metadata = {
-            type: GateType.Unitary,
+            type: GateType.X,
             x: 0,
             controlsY: [],
             targetsY: [startY],
@@ -1399,10 +1399,10 @@ describe('Testing _opToMetadata', () => {
             children: [
                 [
                     {
-                        type: GateType.Unitary,
+                        type: GateType.X,
                         x: startX + minGateWidth / 2,
                         controlsY: [],
-                        targetsY: [[startY]],
+                        targetsY: [startY],
                         label: 'X',
                         width: minGateWidth,
                     },
@@ -1470,10 +1470,10 @@ describe('Testing _opToMetadata', () => {
             width: minGateWidth + groupBoxPadding * 2,
             children: [
                 {
-                    type: GateType.Unitary,
+                    type: GateType.X,
                     x: startX + minGateWidth / 2,
                     controlsY: [],
-                    targetsY: [[startY]],
+                    targetsY: [startY],
                     label: 'X',
                     width: minGateWidth,
                 },
@@ -1541,7 +1541,7 @@ describe('Testing _opToMetadata', () => {
             2: { type: RegisterType.Qubit, y: startY + registerHeight },
         };
         const metadata: Metadata = {
-            type: GateType.Unitary,
+            type: GateType.X,
             x: 0,
             controlsY: [],
             targetsY: [startY + registerHeight],
@@ -1761,7 +1761,7 @@ describe('Testing _offsetChildrenX', () => {
         const children: Metadata[][] = [
             [
                 {
-                    type: GateType.Unitary,
+                    type: GateType.X,
                     x: 0,
                     controlsY: [],
                     targetsY: [],
@@ -1773,7 +1773,7 @@ describe('Testing _offsetChildrenX', () => {
         const expected: Metadata[][] = [
             [
                 {
-                    type: GateType.Unitary,
+                    type: GateType.X,
                     x: 50,
                     controlsY: [],
                     targetsY: [],
@@ -1789,7 +1789,7 @@ describe('Testing _offsetChildrenX', () => {
         const children: Metadata[][] = [
             [
                 {
-                    type: GateType.Unitary,
+                    type: GateType.X,
                     x: 0,
                     controlsY: [],
                     targetsY: [],
@@ -1798,7 +1798,7 @@ describe('Testing _offsetChildrenX', () => {
                     children: [
                         [
                             {
-                                type: GateType.Unitary,
+                                type: GateType.X,
                                 x: 0,
                                 controlsY: [],
                                 targetsY: [],
@@ -1814,7 +1814,7 @@ describe('Testing _offsetChildrenX', () => {
         const expected: Metadata[][] = [
             [
                 {
-                    type: GateType.Unitary,
+                    type: GateType.X,
                     x: 50,
                     controlsY: [],
                     targetsY: [],
@@ -1823,7 +1823,7 @@ describe('Testing _offsetChildrenX', () => {
                     children: [
                         [
                             {
-                                type: GateType.Unitary,
+                                type: GateType.X,
                                 x: 50,
                                 controlsY: [],
                                 targetsY: [],
@@ -1851,7 +1851,7 @@ describe('Testing _fillMetadataX', () => {
         const opsMetadata: Metadata[][] = [
             [
                 {
-                    type: GateType.Unitary,
+                    type: GateType.X,
                     x: 0,
                     controlsY: [],
                     targetsY: [],
@@ -1863,7 +1863,7 @@ describe('Testing _fillMetadataX', () => {
         const expected: Metadata[][] = [
             [
                 {
-                    type: GateType.Unitary,
+                    type: GateType.X,
                     x: startX + minGateWidth / 2,
                     controlsY: [],
                     targetsY: [],
@@ -1920,7 +1920,7 @@ describe('Testing _fillMetadataX', () => {
                     children: [
                         [
                             {
-                                type: GateType.Unitary,
+                                type: GateType.X,
                                 x: 0,
                                 controlsY: [],
                                 targetsY: [],
@@ -1930,7 +1930,7 @@ describe('Testing _fillMetadataX', () => {
                         ],
                         [
                             {
-                                type: GateType.Unitary,
+                                type: GateType.X,
                                 x: 0,
                                 controlsY: [],
                                 targetsY: [],
@@ -1954,7 +1954,7 @@ describe('Testing _fillMetadataX', () => {
                     children: [
                         [
                             {
-                                type: GateType.Unitary,
+                                type: GateType.X,
                                 x: controlBtnOffset + groupBoxPadding,
                                 controlsY: [],
                                 targetsY: [],
@@ -1964,7 +1964,7 @@ describe('Testing _fillMetadataX', () => {
                         ],
                         [
                             {
-                                type: GateType.Unitary,
+                                type: GateType.X,
                                 x: controlBtnOffset + groupBoxPadding,
                                 controlsY: [],
                                 targetsY: [],
@@ -2271,10 +2271,10 @@ describe('Testing processOperations', () => {
             children: [
                 [
                     {
-                        type: GateType.Unitary,
+                        type: GateType.X,
                         x: startX + minGateWidth / 2 + controlBtnOffset + groupBoxPadding,
                         controlsY: [],
-                        targetsY: [[startY]],
+                        targetsY: [startY],
                         label: 'X',
                         width: minGateWidth,
                     },
@@ -2367,10 +2367,10 @@ describe('Testing processOperations', () => {
             width: minGateWidth * 2 + gatePadding * 2 + groupBoxPadding * 2,
             children: [
                 {
-                    type: GateType.Unitary,
+                    type: GateType.X,
                     x: startX + minGateWidth / 2 + groupBoxPadding,
                     controlsY: [],
-                    targetsY: [[startY]],
+                    targetsY: [startY],
                     label: 'X',
                     width: minGateWidth,
                 },
@@ -2473,10 +2473,10 @@ describe('Testing processOperations', () => {
                     width: minGateWidth * 2 + gatePadding * 2 + groupBoxPadding * 2,
                     children: [
                         {
-                            type: GateType.Unitary,
+                            type: GateType.X,
                             x: startX + minGateWidth / 2 + groupBoxPadding * 2,
                             controlsY: [],
-                            targetsY: [[startY]],
+                            targetsY: [startY],
                             label: 'X',
                             width: minGateWidth,
                         },
