@@ -14,17 +14,17 @@ const config = {
     // the name to filter the second entry point for applying code
     // minification via UglifyJS
     entry: {
-        sqore: [PATHS.entryPoint],
-        'sqore.min': [PATHS.entryPoint],
+        qviz: [PATHS.entryPoint],
+        'qviz.min': [PATHS.entryPoint],
     },
     // The output defines how and where we want the bundles. The special
     // value `[name]` in `filename` tell Webpack to use the name we defined above.
-    // The bundled script will be available as a global variable `Sqore`.
+    // The bundled script will be available as a global variable `qviz`.
     output: {
         path: PATHS.bundles,
         filename: '[name].js',
-        library: 'Sqore',
-        libraryTarget: 'umd'
+        library: 'qviz',
+        libraryTarget: 'umd',
     },
     // Add resolve for `tsx` and `ts` files, otherwise Webpack would
     // only look for common JavaScript file extension (.js)

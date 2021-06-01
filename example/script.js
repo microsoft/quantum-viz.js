@@ -5,18 +5,15 @@
    a container. */
 const sampleDiv = document.getElementById('sample');
 if (sampleDiv != null) {
-    const sampleViz = new Sqore.Sqore(sample, Sqore.STYLES['Default']);
-    sampleViz.visualize(sampleDiv);
+    qviz.draw(sample, sampleDiv, qviz.STYLES['Default']);
 }
 
 const teleportDiv = document.getElementById('teleport');
 if (teleportDiv != null) {
-    const teleportViz = new Sqore.Sqore(teleport, Sqore.STYLES['Default']);
-    teleportViz.visualize(teleportDiv);
+    qviz.draw(teleport, teleportDiv, qviz.STYLES['Default']);
 }
 
 const groverDiv = document.getElementById('grover');
 if (groverDiv != null) {
-    const groverViz = new Sqore.Sqore(grover, Sqore.STYLES['Default']);
-    groverViz.visualize(groverDiv);
+    qviz.draw(grover, groverDiv, qviz.STYLES['Default']);
 }
