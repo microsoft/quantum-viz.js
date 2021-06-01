@@ -23,11 +23,10 @@ To import Sqore into your TypeScript project, perform the following steps:
 2. You can now import the files from `lib/index.js`!
 
 ### Example usage
-```JavaScript
-const svg = Sqore.createSqore()
-    .stylize(Sqore.STYLES['Default'])
-    .compose(circuit)
-    .asSvg((injectScript = true));
+```js
+const sampleDiv = document.getElementById('sample');
+const sampleViz = new Sqore.Sqore(sample, Sqore.STYLES['Default']);
+sampleViz.visualize(sampleDiv);
 ```
 
 Refer to the example project in the [`example`](./example) folder for an example on how to use Sqore.
