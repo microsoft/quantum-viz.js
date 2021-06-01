@@ -39,7 +39,7 @@ export class Sqore {
      * Initializes Sqore object with custom styles.
      *
      * @param circuit Circuit to be visualized.
-     * @param style Custom style for visualization.
+     * @param style Custom visualization style.
      */
     constructor(circuit: Circuit, style: StyleConfig | string = {}) {
         this.circuit = circuit;
@@ -52,7 +52,7 @@ export class Sqore {
      * @param container HTML element for rendering visualization into.
      * @param renderDepth Initial layer depth at which to render gates.
      */
-    visualize(container: HTMLElement, renderDepth = 0): void {
+    draw(container: HTMLElement, renderDepth = 0): void {
         // Inject into container
         if (container == null) throw new Error(`Container not provided.`);
 
@@ -320,9 +320,3 @@ export class Sqore {
         });
     }
 }
-
-export { STYLES } from './styles';
-
-// Export types
-export type { Circuit, StyleConfig };
-export type { Qubit, Operation } from './circuit';
