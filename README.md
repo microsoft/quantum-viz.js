@@ -15,7 +15,7 @@ Install the necessary dependencies with `npm install`.
 To use Sqore in the browser, perform the following steps:
 1. Run `npm run build:prod` to build the minified JS files.
 2. Include `dist/sqore.js` or `dist/sqore.min.js` as a `<script>` in your HTML.
-3. You can now use `Sqore` in your JavaScript files!
+3. You can now use `sqore` in your JavaScript files!
 
 #### Using with TypeScript
 To import Sqore into your TypeScript project, perform the following steps:
@@ -25,7 +25,7 @@ To import Sqore into your TypeScript project, perform the following steps:
 ### Example usage
 ```js
 const sampleDiv = document.getElementById('sample');
-const sampleViz = new Sqore.Sqore(sample, Sqore.STYLES['Default']);
+const sampleViz = new sqore.Sqore(sample, Sqore.STYLES['Default']);
 sampleViz.visualize(sampleDiv);
 ```
 

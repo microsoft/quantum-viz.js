@@ -23,8 +23,8 @@ const config = {
     output: {
         path: PATHS.bundles,
         filename: '[name].js',
-        library: 'Sqore',
-        libraryTarget: 'umd'
+        library: 'sqore',
+        libraryTarget: 'umd',
     },
     // Add resolve for `tsx` and `ts` files, otherwise Webpack would
     // only look for common JavaScript file extension (.js)
