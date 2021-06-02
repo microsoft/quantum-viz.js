@@ -1,10 +1,10 @@
 {
-  "name": "sqore",
-  "version": "0.0.1",
-  "description": "Sqore is a configurable tool for visualizing quantum circuits.",
+  "name": "quantum-viz.js",
+  "version": "1.0.0",
+  "description": "quantum-viz.js is a configurable tool for visualizing quantum circuits.",
   "main": "lib/index.js",
   "types": "lib/index.d.js",
-  "unpkg": "dist/sqore.min.js",
+  "unpkg": "dist/qviz.min.js",
   "scripts": {
     "build": "tsc",
     "build:prod": "tsc && webpack",
@@ -23,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://t-rkoh@dev.azure.com/t-rkoh/CircuitViz/_git/sqore"
+    "url": "https://github.com/microsoft/quantum-viz.js"
   },
   "keywords": [
     "quantum",
@@ -50,5 +50,5 @@
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12"
   },
-  "homepage": "https://dev.azure.com/t-rkoh/CircuitViz/_git/sqore?path=README.md"
+  "homepage": "https://github.com/microsoft/quantum-viz.js#readme"
 }
