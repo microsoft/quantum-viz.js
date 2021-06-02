@@ -129,15 +129,14 @@ const teleport = {
     qubits: [
         {
             id: 0,
-            numChildren: 2,
+            numChildren: 1,
         },
         {
             id: 1,
-            numChildren: 2,
+            numChildren: 1,
         },
         {
             id: 2,
-            numChildren: 1,
         },
     ],
     operations: [
