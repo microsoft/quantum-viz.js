@@ -8,7 +8,7 @@ When contributing to this repository, please first discuss the change you wish t
 
 1. Ensure that your code passes the lint check by running `npm run lint`. If it fails, you can fix them manually or run `npm run lint:fix`.
 2. Test your code with `npm test` and ensure that all tests pass.
-3. Update the README.md with details of changes to the interface (e.g. changes to Sqore API).
+3. Update the README.md with details of changes to the interface (e.g. changes to quantum-viz.js API).
 4. Increase the version numbers in any examples files and the README.md to the new version that this Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
 5. You may merge the Pull Request in once you have the sign-off of two other developers, or if you do not have permission to do that, you may request the second reviewer to merge it for you.
 
