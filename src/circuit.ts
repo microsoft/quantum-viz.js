@@ -51,7 +51,7 @@ export interface Operation {
     gate: string;
     /** Formatted gate arguments to be displayed. */
     displayArgs?: string;
-    /** Nested operations within this operation */
+    /** Nested operations within this operation. */
     children?: Operation[];
     /** Whether gate is a measurement operation. */
     isMeasurement: boolean;
