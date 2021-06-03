@@ -1,10 +1,8 @@
 {
-  "name": "quantum-viz.js",
+  "name": "@microsoft/quantum-viz.js",
   "version": "1.0.0",
   "description": "quantum-viz.js is a configurable tool for visualizing quantum circuits.",
-  "main": "lib/index.js",
-  "types": "lib/index.d.js",
-  "unpkg": "dist/qviz.min.js",
+  "main": "dist/qviz.min.js",
   "scripts": {
     "build": "tsc",
     "build:prod": "tsc && webpack",
