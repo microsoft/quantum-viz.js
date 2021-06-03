@@ -54,7 +54,7 @@ To run tests for this project, run the following commands:
 ```
 
 ## Contributing
-Check out our [contributing guidelines](./CONTRIBUTING.md) to find out how you can contribute to quantum-viz.js!
+Check out our [contributing guidelines](.github/CONTRIBUTING.md) to find out how you can contribute to quantum-viz.js!
 
 
 ## Feedback ##
