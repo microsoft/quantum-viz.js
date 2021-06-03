@@ -7,7 +7,7 @@
 
 ## Getting Started
 ### Installation
-Include `quantum-viz.js` by using it directly from CDN:
+Include `quantum-viz.js` in your HTML page by using it directly from CDN:
 ```html
 <script src="https://unpkg.com/@microsoft/quantum-viz.js"></script>
 ```
@@ -54,11 +54,11 @@ To run tests for this project, run the following commands:
 ```
 
 ## Contributing
-Check out our [contributing guidelines](CONTRIBUTING.md) to find out how you can contribute to quantum-viz.js!
+Check out our [contributing guidelines](./CONTRIBUTING.md) to find out how you can contribute to quantum-viz.js!
 
 
 ## Feedback ##
-If you have feedback about this library, please let us know by filing a [new issue](https://github.com/microsoft/quantum-viz.js/issues/new)!
+If you have feedback about this library, please let us know by filing a [new issue](https://github.com/microsoft/quantum-viz.js/issues/new/choose)!
 
 
 ## Reporting Security Issues
