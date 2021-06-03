@@ -7,20 +7,13 @@
 
 ## Getting Started
 ### Installation
-Install the necessary dependencies with `npm install`.
+Include `quantum-viz.js` by using it directly from CDN:
+```html
+<script src="https://unpkg.com/@microsoft/quantum-viz.js"></script>
+```
 
-#### Embedding in browser
-To use quantum-viz.js in the browser, perform the following steps:
-1. Run `npm run build:prod` to build the minified JS files.
-2. Include `dist/qviz.js` or `dist/qviz.min.js` as a `<script>` in your HTML.
-3. You can now use `qviz` in your JavaScript files!
-
-#### Using with TypeScript
-To import quantum-viz.js into your TypeScript project, perform the following steps:
-1. Run `npm run build` to compile TypeScript source files with the type declaration files.
-2. You can now import the files from `lib/index.js`!
-
-### Example usage
+### Usage
+Create a javascript circuit representation:
 ```js
 const sampleCircuit = {
     qubits: [
@@ -30,15 +23,56 @@ const sampleCircuit = {
         // ...
     ],
 };
+```
+
+Draw it on a `div` with:
+```js
 const sampleDiv = document.getElementById('sample');
 qviz.draw(sampleCircuit, sampleDiv, qviz.STYLES['Default']);
 ```
 
-Refer to the example project in the [`example`](./example) folder for an example on how to use quantum-viz.js.
+Refer to the [`example`](./example) folder for an example on how to use quantum-viz.js. Notice that in order to open the contents of this folder in a browser you will need first to install from source (see below).
+
+## Running from source
+
+### Installing
+To build and install this project from source, run the following commands from the root folder of this repository:
+```bash
+# Install dependencies
+> npm install
+# Build 
+> npm run build:prod
+```
+
+### Running tests
+To run tests for this project, run the following commands:
+```bash
+# Installs dependencies (run this step if you haven't)
+> npm install
+# Starts Jest tests
+> npm run test
+```
 
 ## Contributing
-
 Check out our [contributing guidelines](CONTRIBUTING.md) to find out how you can contribute to quantum-viz.js!
+
+
+## Feedback ##
+If you have feedback about this library, please let us know by filing a [new issue](https://github.com/microsoft/quantum-viz.js/issues/new)!
+
+
+## Reporting Security Issues
+Security issues and bugs should be reported privately, via email, to the Microsoft Security
+Response Center (MSRC) at [secure@microsoft.com](mailto:secure@microsoft.com). You should
+receive a response within 24 hours. If for some reason you do not, please follow up via
+email to ensure we received your original message. Further information, including the
+[MSRC PGP](https://technet.microsoft.com/en-us/security/dn606155) key, can be found in
+the [Security TechCenter](https://technet.microsoft.com/en-us/security/default).
+
+
+## Trademarks
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow Microsoft's Trademark & Brand Guidelines. Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party's policies.
+
 
 ## Code of Conduct
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
