@@ -4,6 +4,10 @@
 [![Build Status](https://github.com/microsoft/quantum-viz.js/actions/workflows/main.yml/badge.svg)](https://github.com/microsoft/quantum-viz.js/actions)
 [![npm version](https://badge.fury.io/js/%40microsoft%2Fquantum-viz.js.svg)](https://www.npmjs.com/package/@microsoft/quantum-viz.js)
 
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/19257435/120700950-4ce70a80-c480-11eb-9f8b-0d5f2be18b37.png" alt="screenshot" width="80%"/>
+</p>
+
 **quantum-viz.js** (or **qviz**) is a configurable tool for rendering quantum circuits. With the increasing demand for quantum libraries and educational tools, quantum circuits provide an intuitive way to visualize and understand quantum algorithms. quantum-viz.js is a lightweight library that can be easily integrated into any project. It aims to be easily configurable while allowing complex user interactions, such as toggling between different measurement outcomes.
 
 ## Getting Started
@@ -37,7 +41,7 @@ const sampleDiv = document.getElementById('sample');
 qviz.draw(sampleCircuit, sampleDiv, qviz.STYLES['Default']);
 ```
 
-Refer to the [`example`](./example) folder for an example on how to use quantum-viz.js. Notice that in order to open the contents of this folder in a browser you will need first to install from source (see below).
+Refer to the [`example`](./example) folder for an example on how to use quantum-viz.js. Notice that in order to open the contents of this folder in a browser you will need first to install from source (see [below](#running-from-source)).
 
 ## Running from source
 
