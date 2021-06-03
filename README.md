@@ -2,6 +2,7 @@
 [![Licensed under the MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
 [![PR's Welcome](https://img.shields.io/badge/PRs%20-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Build Status](https://github.com/microsoft/quantum-viz.js/actions/workflows/main.yml/badge.svg)](https://github.com/microsoft/quantum-viz.js/actions)
+[![npm version](https://badge.fury.io/js/%40microsoft%2Fquantum-viz.js.svg)](https://www.npmjs.com/package/@microsoft/quantum-viz.js)
 
 **quantum-viz.js** (or **qviz**) is a configurable tool for rendering quantum circuits. With the increasing demand for quantum libraries and educational tools, quantum circuits provide an intuitive way to visualize and understand quantum algorithms. quantum-viz.js is a lightweight library that can be easily integrated into any project. It aims to be easily configurable while allowing complex user interactions, such as toggling between different measurement outcomes.
 
@@ -11,9 +12,13 @@ Include `quantum-viz.js` in your HTML page by using it directly from CDN:
 ```html
 <script src="https://unpkg.com/@microsoft/quantum-viz.js"></script>
 ```
+or import it in into your TypeScript package:
+```bash
+npm i @microsoft/quantum-viz.js
+```
 
 ### Usage
-Create a javascript circuit representation:
+1. Create a `Circuit` JavaScript object (the `Circuit` schema is documented [here](https://github.com/microsoft/quantum-viz.js/wiki/API-schema-reference)):
 ```js
 const sampleCircuit = {
     qubits: [
@@ -25,7 +30,8 @@ const sampleCircuit = {
 };
 ```
 
-Draw it on a `div` with:
+
+2. Draw it in a `div`:
 ```js
 const sampleDiv = document.getElementById('sample');
 qviz.draw(sampleCircuit, sampleDiv, qviz.STYLES['Default']);
@@ -54,7 +60,7 @@ To run tests for this project, run the following commands:
 ```
 
 ## Contributing
-Check out our [contributing guidelines](.github/CONTRIBUTING.md) to find out how you can contribute to quantum-viz.js!
+Check out our [contributing guidelines](CONTRIBUTING.md) to find out how you can contribute to quantum-viz.js!
 
 
 ## Feedback ##
