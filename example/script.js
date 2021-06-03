@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-if (typeof(qviz) != "undefined") {
-    document.getElementById("msg").style.display = 'none';
+if (typeof qviz != 'undefined') {
+    document.getElementById('msg').style.display = 'none';
 
     /* These examples shows how to draw circuits into containers. */
     const sampleDiv = document.getElementById('sample');
