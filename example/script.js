@@ -2,6 +2,8 @@
 // Licensed under the MIT license.
 
 if (typeof(qviz) != "undefined") {
+    document.getElementById("msg").style.display = 'none';
+
     /* These examples shows how to draw circuits into containers. */
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
@@ -17,13 +19,4 @@ if (typeof(qviz) != "undefined") {
     if (groverDiv != null) {
         qviz.draw(grover, groverDiv, qviz.STYLES['Default']);
     }
-
-} else {
-    title = document.createElement("h1");
-    title.innerHTML = "<code>qviz</code> not found!"
-    msg = document.createElement("div");
-    msg.innerHTML = "Please make sure the project is built first by following the <i>Running from source</i> instructions from the README.md";
-    
-    document.body.appendChild(title);
-    document.body.appendChild(msg);
 }
