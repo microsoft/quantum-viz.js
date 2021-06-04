@@ -345,7 +345,7 @@ exports[`Testing _controlledGate SWAP gate 3`] = `
 exports[`Testing _createGate Expanded gate 1`] = `
 "<g class='gate' data-a='1' data-b='2' data-expanded='true'>
 <line />
-<g class='gate-control collapse' transform='translate(2.5, Infinity)'>
+<g class='gate-control gate-collapse' transform='translate(2.5, Infinity)'>
 <circle cx=\\"0\\" cy=\\"0\\" r=\\"10\\" />
 <path d=\\"M-7,0 H7\\" />
 </g>
@@ -468,7 +468,7 @@ exports[`Testing _formatGate swap gate 1`] = `
 
 exports[`Testing _gateControls Expanded gate 1`] = `
 Array [
-  "<g class='gate-control collapse' transform='translate(2.5, Infinity)'>
+  "<g class='gate-control gate-collapse' transform='translate(2.5, Infinity)'>
 <circle cx=\\"0\\" cy=\\"0\\" r=\\"10\\" />
 <path d=\\"M-7,0 H7\\" />
 </g>",
@@ -477,7 +477,7 @@ Array [
 
 exports[`Testing _gateControls Expanded with children gate 1`] = `
 Array [
-  "<g class='gate-control collapse' transform='translate(2.5, Infinity)'>
+  "<g class='gate-control gate-collapse' transform='translate(2.5, Infinity)'>
 <circle cx=\\"0\\" cy=\\"0\\" r=\\"10\\" />
 <path d=\\"M-7,0 H7\\" />
 </g>",
@@ -486,7 +486,7 @@ Array [
 
 exports[`Testing _gateControls Non-expanded with children gate 1`] = `
 Array [
-  "<g class='gate-control expand' transform='translate(2.5, Infinity)'>
+  "<g class='gate-control gate-expand' transform='translate(2.5, Infinity)'>
 <circle cx=\\"0\\" cy=\\"0\\" r=\\"10\\" />
 <path d=\\"M0,-7 V7 M-7,0 H7\\" />
 </g>",
