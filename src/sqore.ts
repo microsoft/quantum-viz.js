@@ -272,9 +272,9 @@ export class Sqore {
             ctrl.addEventListener('click', (ev: Event) => {
                 const gateId: string | null | undefined = ctrl.parentElement?.getAttribute('data-id');
                 if (typeof gateId == 'string') {
-                    if (ctrl.classList.contains('collapse')) {
+                    if (ctrl.classList.contains('gate-collapse')) {
                         this.collapseOperation(circuit.operations, gateId);
-                    } else if (ctrl.classList.contains('expand')) {
+                    } else if (ctrl.classList.contains('gate-expand')) {
                         this.expandOperation(circuit.operations, gateId);
                     }
                     this.renderCircuit(container, circuit);

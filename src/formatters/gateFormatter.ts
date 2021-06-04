@@ -42,14 +42,14 @@ const _gateControls = (metadata: Metadata, nestedDepth: number): string[] => {
     if (expanded) {
         ctrls.push(
             group(['<circle cx="0" cy="0" r="10" />', '<path d="M-7,0 H7" />'], {
-                class: 'gate-control collapse',
+                class: 'gate-control gate-collapse',
                 transform: `translate(${x1 + 2}, ${y1 + 2})`,
             }),
         );
     } else if (atts['zoom-in'] == 'true') {
         ctrls.push(
             group(['<circle cx="0" cy="0" r="10" />', '<path d="M0,-7 V7 M-7,0 H7" />'], {
-                class: 'gate-control expand',
+                class: 'gate-control gate-expand',
                 transform: `translate(${x1 + 2}, ${y1 + 2})`,
             }),
         );

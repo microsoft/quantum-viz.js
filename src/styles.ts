@@ -183,38 +183,38 @@ export const style = (customStyle: StyleConfig = {}): string => {
         fill: ${styleConfig.classicalZeroText};
     }
 
-    .qviz .collapse,
-    .qviz .expand {
+    .qviz .gate-collapse,
+    .qviz .gate-expand {
         opacity: 0;
         transition: opacity 1s;
     }
 
-    .qviz:hover .collapse,
-    .qviz:hover .expand {
+    .qviz:hover .gate-collapse,
+    .qviz:hover .gate-expand {
         visibility: visible;
         opacity: 0.2;
         transition: visibility 1s;
         transition: opacity 1s;
     }
 
-    .expand, .collapse {
+    .gate-expand, .gate-collapse {
         cursor: pointer;
     }
 
-    .collapse circle,
-    .expand circle {
+    .gate-collapse circle,
+    .gate-expand circle {
         fill: white;
         stroke-width: 2px;
         stroke: black;
     }
-    .collapse path,
-    .expand path {
+    .gate-collapse path,
+    .gate-expand path {
         stroke-width: 4px;
         stroke: black;
     }
 
-    .gate:hover > .collapse,
-    .gate:hover > .expand {
+    .gate:hover > .gate-collapse,
+    .gate:hover > .gate-expand {
         visibility: visible;
         opacity: 1;
         transition: opacity 1s;
