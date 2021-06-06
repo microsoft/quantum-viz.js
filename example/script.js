@@ -5,6 +5,11 @@ if (typeof qviz != 'undefined') {
     document.getElementById('msg').style.display = 'none';
 
     /* These examples shows how to draw circuits into containers. */
+    const entangleDiv = document.getElementById('entangle');
+    if (entangleDiv != null) {
+        qviz.draw(entangle, entangleDiv, qviz.STYLES['Default']);
+    }
+
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
         qviz.draw(sample, sampleDiv, qviz.STYLES['Default']);

@@ -3,7 +3,26 @@
 
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 
+// Basic example: entanglement with measurement
+//export
+const entangle = {
+    qubits: [{ id: 0 }, { id: 1 }],
+    operations: [
+        {
+            gate: 'H',
+            targets: [{ qId: 0 }],
+        },
+        {
+            gate: 'X',
+            isControlled: true,
+            controls: [{ qId: 0 }],
+            targets: [{ qId: 1 }],
+        },
+    ],
+};
+
 // Sample circuit
+//export
 const sample = {
     qubits: [{ id: 0, numChildren: 1 }, { id: 1 }, { id: 2 }, { id: 3 }],
     operations: [
@@ -128,6 +147,7 @@ const sample = {
 };
 
 // Teleportation algorithm
+//export
 const teleport = {
     qubits: [
         {
@@ -394,6 +414,7 @@ const teleport = {
 };
 
 // Grover's algorithm
+//export
 const grover = {
     qubits: [
         {
