@@ -70,7 +70,7 @@ export class Sqore {
 
         // If only one top-level operation, expand automatically:
         if (circuit.operations.length == 1 && circuit.operations[0].dataAttributes != null) {
-            const id : string =  circuit.operations[0].dataAttributes['id'];
+            const id: string = circuit.operations[0].dataAttributes['id'];
             this.expandOperation(circuit.operations, id);
         }
 
