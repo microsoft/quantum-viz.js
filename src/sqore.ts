@@ -69,7 +69,7 @@ export class Sqore {
         circuit.operations = this.selectOpsAtDepth(circuit.operations, renderDepth);
 
         // If only one top-level operation, expand automatically:
-        if (circuit.operations.length == 1 && circuit.operations[0].dataAttributes != null) {
+        if (circuit.operations.length == 1 && circuit.operations[0].dataAttributes != null && circuit.operations[0].dataAttributes.hasOwnProperty('id')) {
             const id: string = circuit.operations[0].dataAttributes['id'];
             this.expandOperation(circuit.operations, id);
         }
