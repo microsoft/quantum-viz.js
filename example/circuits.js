@@ -6,7 +6,7 @@
 // Basic example: entanglement with measurement
 //export
 const entangle = {
-    qubits: [{ id: 0 }, { id: 1 }],
+    qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
     operations: [
         {
             gate: 'H',
@@ -17,6 +17,12 @@ const entangle = {
             isControlled: true,
             controls: [{ qId: 0 }],
             targets: [{ qId: 1 }],
+        },
+        {
+            gate: 'Measure',
+            isMeasurement: true,
+            controls: [{ qId: 1 }],
+            targets: [{ type: 1, qId: 1, cId: 0 }],
         },
     ],
 };
