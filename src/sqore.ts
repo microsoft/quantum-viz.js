@@ -113,7 +113,6 @@ export class Sqore {
         const svg: SVGElement = this.generateSvg(composedSqore);
         container.innerHTML = '';
         container.appendChild(svg);
-        // TODO: Classically-controlled gates not showing cursor
         this.addGateClickHandlers(container, circuit);
     }
 

@@ -59,7 +59,7 @@ const formatInputs = (qubits: Qubit[]): { qubitWires: SVGElement; registers: Reg
  * @returns SVG text component for the input register.
  */
 const _qubitInput = (y: number): SVGElement => {
-    const el: SVGElement = text('|0⟩', leftPadding, y);
+    const el: SVGElement = text('|0⟩', leftPadding, y, 16);
     el.setAttribute('text-anchor', 'start');
     el.setAttribute('dominant-baseline', 'middle');
     return el;

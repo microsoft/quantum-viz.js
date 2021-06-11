@@ -3,7 +3,7 @@
 exports[`Testing _qubitInput classical register 1`] = `
 <text
   dominant-baseline="middle"
-  font-size="14"
+  font-size="16"
   text-anchor="start"
   x="20"
   y="20"
@@ -15,7 +15,7 @@ exports[`Testing _qubitInput classical register 1`] = `
 exports[`Testing _qubitInput classical register 2`] = `
 <text
   dominant-baseline="middle"
-  font-size="14"
+  font-size="16"
   text-anchor="start"
   x="20"
   y="50"
@@ -27,7 +27,7 @@ exports[`Testing _qubitInput classical register 2`] = `
 exports[`Testing _qubitInput classical register 3`] = `
 <text
   dominant-baseline="middle"
-  font-size="14"
+  font-size="16"
   text-anchor="start"
   x="20"
   y="0"
@@ -40,7 +40,7 @@ exports[`Testing formatInputs 1 quantum register 1`] = `
 <g>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="40"
@@ -54,7 +54,7 @@ exports[`Testing formatInputs Multiple quantum registers 1`] = `
 <g>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="40"
@@ -63,7 +63,7 @@ exports[`Testing formatInputs Multiple quantum registers 1`] = `
   </text>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="100"
@@ -72,7 +72,7 @@ exports[`Testing formatInputs Multiple quantum registers 1`] = `
   </text>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="160"
@@ -86,7 +86,7 @@ exports[`Testing formatInputs Quantum and classical registers 1`] = `
 <g>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="40"
@@ -95,7 +95,7 @@ exports[`Testing formatInputs Quantum and classical registers 1`] = `
   </text>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="120"
@@ -104,7 +104,7 @@ exports[`Testing formatInputs Quantum and classical registers 1`] = `
   </text>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="180"
@@ -118,7 +118,7 @@ exports[`Testing formatInputs Quantum and classical registers 2`] = `
 <g>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="40"
@@ -127,7 +127,7 @@ exports[`Testing formatInputs Quantum and classical registers 2`] = `
   </text>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="100"
@@ -136,7 +136,7 @@ exports[`Testing formatInputs Quantum and classical registers 2`] = `
   </text>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="220"
@@ -150,7 +150,7 @@ exports[`Testing formatInputs Skip quantum registers 1`] = `
 <g>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="40"
@@ -159,7 +159,7 @@ exports[`Testing formatInputs Skip quantum registers 1`] = `
   </text>
   <text
     dominant-baseline="middle"
-    font-size="14"
+    font-size="16"
     text-anchor="start"
     x="20"
     y="100"
