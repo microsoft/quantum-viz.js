@@ -4,6 +4,7 @@
 import { Qubit } from '../circuit';
 import { RegisterType, RegisterMap, RegisterMetadata } from '../register';
 import { leftPadding, startY, registerHeight, classicalRegHeight } from '../constants';
+import { group, text } from './formatUtils';
 
 /**
  * `formatInputs` takes in an array of Qubits and outputs the SVG string of formatted
@@ -14,8 +15,8 @@ import { leftPadding, startY, registerHeight, classicalRegHeight } from '../cons
  * @returns returns the SVG string of formatted qubit wires, a mapping from registers
  *          to y coord and total SVG height.
  */
-const formatInputs = (qubits: Qubit[]): { qubitWires: string; registers: RegisterMap; svgHeight: number } => {
-    const qubitWires: string[] = [];
+const formatInputs = (qubits: Qubit[]): { qubitWires: SVGElement; registers: RegisterMap; svgHeight: number } => {
+    const qubitWires: SVGElement[] = [];
     const registers: RegisterMap = {};
 
     let currY: number = startY;
@@ -44,7 +45,7 @@ const formatInputs = (qubits: Qubit[]): { qubitWires: string; registers: Registe
     });
 
     return {
-        qubitWires: qubitWires.join('\n'),
+        qubitWires: group(qubitWires),
         registers,
         svgHeight: currY,
     };
@@ -57,7 +58,11 @@ const formatInputs = (qubits: Qubit[]): { qubitWires: string; registers: Registe
  *
  * @returns SVG text component for the input register.
  */
-const _qubitInput = (y: number): string =>
-    `<text x="${leftPadding}" y="${y}" dominant-baseline="middle" text-anchor="start">|0⟩</text>`;
+const _qubitInput = (y: number): SVGElement => {
+    const el: SVGElement = text('|0⟩', leftPadding, y);
+    el.setAttribute('text-anchor', 'start');
+    el.setAttribute('dominant-baseline', 'middle');
+    return el;
+};
 
 export { formatInputs, _qubitInput };

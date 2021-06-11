@@ -84,7 +84,7 @@ export const STYLES: { [name: string]: StyleConfig } = {
 };
 
 /**
- * CSS style script to be injected into visualization HTML string.
+ * CSS style script to be injected into visualization SVG.
  *
  * @param customStyle Custom style configuration.
  *
@@ -93,7 +93,6 @@ export const STYLES: { [name: string]: StyleConfig } = {
 export const style = (customStyle: StyleConfig = {}): string => {
     const styleConfig = { ...defaultStyle, ...customStyle };
     return `
-<style>
     line,
     circle,
     rect {
@@ -219,6 +218,5 @@ export const style = (customStyle: StyleConfig = {}): string => {
         opacity: 1;
         transition: opacity 1s;
     }
-</style>
 `;
 };
