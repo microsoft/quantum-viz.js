@@ -84,7 +84,7 @@ export const STYLES: { [name: string]: StyleConfig } = {
 };
 
 /**
- * CSS style script to be injected into visualization HTML string.
+ * CSS style script to be injected into visualization SVG.
  *
  * @param customStyle Custom style configuration.
  *
@@ -92,8 +92,13 @@ export const STYLES: { [name: string]: StyleConfig } = {
  */
 export const style = (customStyle: StyleConfig = {}): string => {
     const styleConfig = { ...defaultStyle, ...customStyle };
-    return `
-<style>
+
+    return `${_defaultGates(styleConfig)}
+    ${_classicallyControlledGates(styleConfig)}
+    ${_expandCollapse}`;
+};
+
+const _defaultGates = (styleConfig: StyleConfig): string => `
     line,
     circle,
     rect {
@@ -130,15 +135,10 @@ export const style = (customStyle: StyleConfig = {}): string => {
     }
     .register-classical {
         stroke-width: ${(styleConfig.lineWidth || 0) / 2};
-    }
-    <!-- Classically controlled gates -->
-    .hidden {
-        display: none;
-    }
-    .classically-controlled-unknown {
-        opacity: 0.25;
-    }
-    <!-- Gate outline -->
+    }`;
+
+const _classicallyControlledGates = (styleConfig: StyleConfig): string => {
+    const gateOutline = `
     .classically-controlled-one .classical-container,
     .classically-controlled-one .classical-line {
         stroke: ${styleConfig.classicalOne};
@@ -152,8 +152,8 @@ export const style = (customStyle: StyleConfig = {}): string => {
         stroke-width: ${(styleConfig.lineWidth || 0) + 0.3};
         fill: ${styleConfig.classicalZero};
         fill-opacity: 0.1;
-    }
-    <!-- Control button -->
+    }`;
+    const controlBtn = `
     .classically-controlled-btn {
         cursor: pointer;
     }
@@ -165,8 +165,9 @@ export const style = (customStyle: StyleConfig = {}): string => {
     }
     .classically-controlled-zero .classically-controlled-btn {
         fill: ${styleConfig.classicalZero};
-    }
-    <!-- Control button text -->
+    }`;
+
+    const controlBtnText = `
     .classically-controlled-btn text {
         dominant-baseline: middle;
         text-anchor: middle;
@@ -181,8 +182,22 @@ export const style = (customStyle: StyleConfig = {}): string => {
     }
     .classically-controlled-zero .classically-controlled-btn text {
         fill: ${styleConfig.classicalZeroText};
-    }
+    }`;
 
+    return `
+    .hidden {
+        display: none;
+    }
+    .classically-controlled-unknown {
+        opacity: 0.25;
+    }
+    
+    ${gateOutline}
+    ${controlBtn}
+    ${controlBtnText}`;
+};
+
+const _expandCollapse = `
     .qviz .gate-collapse,
     .qviz .gate-expand {
         opacity: 0;
@@ -218,7 +233,4 @@ export const style = (customStyle: StyleConfig = {}): string => {
         visibility: visible;
         opacity: 1;
         transition: opacity 1s;
-    }
-</style>
-`;
-};
+    }`;

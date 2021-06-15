@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+// SVG Namespace
+export const svgNS = 'http://www.w3.org/2000/svg';
+
 // Display attributes
 /** Left padding of SVG. */
 export const leftPadding = 20;

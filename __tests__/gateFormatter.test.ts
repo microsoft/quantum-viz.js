@@ -8,8 +8,9 @@ import {
     _controlledGate,
     _groupedOperations,
     _classicalControlled,
-    _gateControls,
+    _zoomButton,
 } from '../src/formatters/gateFormatter';
+import { createSvgElement } from '../src/formatters/formatUtils';
 import { Metadata, GateType } from '../src/metadata';
 import {
     startX,
@@ -451,7 +452,7 @@ describe('Testing _controlledGate', () => {
             targetsY: [startY + registerHeight],
             width: minGateWidth,
         };
-        let svg: string = _controlledGate(metadata, 0);
+        let svg: SVGElement = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Flip target and control
@@ -470,7 +471,7 @@ describe('Testing _controlledGate', () => {
             width: minGateWidth,
         };
         // Control on top
-        let svg: string = _controlledGate(metadata, 0);
+        let svg: SVGElement = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Control on bottom
@@ -494,7 +495,7 @@ describe('Testing _controlledGate', () => {
             targetsY: [[startY + registerHeight]],
             width: 45,
         };
-        let svg: string = _controlledGate(metadata, 0);
+        let svg: SVGElement = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Flip target and control
@@ -513,7 +514,7 @@ describe('Testing _controlledGate', () => {
             width: 45,
         };
         // Target on bottom
-        let svg: string = _controlledGate(metadata, 0);
+        let svg: SVGElement = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Target on top
@@ -538,7 +539,7 @@ describe('Testing _controlledGate', () => {
             width: 45,
         };
         // Control on bottom
-        let svg: string = _controlledGate(metadata, 0);
+        let svg: SVGElement = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Control on top
@@ -563,7 +564,7 @@ describe('Testing _controlledGate', () => {
             width: 45,
         };
         // Controls on bottom
-        let svg: string = _controlledGate(metadata, 0);
+        let svg: SVGElement = _controlledGate(metadata, 0);
         expect(svg).toMatchSnapshot();
 
         // Controls on top
@@ -611,7 +612,7 @@ describe('Testing _swap', () => {
 
     test('Adjacent swap', () => {
         metadata.targetsY = [startY, startY + registerHeight];
-        let svg: string = _swap(metadata, 0);
+        let svg: SVGElement = _swap(metadata, 0);
         expect(svg).toMatchSnapshot();
         // Flip target and control
         metadata.targetsY = [startY + registerHeight, startY];
@@ -620,7 +621,7 @@ describe('Testing _swap', () => {
     });
     test('Non-adjacent swap', () => {
         metadata.targetsY = [startY, startY + registerHeight * 2];
-        let svg: string = _swap(metadata, 0);
+        let svg: SVGElement = _swap(metadata, 0);
         expect(svg).toMatchSnapshot();
         // Flip target and control
         metadata.targetsY = [startY + registerHeight * 2, startY];
@@ -634,14 +635,14 @@ describe('Testing _unitary', () => {
         expect(_unitary('H', startX, [[startY]], minGateWidth)).toMatchSnapshot();
     });
     test('Multiqubit unitary on consecutive registers', () => {
-        let svg: string = _unitary('ZZ', startX, [[startY, startY + registerHeight]], minGateWidth);
+        let svg: SVGElement = _unitary('ZZ', startX, [[startY, startY + registerHeight]], minGateWidth);
         expect(svg).toMatchSnapshot();
         svg = _unitary('ZZZ', startX, [[startY, startY + registerHeight, startY + registerHeight * 2]], minGateWidth);
         expect(svg).toMatchSnapshot();
     });
     test('Multiqubit unitary on non-consecutive registers', () => {
         // Dashed line between unitaries
-        let svg: string = _unitary('ZZ', startX, [[startY], [startY + registerHeight * 2]], minGateWidth);
+        let svg: SVGElement = _unitary('ZZ', startX, [[startY], [startY + registerHeight * 2]], minGateWidth);
         expect(svg).toMatchSnapshot();
         svg = _unitary(
             'ZZZ',
@@ -664,8 +665,9 @@ describe('Testing _unitary', () => {
         expect(svg).toMatchSnapshot();
     });
     test('No y coords', () => {
-        const svg: string = _unitary('ZZ', startX, [], minGateWidth);
-        expect(svg).toStrictEqual('');
+        expect(() => _unitary('ZZ', startX, [], minGateWidth)).toThrowError(
+            'Failed to render unitary gate (ZZ): has no y-values',
+        );
     });
 });
 
@@ -692,26 +694,36 @@ describe('Testing _createGate', () => {
         width: -1,
         dataAttributes: { a: '1', b: '2' },
     };
+    const line: SVGElement = createSvgElement('line');
     test('Empty gate', () => {
-        expect(_createGate(['<line />'], metadata, 0)).toEqual(
-            `<g class='gate' data-a='1' data-b='2'>\n<line />\n</g>`,
+        expect(_createGate([line], metadata, 0).outerHTML).toEqual(
+            '<g class="gate" data-a="1" data-b="2"><line></line></g>',
         );
     });
     test('Expanded gate', () => {
         if (metadata.dataAttributes) metadata.dataAttributes['expanded'] = 'true';
-        expect(_createGate(['<line />'], metadata, 0)).toMatchSnapshot();
+        expect(_createGate([line], metadata, 0)).toMatchSnapshot();
     });
 });
 
-describe('Testing _gateControls', () => {
+describe('Testing _zoomButton', () => {
     const metadata: Metadata = {
-        type: GateType.Invalid,
-        x: 0,
+        type: GateType.Group,
+        x: startX,
         controlsY: [],
-        targetsY: [],
+        targetsY: [startY],
         label: '',
-        width: -1,
-        dataAttributes: { a: '1', b: '2' },
+        width: minGateWidth + groupBoxPadding * 2,
+        children: [
+            {
+                type: GateType.Unitary,
+                x: startX + minGateWidth / 2 + groupBoxPadding,
+                controlsY: [],
+                targetsY: [[startY]],
+                label: 'X',
+                width: minGateWidth,
+            },
+        ],
     };
 
     test('Expanded gate', () => {
@@ -719,28 +731,28 @@ describe('Testing _gateControls', () => {
             metadata.dataAttributes['expanded'] = 'true';
             metadata.dataAttributes['zoom-in'] = 'true';
         }
-        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+        expect(_zoomButton(metadata, 0)).toMatchSnapshot();
     });
     test('Non-expanded with no children gate', () => {
         if (metadata.dataAttributes) {
             delete metadata.dataAttributes['expanded'];
             delete metadata.dataAttributes['zoom-in'];
         }
-        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+        expect(_zoomButton(metadata, 0)).toMatchSnapshot();
     });
     test('Non-expanded with children gate', () => {
         if (metadata.dataAttributes) {
             delete metadata.dataAttributes['expanded'];
             metadata.dataAttributes['zoom-in'] = 'true';
         }
-        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+        expect(_zoomButton(metadata, 0)).toMatchSnapshot();
     });
     test('Expanded with children gate', () => {
         if (metadata.dataAttributes) {
             metadata.dataAttributes['expanded'] = 'true';
             metadata.dataAttributes['zoom-in'] = 'true';
         }
-        expect(_gateControls(metadata, 0)).toMatchSnapshot();
+        expect(_zoomButton(metadata, 0)).toMatchSnapshot();
     });
 });
 

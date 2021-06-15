@@ -9,6 +9,7 @@ import { ConditionalRender, Circuit, Operation } from './circuit';
 import { Metadata, GateType } from './metadata';
 import { StyleConfig, style, STYLES } from './styles';
 import { createUUID } from './utils';
+import { svgNS } from './constants';
 
 /**
  * Contains metadata for visualization.
@@ -19,7 +20,7 @@ interface ComposedSqore {
     /** Height of visualization. */
     height: number;
     /** SVG elements the make up the visualization. */
-    elements: string[];
+    elements: SVGElement[];
 }
 
 /**
@@ -109,7 +110,9 @@ export class Sqore {
     private renderCircuit(container: HTMLElement, circuit: Circuit): void {
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(circuit);
-        container.innerHTML = this.generateSvg(composedSqore);
+        const svg: SVGElement = this.generateSvg(composedSqore);
+        container.innerHTML = '';
+        container.appendChild(svg);
         this.addGateClickHandlers(container, circuit);
     }
 
@@ -139,9 +142,9 @@ export class Sqore {
         const { qubits, operations } = circuit;
         const { qubitWires, registers, svgHeight } = formatInputs(qubits);
         const { metadataList, svgWidth } = processOperations(operations, registers);
-        const formattedGates: string = formatGates(metadataList);
+        const formattedGates: SVGElement = formatGates(metadataList);
         const measureGates: Metadata[] = flatten(metadataList).filter(({ type }) => type === GateType.Measure);
-        const formattedRegs: string = formatRegisters(registers, measureGates, svgWidth);
+        const formattedRegs: SVGElement = formatRegisters(registers, measureGates, svgWidth);
 
         const composedSqore: ComposedSqore = {
             width: svgWidth,
@@ -152,22 +155,31 @@ export class Sqore {
     }
 
     /**
-     * Generates visualization of `composedSqore` as an SVG string.
+     * Generates visualization of `composedSqore` as an SVG.
      *
      * @param composedSqore ComposedSqore to be visualized.
      *
      * @returns SVG representation of circuit visualization.
      */
-    // TODO: Return an SVG node instead and attach interactivity.
-    private generateSvg(composedSqore: ComposedSqore): string {
+    private generateSvg(composedSqore: ComposedSqore): SVGElement {
+        const { width, height, elements } = composedSqore;
         const uuid: string = createUUID();
 
-        return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="${uuid}" class="qviz" width="${
-            composedSqore.width
-        }" height="${composedSqore.height}">
-    ${style(this.style)}
-    ${composedSqore.elements.join('\n')}
-</svg>`;
+        const svg: SVGElement = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('id', uuid);
+        svg.setAttribute('class', 'qviz');
+        svg.setAttribute('width', width.toString());
+        svg.setAttribute('height', height.toString());
+
+        // Add styles
+        const css = document.createElement('style');
+        css.innerHTML = style(this.style);
+        svg.appendChild(css);
+
+        // Add body elements
+        elements.forEach((element: SVGElement) => svg.appendChild(element));
+
+        return svg;
     }
 
     /**
@@ -182,13 +194,16 @@ export class Sqore {
     private fillGateRegistry(operation: Operation, id: string): void {
         if (operation.dataAttributes == null) operation.dataAttributes = {};
         operation.dataAttributes['id'] = id;
+        // By default, operations cannot be zoomed-out
         operation.dataAttributes['zoom-out'] = 'false';
         this.gateRegistry[id] = operation;
         operation.children?.forEach((childOp, i) => {
             this.fillGateRegistry(childOp, `${id}-${i}`);
             if (childOp.dataAttributes == null) childOp.dataAttributes = {};
+            // Children operations can be zoomed out
             childOp.dataAttributes['zoom-out'] = 'true';
         });
+        // Composite operations can be zoomed in
         operation.dataAttributes['zoom-in'] = (operation.children != null).toString();
     }
 
@@ -226,8 +241,8 @@ export class Sqore {
      * @param container HTML element containing visualized circuit.
      *
      */
-    private addClassicalControlHandlers(container: Element | null): Element | null {
-        container?.querySelectorAll('.classically-controlled-btn').forEach((btn) => {
+    private addClassicalControlHandlers(container: HTMLElement): void {
+        container.querySelectorAll('.classically-controlled-btn').forEach((btn) => {
             // Zoom in on clicked gate
             btn.addEventListener('click', (evt: Event) => {
                 const textSvg = btn.querySelector('text');
@@ -266,8 +281,6 @@ export class Sqore {
                 evt.stopPropagation();
             });
         });
-
-        return container;
     }
 
     /**
@@ -278,7 +291,7 @@ export class Sqore {
      *
      */
     private addZoomHandlers(container: HTMLElement, circuit: Circuit): void {
-        container.querySelectorAll(`.gate .gate-control`).forEach((ctrl) => {
+        container.querySelectorAll('.gate .gate-control').forEach((ctrl) => {
             // Zoom in on clicked gate
             ctrl.addEventListener('click', (ev: Event) => {
                 const gateId: string | null | undefined = ctrl.parentElement?.getAttribute('data-id');
