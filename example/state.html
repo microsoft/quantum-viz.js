@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>quantum-viz.js Demo</title>
+    <style>
+        svg {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const w = 800;
+        const h = 400;
+
+        const n = 2;
+        const total = 1 << n;
+
+        const histogram = { 
+            0: {r: 1.0 / Math.sqrt(3.0), i: 0}, 
+            2: {r: -Math.sqrt(2.0) / Math.sqrt(3.0), i: 0}
+        };
+
+        console.log(`n: ${n}`);
+        console.log(`total: ${total}`);
+
+        const createSvgElement = function (type, attributes) {
+            const elem = document.createElementNS("http://www.w3.org/2000/svg", type);
+            for (const a in attributes) {
+                elem.setAttribute(a, attributes[a]);
+            }
+            return elem;
+        };
+
+        const renderHistogram = function(states, width, height) {
+            const h = Math.max(10, Math.ceil(height/total));
+
+            const drawOneState = function(state) {
+                if (state) {
+                    const g = createSvgElement("g");
+
+                    g.appendChild(createSvgElement("rect", {
+                        "x": "0",
+                        "y": (state.v / total) * height,
+                        "width": width * state.p,
+                        "height": h,
+                        "stroke": "yellow",
+                        "fill": "yellow",
+                        "stroke-width": "1",
+                        "tooltip": state.p,
+                    }));
+
+                    g.appendChild(createSvgElement("circle", {
+                        "cx": width * state.a / (2 * Math.PI),
+                        "cy": (state.v / total) * height + (h/ 2),
+                        "r": h / 4,
+                        "stroke": "red",
+                        "fill": "transparent",
+                        "opacity": 0.25,
+                        "stroke-width": "2",
+                    }));
+
+                    return g;
+                }
+            }
+            
+            const root = createSvgElement("g", {
+                "class": "histogram"
+            });            
+
+            root.appendChild(createSvgElement("rect", {
+                "x":  0,
+                "y":  0,
+                "width":  width,
+                "height":  height,
+                "fill":  "#eee",
+                "class": "background"
+            }));
+
+            // render in reverse order:
+            for (let i = states.length - 1; i >= 0; i--) {
+                root.appendChild(drawOneState(states[i]));
+            }
+
+            return root;
+        }
+
+        const renderAnswer = function(histogram) {
+
+        }
+
+        // Add to each element its probability and phase
+        // and convert the histogram in a sorted array 
+        // with the elements with highest probability at the top:
+        let states = [];
+        for (const i in histogram) {
+            const state = histogram[i];
+            state.v = i;
+            state.p = (state.r * state.r) + (state.i * state.i);
+            state.a = Math.atan2(state.i, state.r);
+            states.push(state);
+        }
+        states.sort((a, b) => {return b.p - a.p;});
+
+        const svg = createSvgElement("svg", {
+            "width": w,
+            "height": h
+        });
+
+        let hist = renderHistogram(states, w /2, h);
+        hist.setAttribute("transform", `translate(${w/2})`);
+        svg.appendChild(hist);
+
+        document.body.appendChild(svg);
+    </script>
+</body>
+</html>
