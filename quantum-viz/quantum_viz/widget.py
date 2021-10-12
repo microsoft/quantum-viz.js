@@ -1,15 +1,14 @@
-
-   
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-
 """Module for Jupyter Widget that displays the quantum-viz circuit visualizer
 """
 import uuid
 
+from IPython.core.display import display
+from IPython.core.display import HTML
 from notebook.nbextensions import check_nbextension
-from varname import varname, ImproperUseError
-from IPython.core.display import display, HTML
+from varname import ImproperUseError
+from varname import varname
 
 # Rel file path for Javascript source
 JS_SOURCE = "qviz.min"
@@ -21,7 +20,7 @@ if check_nbextension("quantum_viz") is False:
     # Fallback option in case user didn't install Jupyter extension
     BASE_URL = "https://unpkg.com/@microsoft/quantum-viz.js@1.0.2/dist"
 
-_HTML_STR_FORMAT = '''
+_HTML_STR_FORMAT = """
 <script type="text/javascript">
 require.config({{
     paths: {{
@@ -41,20 +40,15 @@ require(['qviz'], function(qviz) {{
 </script>
 <div id="JSApp_{uid}"></div>
 <div id="msg"></div>
-'''
+"""
 
 
 class QuantumVizWidget:
-    """Jupyter widget for displaying Quantum-viz quantum circuit.
-    """
+    """Jupyter widget for displaying Quantum-viz quantum circuit."""
+
     n = 0
 
-    def __init__(
-        self,
-        program: dict,
-        width: int=400,
-        height: int=350
-    ):
+    def __init__(self, program: dict, width: int = 400, height: int = 350):
         """Create QuantumVizWidget instance
         :param program: Quantum program
         :type program: dict
@@ -89,10 +83,7 @@ class QuantumVizWidget:
         """
         QuantumVizWidget.n += 1
         return _HTML_STR_FORMAT.format(
-            base_url=BASE_URL,
-            js_source=JS_SOURCE,
-            uid=uid,
-            data=self.value
+            base_url=BASE_URL, js_source=JS_SOURCE, uid=uid, data=self.value
         )
 
     def _ipython_display_(self):
