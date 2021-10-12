@@ -23,7 +23,7 @@ jobs:
 
       - name: Build TypeScript
         run: npm run build
-        
+
       - name: Build package for production with Webpack
         run: npm run build:prod
 
@@ -38,7 +38,7 @@ jobs:
 
       - name: Run tests with Jest
         run: npm test
-        
+
   lint:
     runs-on: ubuntu-latest
 
