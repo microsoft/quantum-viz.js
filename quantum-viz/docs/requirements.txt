@@ -1,0 +1,2 @@
+sphinx==4.2.0
+sphinx-autobuild==2021.3.14
