@@ -125,7 +125,7 @@ jobs:
         uses: actions/download-artifact@v2.0.10
         with:
           name: coverage-data
-          path: quantum-viz/.coverage
+          path: quantum-viz/
 
       - name: Combine coverage data and display human readable report
         run: |
