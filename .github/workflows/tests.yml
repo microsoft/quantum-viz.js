@@ -81,16 +81,19 @@ jobs:
         working-directory: quantum-viz
       
       - name: Combine coverage data and display human readable report
+        if: always() && matrix.session == 'tests'
         run: |
           nox --force-color --session=coverage
         working-directory: quantum-viz
       
       - name: Create coverage report
+        if: always() && matrix.session == 'tests'
         run: |
           nox --force-color --session=coverage -- xml
         working-directory: quantum-viz
       
       - name: Upload coverage report
+        if: always() && matrix.session == 'tests'
         uses: codecov/codecov-action@v1.5.2
 
       - name: Upload coverage data
