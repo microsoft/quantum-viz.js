@@ -1,2 +1,2 @@
-[darglint];
-strictness = long;
+[darglint]
+strictness = long

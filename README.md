@@ -50,7 +50,7 @@ To build and install this project from source, run the following commands from t
 ```bash
 # Install dependencies
 > npm install
-# Build 
+# Build
 > npm run build:prod
 ```
 

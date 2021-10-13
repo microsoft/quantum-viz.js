@@ -191,7 +191,7 @@ const _classicallyControlledGates = (styleConfig: StyleConfig): string => {
     .classically-controlled-unknown {
         opacity: 0.25;
     }
-    
+
     ${gateOutline}
     ${controlBtn}
     ${controlBtnText}`;

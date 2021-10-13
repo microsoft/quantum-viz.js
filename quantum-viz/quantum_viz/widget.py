@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-"""Module for Jupyter Widget that displays the quantum-viz circuit visualizer
+"""
+QuantumVizWidget.
+
+Module for Jupyter Widget that displays the quantum-viz.js
+circuit visualizer.
 """
 import uuid
 
@@ -49,7 +53,9 @@ class QuantumVizWidget:
     n = 0
 
     def __init__(self, program: dict, width: int = 400, height: int = 350):
-        """Create QuantumVizWidget instance
+        """
+        Create QuantumVizWidget instance.
+
         :param program: Quantum program
         :type program: dict
         :param width: Widget width in pixels, defaults to 400
@@ -68,14 +74,15 @@ class QuantumVizWidget:
         self._uids = []
 
     def _gen_uid(self):
-        """Generate unique identifier for javascript applet"""
+        """Generate unique identifier for javascript applet. Returns UID."""
         uid = str(uuid.uuid1()).replace("-", "")
         # Keep track of all UIDs
         self._uids.append(uid)
         return uid
 
     def html_str(self, uid: str) -> str:
-        """Returns an HTML string that contains the widget.
+        """Return an HTML string that contains the widget.
+
         :param uid: Unique identifier of widget
         :type uid: str
         :return: HTML string for displaying widget
@@ -87,7 +94,7 @@ class QuantumVizWidget:
         )
 
     def _ipython_display_(self):
-        """Display the widget"""
+        """Display the widget."""
         uid = self._gen_uid()
         qviz = HTML(self.html_str(uid=uid))
         display(qviz)
