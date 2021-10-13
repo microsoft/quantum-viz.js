@@ -6,8 +6,10 @@ QuantumVizWidget.
 Module for Jupyter Widget that displays the quantum-viz.js
 circuit visualizer.
 """
-from typing import Any, Dict, List
 import uuid
+from typing import Any
+from typing import Dict
+from typing import List
 
 from IPython.core.display import display
 from IPython.core.display import HTML
