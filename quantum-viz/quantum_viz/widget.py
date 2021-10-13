@@ -8,11 +8,9 @@ circuit visualizer.
 """
 import uuid
 
-from IPython.core.display import display
-from IPython.core.display import HTML
+from IPython.core.display import display, HTML
 from notebook.nbextensions import check_nbextension
-from varname import ImproperUseError
-from varname import varname
+from varname import varname, ImproperUseError
 
 # Rel file path for Javascript source
 JS_SOURCE = "qviz.min"

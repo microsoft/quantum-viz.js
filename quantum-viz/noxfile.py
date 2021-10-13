@@ -103,7 +103,7 @@ def precommit(session: Session) -> None:
 
 @session(name="flake8", python="3.9")
 def flake8(session: Session) -> None:
-    """Flake8"""
+    """Flake8 style guide enforcement"""
     args = session.posargs or ["quantum_viz"]
     session.install(
         "flake8",
@@ -128,7 +128,7 @@ def safety(session: Session) -> None:
 @session(python=python_versions)
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
-    args = session.posargs or ["src", "tests", "docs/conf.py"]
+    args = session.posargs or ["quantum_viz", "docs/conf.py"]
     session.install(".")
     session.install("mypy", "pytest")
     session.run("mypy", *args)
