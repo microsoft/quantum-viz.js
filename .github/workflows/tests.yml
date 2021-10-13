@@ -127,11 +127,11 @@ jobs:
 
       - name: Combine coverage data and display human readable report
         run: |
-          nox --force-color --session=coverage
+          nox -f quantum-viz/noxfile.py --force-color --session=coverage
 
       - name: Create coverage report
         run: |
-          nox quantum-viz/noxfile.py --force-color --session=coverage -- xml
+          nox -f quantum-viz/noxfile.py --force-color --session=coverage -- xml
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v1.5.2
