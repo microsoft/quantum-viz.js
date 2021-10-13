@@ -80,6 +80,13 @@ jobs:
           nox --force-color --python=${{ matrix.python-version }}
         working-directory: quantum-viz
 
+      - name: Upload coverage data
+        if: always() && matrix.session == 'tests'
+        uses: "actions/upload-artifact@v2.2.4"
+        with:
+          name: coverage-data
+          path: "quantum-viz/.coverage.*"
+
       - name: Combine coverage data and display human readable report
         if: always() && matrix.session == 'tests'
         run: |
@@ -95,12 +102,6 @@ jobs:
       - name: Upload coverage report
         if: always() && matrix.session == 'tests'
         uses: codecov/codecov-action@v1.5.2
-
-      - name: Upload coverage data
-        if: always() && matrix.session == 'tests'
-        uses: "actions/upload-artifact@v2.2.4"
-        with:
-          path: "quantum-viz/.coverage.*"
 
       - name: Upload quantum-viz documentation
         if: matrix.session == 'docs-build'
