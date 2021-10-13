@@ -42,11 +42,12 @@ jobs:
         uses: salsify/action-detect-and-tag-new-version@v2.0.1
         with:
           version-command: |
-            bash -o pipefail -c "poetry version | awk '{ print \$2 }'"
+            bash -o pipefail -c "cd quantum-viz && poetry version | awk '{ print \$2 }'"
 
       - name: Bump version for developmental release
         if: "! steps.check-version.outputs.tag"
         run: |
+          cd quantum-viz &&
           poetry version patch &&
           version=$(poetry version | awk '{ print $2 }') &&
           poetry version $version.dev.$(date +%s)
@@ -62,6 +63,7 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
+          packages_dir: quantum-viz/dist/
 
       - name: Publish package on TestPyPI
         if: "! steps.check-version.outputs.tag"
@@ -70,6 +72,7 @@ jobs:
           user: __token__
           password: ${{ secrets.TEST_PYPI_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
+          packages_dir: quantum-viz/dist/
 
       - name: Publish the release notes
         uses: release-drafter/release-drafter@v5.15.0
