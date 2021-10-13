@@ -105,6 +105,12 @@ jobs:
         if: always() && matrix.session == 'tests'
         uses: codecov/codecov-action@v1.5.2
 
+      - name: Check if there is a parent commit
+        if: matrix.session == 'build'
+        id: check-parent-commit
+        run: |
+          echo "::set-output name=sha::$(git rev-parse --verify --quiet HEAD^)"
+
       - name: Detect and tag new version
         id: check-version
         if: steps.check-parent-commit.outputs.sha
@@ -114,7 +120,7 @@ jobs:
             bash -o pipefail -c "cd quantum-viz && poetry version | awk '{ print \$2 }'"
 
       - name: Bump version for developmental release
-        if: "! steps.check-version.outputs.tag"
+        if: "! steps.check-version.outputs.tag && matrix.session == 'build'"
         run: |
           poetry version patch &&
           version=$(poetry version | awk '{ print $2 }') &&
