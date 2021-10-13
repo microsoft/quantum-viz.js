@@ -123,7 +123,7 @@ jobs:
       - name: Download coverage data
         uses: actions/download-artifact@v2.0.10
         with:
-          name: coverage-data
+          name: quantum-viz/coverage-data
 
       - name: Combine coverage data and display human readable report
         run: |
