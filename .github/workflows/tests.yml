@@ -77,7 +77,8 @@ jobs:
 
       - name: Run Nox
         run: |
-          nox -f quantum-viz/noxfile.py --force-color --python=${{ matrix.python-version }}
+          nox --force-color --python=${{ matrix.python-version }}
+        working-directory: quantum-viz
 
       - name: Upload coverage data
         if: always() && matrix.session == 'tests'
@@ -124,7 +125,7 @@ jobs:
         uses: actions/download-artifact@v2.0.10
         with:
           name: coverage-data
-          path: quantum-viz/coverage-data
+          path: quantum-viz/.coverage
 
       - name: Combine coverage data and display human readable report
         run: |
