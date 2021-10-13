@@ -1,4 +1,6 @@
-# Quantum-viz widget
+# quantum-viz
+
+`quantum-viz` is a Jupyter widget for rendering quantum circuit diagrams.
 
 ## Installation
 

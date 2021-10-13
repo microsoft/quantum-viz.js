@@ -54,6 +54,7 @@ jobs:
       - name: Build package
         run: |
           poetry build --ansi
+        working-directory: quantum-viz
 
       - name: Publish package on PyPI
         if: steps.check-version.outputs.tag
