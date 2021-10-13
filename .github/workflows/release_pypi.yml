@@ -47,10 +47,10 @@ jobs:
       - name: Bump version for developmental release
         if: "! steps.check-version.outputs.tag"
         run: |
-          cd quantum-viz &&
           poetry version patch &&
           version=$(poetry version | awk '{ print $2 }') &&
           poetry version $version.dev.$(date +%s)
+        working-directory: quantum-viz
 
       - name: Build package
         run: |
