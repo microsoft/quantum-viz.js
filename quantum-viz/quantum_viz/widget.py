@@ -6,6 +6,7 @@ QuantumVizWidget.
 Module for Jupyter Widget that displays the quantum-viz.js
 circuit visualizer.
 """
+from typing import Any, Dict, List
 import uuid
 
 from IPython.core.display import display
@@ -16,13 +17,7 @@ from varname import varname
 
 # Rel file path for Javascript source
 JS_SOURCE = "qviz.min"
-
-# Base URL for widget source javascript
-BASE_URL = "/nbextensions/jupyter_qviz"
-
-if check_nbextension("quantum_viz") is False:
-    # Fallback option in case user didn't install Jupyter extension
-    BASE_URL = "https://unpkg.com/@microsoft/quantum-viz.js@1.0.2/dist"
+BASE_URL = "https://unpkg.com/@microsoft/quantum-viz.js@1.0.2/dist"
 
 _HTML_STR_FORMAT = """
 <script type="text/javascript">
@@ -52,7 +47,7 @@ class QuantumVizWidget:
 
     n = 0
 
-    def __init__(self, program: dict, width: int = 400, height: int = 350):
+    def __init__(self, program: Dict[str, Any], width: int = 400, height: int = 350):
         """
         Create QuantumVizWidget instance.
 
@@ -71,9 +66,9 @@ class QuantumVizWidget:
         self.width = width
         self.height = height
         self.value = program
-        self._uids = []
+        self._uids: List[str] = []
 
-    def _gen_uid(self):
+    def _gen_uid(self) -> str:
         """Generate unique identifier for javascript applet. Returns UID."""
         uid = str(uuid.uuid1()).replace("-", "")
         # Keep track of all UIDs
@@ -93,7 +88,7 @@ class QuantumVizWidget:
             base_url=BASE_URL, js_source=JS_SOURCE, uid=uid, data=self.value
         )
 
-    def _ipython_display_(self):
+    def _ipython_display_(self) -> None:
         """Display the widget."""
         uid = self._gen_uid()
         qviz = HTML(self.html_str(uid=uid))
