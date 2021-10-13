@@ -104,6 +104,22 @@ jobs:
         if: always() && matrix.session == 'tests'
         uses: codecov/codecov-action@v1.5.2
 
+      - name: Detect and tag new version
+        id: check-version
+        if: steps.check-parent-commit.outputs.sha
+        uses: salsify/action-detect-and-tag-new-version@v2.0.1
+        with:
+          version-command: |
+            bash -o pipefail -c "cd quantum-viz && poetry version | awk '{ print \$2 }'"
+
+      - name: Bump version for developmental release
+        if: "! steps.check-version.outputs.tag"
+        run: |
+          cd quantum-viz &&
+          poetry version patch &&
+          version=$(poetry version | awk '{ print $2 }') &&
+          poetry version $version.dev.$(date +%s)
+
       - name: Build package
         if: matrix.session == 'build'
         run: |
