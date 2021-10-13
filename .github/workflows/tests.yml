@@ -22,6 +22,7 @@ jobs:
           - { python-version: 3.9, os: macos-latest, session: "tests" }
           - { python-version: 3.9, os: ubuntu-latest, session: "typeguard" }
           - { python-version: 3.9, os: ubuntu-latest, session: "xdoctest" }
+          - { python-version: 3.9, os: ubuntu-latest, session: "build"}
           - { python-version: 3.9, os: ubuntu-latest, session: "docs-build" }
 
     env:
@@ -102,6 +103,19 @@ jobs:
       - name: Upload coverage report
         if: always() && matrix.session == 'tests'
         uses: codecov/codecov-action@v1.5.2
+
+      - name: Build package
+        if: matrix.session == 'build'
+        run: |
+          poetry build --ansi
+        working-directory: quantum-viz
+
+      - name: Upload quantum-viz dist
+        if: matrix.session == 'build'
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: dist
+          path: quantum-viz/dist/*
 
       - name: Upload quantum-viz documentation
         if: matrix.session == 'docs-build'
