@@ -105,12 +105,6 @@ jobs:
         if: always() && matrix.session == 'tests'
         uses: codecov/codecov-action@v1.5.2
 
-      - name: Check if there is a parent commit
-        if: matrix.session == 'build'
-        id: check-parent-commit
-        run: |
-          echo "::set-output name=sha::$(git rev-parse --verify HEAD^)"
-
       - name: Bump version for developmental release
         if: "matrix.session == 'build'"
         run: |
