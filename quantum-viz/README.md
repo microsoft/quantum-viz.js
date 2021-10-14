@@ -16,6 +16,8 @@ pip install quantum-viz
 
 ```python
 from quantum_viz import QuantumViz
+
+# Create a quantum program to prepare a Bell state
 program = {
     "qubits": [{ "id": 0 }, { "id": 1, "numChildren": 1 }],
     "operations": [
@@ -37,6 +39,7 @@ program = {
         },
     ],
 }
+
 QuantumViz(program)
 ```
 
