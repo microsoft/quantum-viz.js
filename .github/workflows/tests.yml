@@ -119,15 +119,6 @@ jobs:
           poetry build --ansi
         working-directory: quantum-viz
 
-      - name: Publish package on TestPyPI
-        if: matrix.session == 'build'
-        uses: pypa/gh-action-pypi-publish@v1.4.2
-        with:
-          user: __token__
-          password: ${{ secrets.TEST_PYPI_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
-          packages_dir: quantum-viz/dist/
-
       - name: Upload quantum-viz dist
         if: matrix.session == 'build'
         uses: actions/upload-artifact@v2.2.4
