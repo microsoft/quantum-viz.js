@@ -1,8 +1,8 @@
 # quantum-viz
 
-`quantum-viz` is a Jupyter widget for rendering quantum circuit diagrams.
+`quantum-viz` is a Jupyter widget for rendering interactive quantum circuit diagrams. It is based on [quantum-viz.js](https://github.com/microsoft/quantum-viz.js) and supports visualizing any arbitrary quantum gate, classical control logic and collapsed grouped blocks of gates.
 
-![quantum-viz screenshot](https://user-images.githubusercontent.com/19257435/120700950-4ce70a80-c480-11eb-9f8b-0d5f2be18b37.png)
+![quantum-viz screenshot](https://user-images.githubusercontent.com/4041805/137234877-6a529652-a3b9-48c6-9d3c-c2b9d1e11855.gif)
 
 ## Installation
 
