@@ -1,5 +1,5 @@
 import pytest
-from quantum_viz.widget import QuantumVizWidget
+from quantum_viz.widget import QuantumViz
 
 
 @pytest.fixture
@@ -29,10 +29,10 @@ def program():
 
 
 def test_widget(program):
-    widget = QuantumVizWidget(program=program)
+    widget = QuantumViz(program=program)
     assert widget
     widget._ipython_display_()
 
 
 def test_widget_no_varname(program):
-    QuantumVizWidget(program=program)
+    QuantumViz(program=program)

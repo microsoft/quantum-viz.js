@@ -15,7 +15,7 @@ pip install quantum-viz
 ## Example
 
 ```python
-from quantum_viz import QuantumVizWidget
+from quantum_viz import QuantumViz
 program = {
     "qubits": [{ "id": 0 }, { "id": 1, "numChildren": 1 }],
     "operations": [
@@ -37,7 +37,7 @@ program = {
         },
     ],
 }
-QuantumVizWidget(program)
+QuantumViz(program)
 ```
 
 ![quantum-viz example](https://user-images.githubusercontent.com/4041805/137230540-b523dc76-29c7-48e2-baa3-34d4ee0a17a1.PNG)

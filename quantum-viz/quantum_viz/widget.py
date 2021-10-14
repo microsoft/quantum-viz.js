@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-QuantumVizWidget.
+QuantumViz.
 
 Module for Jupyter Widget that displays the quantum-viz.js
 circuit visualizer.
@@ -44,14 +44,14 @@ require(['qviz'], function(qviz) {{
 """
 
 
-class QuantumVizWidget:
+class QuantumViz:
     """Jupyter widget for displaying Quantum-viz quantum circuit."""
 
     n = 0
 
     def __init__(self, program: Dict[str, Any], width: int = 400, height: int = 350):
         """
-        Create QuantumVizWidget instance.
+        Create QuantumViz instance.
 
         :param program: Quantum program
         :type program: dict
@@ -85,7 +85,7 @@ class QuantumVizWidget:
         :return: HTML string for displaying widget
         :rtype: str
         """
-        QuantumVizWidget.n += 1
+        QuantumViz.n += 1
         return _HTML_STR_FORMAT.format(
             base_url=BASE_URL, js_source=JS_SOURCE, uid=uid, data=self.value
         )
