@@ -5,5 +5,5 @@ Quantum-viz.js widget
    :hidden:
    :maxdepth: 1
 
-   Quickstart <quickstart>
    License <license>
+   Credits <credits>
