@@ -13,7 +13,6 @@ from typing import List
 
 from IPython.core.display import display
 from IPython.core.display import HTML
-from notebook.nbextensions import check_nbextension
 from varname import ImproperUseError
 from varname import varname
 
