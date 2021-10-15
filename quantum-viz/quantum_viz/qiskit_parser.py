@@ -1,15 +1,24 @@
 import json
 
-import qiskit
+try:
+    import qiskit
+except ImportError:
+    raise ImportError(
+        '`qiskit` was not found, try to `pip install "quantum-viz[qiskit]"`'
+    )
 
-# Pass in a quantumCircuit created using IBM's Qiskit
-def qc_parser(quantumCircuit):
+
+def qiskit2json(circ: qiskit.QuantumCircuit, indent=2) -> str:
+    return json.dumps(qiskit2dict(circ), indent=indent)
+
+
+def qiskit2dict(circ: qiskit.QuantumCircuit) -> dict:
     qbitCount = (
-        quantumCircuit.num_qubits + quantumCircuit.num_ancillas
+        circ.num_qubits + circ.num_ancillas
     )  # Number of qubits and ancilla bits in Qiskit
-    clbitCount = quantumCircuit.num_clbits  # Number of Classical Bits
-    print(quantumCircuit.parameters)
-    outputCircuit = {"qubits": [], "operations": []}
+    clbitCount = circ.num_clbits  # Number of Classical Bits
+    print(circ.parameters)
+    circ_dict = {"qubits": [], "operations": []}
 
     qubits = []
     operations = []
@@ -24,7 +33,7 @@ def qc_parser(quantumCircuit):
     # Loop through each of the elements of the circuit.
     # Each element of quantumCircuit.data basically corresponds to the function call used to create that element and appears sequentially
     # https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.html#qiskit.circuit.QuantumCircuit.data
-    for qc in quantumCircuit.data:
+    for qc in circ.data:
 
         isMeasurement = "false"
         isConditional = "false"
@@ -72,7 +81,7 @@ def qc_parser(quantumCircuit):
                     print(qc[1][i])
                     print(qbitControlled)
                     if qc[1][i].register.name == "ancilla":
-                        qbitControlled = qbitControlled + quantumCircuit.num_qubits - 1
+                        qbitControlled = qbitControlled + circ.num_qubits - 1
 
                     controlOut["type"] = 0
                     controlOut["qId"] = qbitControlled
@@ -81,7 +90,7 @@ def qc_parser(quantumCircuit):
                     controlOut.clear()
 
             if qc[1][-1].register.name == "ancilla":
-                qbitTarget = qbitTarget + quantumCircuit.num_qubits - 1
+                qbitTarget = qbitTarget + circ.num_qubits - 1
 
             out["targets"].append({"qId": qbitTarget})
 
@@ -90,15 +99,6 @@ def qc_parser(quantumCircuit):
             # Clear temporary dict for next loop
             out.clear()
 
-    outputCircuit["qubits"] = qubits
-    outputCircuit["operations"] = operations
-    print("output:")
-    print(outputCircuit)
-    jsonOutput = json.dumps(outputCircuit, indent=2)
-    outputFile = open("quantum.json", "w")  # Outputs to "quantum.json" file
-    outputFile.write(jsonOutput)
-    outputFile.close()
-
-    # Post Process:
-    # I have been pasting the output from quantum.json to: https://csvjson.com/json_beautifier
-    # I select no quotes: on keys and quotes: single
+    circ_dict["qubits"] = qubits
+    circ_dict["operations"] = operations
+    return circ_dict
