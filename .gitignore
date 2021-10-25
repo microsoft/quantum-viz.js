@@ -153,3 +153,4 @@ __pycache__/
 */.cookiecutter.json
 *-checkpoint.ipynb
 */*.xml
+*.xml
