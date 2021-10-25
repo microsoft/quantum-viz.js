@@ -5,8 +5,8 @@ from quantum_viz.widget import QViz
 
 
 @pytest.fixture
-def program():
-    program = {
+def circuit():
+    circuit = {
         "qubits": [{"id": 0}, {"id": 1, "numChildren": 1}],
         "operations": [
             {
@@ -27,16 +27,16 @@ def program():
             },
         ],
     }
-    return program
+    return circuit
 
 
-def test_widget(program):
-    widget = QViz(program=program)
+def test_widget(circuit):
+    widget = QViz(circuit=circuit)
     assert widget
     with patch("quantum_viz.widget.display") as display:
         widget._ipython_display_()
         display.assert_called_once()
 
 
-def test_widget_no_varname(program):
-    QViz(program=program)
+def test_widget_no_varname(circuit):
+    QViz(circuit=circuit)

@@ -28,14 +28,14 @@ require.config({{
     }}
 }});
 require(['qviz'], function(qviz) {{
-    function renderQuantumProgram(program) {{
+    function renderQuantumCircuit(circuit) {{
         const targetDiv = document.getElementById('JSApp_{uid}');
         if (targetDiv != null) {{
-            qviz.draw(program, targetDiv, qviz.STYLES['Default']);
+            qviz.draw(circuit, targetDiv, qviz.STYLES['Default']);
         }}
     }}
     const data = {data};
-    renderQuantumProgram(data);
+    renderQuantumCircuit(data);
 }});
 </script>
 <div id="JSApp_{uid}"></div>
@@ -48,12 +48,12 @@ class QViz:
 
     n = 0
 
-    def __init__(self, program: Dict[str, Any], width: int = 400, height: int = 350):
+    def __init__(self, circuit: Dict[str, Any], width: int = 400, height: int = 350):
         """
         Create QViz instance.
 
-        :param program: Quantum program
-        :type program: dict
+        :param circuit: Quantum circuit
+        :type circuit: dict
         :param width: Widget width in pixels, defaults to 400
         :type width: int, optional
         :param height: Widget height in pixels, defaults to 350
@@ -66,7 +66,7 @@ class QViz:
 
         self.width = width
         self.height = height
-        self.value = program
+        self.value = circuit
         self._uids: List[str] = []
 
     def _gen_uid(self) -> str:
