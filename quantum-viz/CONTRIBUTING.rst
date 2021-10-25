@@ -13,9 +13,9 @@ Here is a list of important resources for contributors:
 - `Code of Conduct`_
 
 .. _MIT license: https://opensource.org/licenses/MIT
-.. _Source Code: https://github.com/guenp/quantum-viz
+.. _Source Code: https://github.com/microsoft/quantum-viz.js
 .. _Documentation: https://quantum-viz.readthedocs.io/
-.. _Issue Tracker: https://github.com/guenp/quantum-viz/issues
+.. _Issue Tracker: https://github.com/microsoft/quantum-viz.js/issues
 
 How to report a bug
 -------------------

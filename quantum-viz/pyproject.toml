@@ -5,8 +5,8 @@ description = "quantum-viz.js Python tools"
 authors = ["Microsoft Corporation <que-contacts@microsoft.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/guenp/quantum-viz"
-repository = "https://github.com/guenp/quantum-viz"
+homepage = "https://github.com/microsoft/quantum-viz.js"
+repository = "https://github.com/microsoft/quantum-viz.js"
 documentation = "https://quantum-viz.readthedocs.io"
 classifiers = [
     "Development Status :: 3 - Alpha",
