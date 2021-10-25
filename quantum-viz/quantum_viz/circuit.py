@@ -1,5 +1,7 @@
-from typing import Any, Dict, List
 from contextlib import contextmanager
+from typing import Any
+from typing import Dict
+from typing import List
 
 
 class Circuit:
@@ -9,13 +11,14 @@ class Circuit:
         circ.operation("H", [0]) # Add a gate named "H" that acts on a qubit [0]
         circ.to_json() # Generate JSON for usage with quantum-viz.js
     """
+
     def __init__(self, value: Dict[str, Any] = None) -> None:
         self._value = value
         self.qubits_to_bits = {}
         self.operations = []
 
     @staticmethod
-    def _ids_to_dicts(ids: List[int], registers: List[int]=None):
+    def _ids_to_dicts(ids: List[int], registers: List[int] = None):
         """Convert qubit IDs to a list of dicts"""
         if registers:
             return [{"type": 1, "qId": q, "cId": c} for q, c in zip(ids, registers)]
@@ -26,9 +29,9 @@ class Circuit:
             if num:
                 return {"id": qid, "numChildren": num}
             return {"id": qid}
+
         return [
-            to_qubit_dict(qid, num) for qid, num
-            in sorted(self.qubits_to_bits.items())
+            to_qubit_dict(qid, num) for qid, num in sorted(self.qubits_to_bits.items())
         ]
 
     @property
@@ -36,40 +39,22 @@ class Circuit:
         return self.create_qubits()
 
     def to_json(self):
-        return {
-            "qubits": self.qubits,
-            "operations": self.operations
-        }
+        return {"qubits": self.qubits, "operations": self.operations}
 
-    def qubit(
-        self,
-        qubit_id: int,
-        num_children: int = 0
-    ):
+    def qubit(self, qubit_id: int, num_children: int = 0):
         if qubit_id not in self.qubits_to_bits:
             self.qubits_to_bits[qubit_id] = num_children
         if num_children:
             self.qubits_to_bits[qubit_id] = num_children
 
-    def operation(
-        self,
-        name: str,
-        targets: List[int]
-    ) -> None:
+    def operation(self, name: str, targets: List[int]) -> None:
         self.controlled_op(name=name, controls=None, targets=targets)
 
-    def measure(
-        self,
-        qubits: List[int],
-        registers: List[int] = None
-    ):
+    def measure(self, qubits: List[int], registers: List[int] = None):
         if registers is None:
             registers = [0] * len(qubits)
         self.controlled_op(
-            name="Measure",
-            controls=qubits,
-            targets=qubits,
-            registers=registers
+            name="Measure", controls=qubits, targets=qubits, registers=registers
         )
 
     @contextmanager
@@ -78,7 +63,7 @@ class Circuit:
         name: str,
         controls: List[int],
         registers: List[int] = None,
-        conditional: int = 2
+        conditional: int = 2,
     ):
         for qid in controls:
             self.qubit(qid)
@@ -87,10 +72,10 @@ class Circuit:
         if registers is None:
             registers = [0] * len(controls)
         _controls = self._ids_to_dicts(controls, registers)
-        [op.update({
-            "conditionalRender": conditional,
-            "controls": _controls
-        }) for op in sub_circuit.operations]
+        [
+            op.update({"conditionalRender": conditional, "controls": _controls})
+            for op in sub_circuit.operations
+        ]
         op = {
             "gate": name,
             "isConditional": "True",
@@ -106,27 +91,20 @@ class Circuit:
         name: str,
         controls: List[int],
         targets: List[int],
-        registers: List[int] = None
+        registers: List[int] = None,
     ) -> None:
-        op = {
-            "gate": name,
-            "targets": self._ids_to_dicts(targets, registers)
-        }
+        op = {"gate": name, "targets": self._ids_to_dicts(targets, registers)}
         if "Measure" in name:
             op.update(
-                {
-                    "isMeasurement": "True",
-                    "controls": self._ids_to_dicts(targets)
-                }
+                {"isMeasurement": "True", "controls": self._ids_to_dicts(targets)}
             )
             for qid in targets:
                 self.qubit(qid, 1)
         elif controls:
             if controls is not None:
-                op.update({
-                    "isControlled": "True",
-                    "controls": self._ids_to_dicts(controls)
-                })
+                op.update(
+                    {"isControlled": "True", "controls": self._ids_to_dicts(controls)}
+                )
                 for qid in targets + controls:
                     self.qubit(qid)
             else:
@@ -142,7 +120,7 @@ class Circuit:
         op = {
             "gate": name,
             "children": operations,
-            "targets": self._ids_to_dicts(qubits.keys())
+            "targets": self._ids_to_dicts(qubits.keys()),
         }
         self.qubits_to_bits.update(qubits)
         self.operations.append(op)
@@ -155,4 +133,5 @@ class Circuit:
 
     def _ipython_display_(self) -> None:
         from quantum_viz.widget import QViz
+
         return QViz(self.to_json())._ipython_display_()
