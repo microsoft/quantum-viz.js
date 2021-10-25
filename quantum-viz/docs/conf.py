@@ -17,7 +17,7 @@ html_theme_options = {
     "github_user": "guenp",
     "github_repo": "quantum-viz.js",
     "github_type": "star",
-    "logo": "logo.png",
+    "logo": "logo.PNG",
     "logo_name": "true",
     "fixed_sidebar": "true",
     "sidebar_width": "250px",

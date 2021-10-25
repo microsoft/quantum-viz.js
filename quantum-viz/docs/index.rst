@@ -1,20 +1,25 @@
 Quantum-viz package
 ===================
 
-`quantum-viz` is a Python package for rendering interactive quantum circuit diagrams using [quantum-viz.js](https://github.com/microsoft/quantum-viz.js), a JavaScript package that supports visualizing any arbitrary quantum gate, classical control logic and collapsed grouped blocks of gates using JSON-formatted input data. `quantum-viz` contains a Jupyter widget and will also include support for translating quantum circuits written in common quantum programming libraries to JSON using the `quantum-viz.js` JSON schema.
+`quantum-viz` is a Python package for rendering interactive quantum circuit diagrams using `quantum-viz.js`_, a JavaScript package that supports visualizing any arbitrary quantum gate, classical control logic and collapsed grouped blocks of gates using JSON-formatted input data. `quantum-viz` contains a Jupyter widget and will also include support for translating quantum circuits written in common quantum programming libraries to JSON using the `quantum-viz.js` JSON schema.
+
+.. _quantum-viz.js: https://github.com/microsoft/quantum-viz.js
 
 Installation
 ------------
 
-You can install the *quantum-viz.js widget* via `pip` from PyPI:
+You can install quantum-viz with `pip` from PyPI:
 
 .. code:: console
-   pip install quantum-viz
+
+    $ pip install quantum-viz
+
 
 Example
 -------
 
 .. code:: python
+
    from quantum_viz import QViz
 
    # Create a quantum circuit that prepares a Bell state
@@ -42,9 +47,10 @@ Example
 
    QViz(circuit)
 
+
 .. image:: https://user-images.githubusercontent.com/4041805/137230540-b523dc76-29c7-48e2-baa3-34d4ee0a17a1.PNG
-  :width: 400
   :alt: quantum-viz example
+
 
 .. toctree::
    :hidden:
