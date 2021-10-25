@@ -43,25 +43,38 @@ Request features on the `Issue Tracker`_.
 How to set up your development environment
 ------------------------------------------
 
-You need Python 3.6+ and the following tools:
+You need Python 3.7+ and the following tools:
 
 - Poetry_
 - Nox_
 - nox-poetry_
 
-Install the package with development requirements:
+If you would like to create a virtual environment for development, use `venv`:
 
 .. code:: console
 
+   $ python3 -m venv quantum-viz-env
+
+Activate your virtual environment. On Windows, run:
+
+.. code:: console
+
+   $ quantum-viz-env\Scripts\activate.bat
+
+On Unix or MacOS, run:
+
+.. code:: console
+
+   $ source quantum-viz-env/bin/activate
+
+Then, install the `quantum-viz` package with development requirements:
+
+.. code:: console
+
+   $ pip install poetry nox nox-poetry
    $ poetry install
 
-You can now run an interactive Python session,
-or the command-line interface:
-
-.. code:: console
-
-   $ poetry run python
-   $ poetry run quantum-viz
+This installs all dependencies as defined in the poetry.lock file.
 
 .. _Poetry: https://python-poetry.org/
 .. _Nox: https://nox.thea.codes/
@@ -77,7 +90,7 @@ Run the full test suite:
 
    $ nox
 
-List the available Nox sessions:
+List the available Nox sessions (defined in `quantum-viz/noxfile.py`):
 
 .. code:: console
 
@@ -107,9 +120,9 @@ Your pull request needs to meet the following guidelines for acceptance:
 - Include unit tests. This project maintains 100% code coverage.
 - If your changes add functionality, update the documentation accordingly.
 
-Feel free to submit early, though—we can always iterate on this.
+Feel free to submit early, though, we can always iterate on this.
 
-To run linting and code formatting checks before commiting your change, you can install pre-commit as a Git hook by running the following command:
+To run linting and code formatting checks before committing your change, you can install pre-commit as a Git hook by running the following command:
 
 .. code:: console
 
@@ -118,6 +131,6 @@ To run linting and code formatting checks before commiting your change, you can 
 It is recommended to open an issue before starting work on anything.
 This will allow a chance to talk it over with the owners and validate your approach.
 
-.. _pull request: https://github.com/guenp/quantum-viz/pulls
+.. _pull request: https://github.com/microsoft/quantum-viz.js/pulls
 .. github-only
-.. _Code of Conduct: CODE_OF_CONDUCT.rst
+.. _Code of Conduct: https://opensource.microsoft.com/codeofconduct/

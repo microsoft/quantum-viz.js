@@ -1,5 +1,7 @@
 import pytest
-from quantum_viz.widget import QuantumViz
+
+from unittest.mock import patch
+from quantum_viz.widget import QViz
 
 
 @pytest.fixture
@@ -29,10 +31,12 @@ def program():
 
 
 def test_widget(program):
-    widget = QuantumViz(program=program)
+    widget = QViz(program=program)
     assert widget
-    widget._ipython_display_()
+    with patch("quantum_viz.widget.display") as display:
+        widget._ipython_display_()
+        display.assert_called_once()
 
 
 def test_widget_no_varname(program):
-    QuantumViz(program=program)
+    QViz(program=program)

@@ -15,10 +15,10 @@ pip install quantum-viz
 ## Example
 
 ```python
-from quantum_viz import QuantumViz
+from quantum_viz import QViz
 
-# Create a quantum program to prepare a Bell state
-program = {
+# Create a quantum circuit that prepares a Bell state
+circuit = {
     "qubits": [{ "id": 0 }, { "id": 1, "numChildren": 1 }],
     "operations": [
         {
@@ -40,7 +40,7 @@ program = {
     ],
 }
 
-QuantumViz(program)
+QViz(circuit)
 ```
 
 ![quantum-viz example](https://user-images.githubusercontent.com/4041805/137230540-b523dc76-29c7-48e2-baa3-34d4ee0a17a1.PNG)

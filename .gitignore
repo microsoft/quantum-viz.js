@@ -152,3 +152,4 @@ lib
 __pycache__/
 */.cookiecutter.json
 *-checkpoint.ipynb
+*.xml

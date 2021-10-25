@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="0" failures="0" hostname="Guens-Air" name="pytest" skipped="0" tests="2" time="1.581" timestamp="2021-10-24T14:32:05.141610"><testcase classname="tests.test_widget" name="test_widget" time="0.150" /><testcase classname="tests.test_widget" name="test_widget_no_varname" time="0.010" /></testsuite></testsuites>

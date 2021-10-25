@@ -1,10 +1,10 @@
 name: Release
 
+# Trigger the workflow on release activity
 on:
-  push:
-    branches:
-      - main
-      - master
+  release:
+    # Only use the types keyword to narrow down the activity types that will trigger your workflow.
+    types: [published]
 
 jobs:
   release:

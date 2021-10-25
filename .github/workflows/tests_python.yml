@@ -1,7 +1,6 @@
-name: Tests
+name: Tests for quantum-viz package
 
 on:
-  - push
   - pull_request
 
 jobs:

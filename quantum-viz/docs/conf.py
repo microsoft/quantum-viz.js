@@ -2,7 +2,7 @@
 from datetime import datetime
 
 
-project = "Quantum-viz.js widget"
+project = "quantum-viz package"
 author = "Microsoft Corporation"
 copyright = f"{datetime.now().year}, {author}"
 extensions = ["sphinx.ext.intersphinx"]

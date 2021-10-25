@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "quantum-viz"
 version = "0.0.0"
-description = "quantum-viz.js Widget"
+description = "quantum-viz.js Python tools"
 authors = ["Microsoft Corporation <que-contacts@microsoft.com>"]
 license = "MIT"
 readme = "README.md"
@@ -17,7 +17,7 @@ classifiers = [
 ]
 
 [tool.poetry.urls]
-Changelog = "https://github.com/guenp/quantum-viz/releases"
+Changelog = "https://github.com/microsoft/quantum-viz.js/releases"
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
@@ -48,9 +48,6 @@ pre-commit-hooks = "^4.0.1"
 sphinx-rtd-theme = "^0.5.2"
 sphinx-click = "^3.0.1"
 Pygments = "^2.9.0"
-
-[tool.poetry.scripts]
-quantum-viz = "quantum_viz.__main__:main"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

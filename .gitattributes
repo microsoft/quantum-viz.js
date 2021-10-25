@@ -1,9 +1,9 @@
 ###############################################################################
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
-* text=auto eol=lf
-*.sh text eol=lf
-*.md text eol=lf
+* text=auto
+*.sh text
+*.md text
 
 ###############################################################################
 # diff behavior for some non-binary formats
