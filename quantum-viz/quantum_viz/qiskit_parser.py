@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 try:
     import qiskit
@@ -6,6 +7,9 @@ except ImportError:
     raise ImportError(
         '`qiskit` was not found, try to `pip install "quantum-viz[qiskit]"`'
     )
+
+from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit
+from qiskit.circuit.instruction import Instruction
 
 
 def qiskit2json(circ: qiskit.QuantumCircuit, indent=2) -> str:
@@ -102,3 +106,46 @@ def qiskit2dict(circ: qiskit.QuantumCircuit) -> dict:
     circ_dict["qubits"] = qubits
     circ_dict["operations"] = operations
     return circ_dict
+
+
+class QiskitCircuitParser:
+    QUBITS_KEY = "qubits"
+    OPERATIONS_KEY = "operations"
+
+    def __init__(self, circuit: QuantumCircuit) -> None:
+        self.qc: QuantumCircuit = circuit
+        self.qviz_dict: dict = {
+            self.QUBITS_KEY: [],
+            self.OPERATIONS_KEY: [],
+        }
+        self.qubit2id: Dict[Qubit, int] = dict()
+        self.init_qubits()
+        self.update_qviz_dict()
+
+    def init_qubits(self) -> None:
+        qubits = self.qc.qubits + self.qc.ancillas
+        num_qubits = self.qc.num_qubits + self.qc.num_ancillas
+        qubits_range = range(num_qubits)
+        self.qubit2id = dict(zip(qubits, qubits_range))
+        self.qviz_dict[self.QUBITS_KEY] += [{"id": i} for i in qubits_range]
+
+    def update_qviz_dict(self) -> None:
+        qc = self.qc
+        self.qviz_dict[self.OPERATIONS_KEY] += [
+            {
+                "gate": qc.name,
+                "children": [
+                    {
+                        "gate": instruction.name,
+                        "targets": (
+                            [{"qId": self.qubit2id[qubit]} for qubit in qargs]
+                            # + [{"cId": self.qubit2id[clbit]} for clbit in cargs]
+                        ),
+                    }
+                    for instruction, qargs, cargs in qc.data
+                ],
+                "targets": [
+                    {"qId": self.qubit2id[qubit]} for qubit in qc.qubits + qc.ancillas
+                ],
+            }
+        ]
