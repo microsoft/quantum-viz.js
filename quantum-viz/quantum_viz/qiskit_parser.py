@@ -157,4 +157,12 @@ class QiskitCircuitParser:
         elif name in self.CAPITALIZE:
             op_dict["gate"] = name.capitalize()
 
+        if instruction.definition is not None:
+            sub_circuit: QuantumCircuit = instruction.definition
+            op_dict["children"] = []
+            for sub_instruction, sub_qargs, sub_cargs in sub_circuit.data:
+                op_dict["children"] += [
+                    self.parse_operation(sub_instruction, sub_qargs, sub_cargs)
+                ]
+
         return op_dict
