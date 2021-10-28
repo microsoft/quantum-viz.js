@@ -51,6 +51,6 @@ def display(circuit: QuantumCircuit) -> str:
 if __name__ == "__main__":
     from qiskit.circuit.random import random_circuit
 
-    qc = random_circuit(1, 5, measure=True)
+    qc = random_circuit(4, 5, measure=True)
     print(qc.draw())
     display(qc)

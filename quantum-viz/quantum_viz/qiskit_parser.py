@@ -161,6 +161,8 @@ class QiskitCircuitParser:
             sub_circuit: QuantumCircuit = instruction.definition
             op_dict["children"] = []
             for sub_instruction, sub_qargs, sub_cargs in sub_circuit.data:
+                sub_qargs = qargs[: len(sub_qargs)]
+                sub_cargs = cargs[: len(sub_cargs)]
                 op_dict["children"] += [
                     self.parse_operation(sub_instruction, sub_qargs, sub_cargs)
                 ]
