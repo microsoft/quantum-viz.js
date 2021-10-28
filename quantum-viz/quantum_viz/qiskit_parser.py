@@ -126,9 +126,7 @@ class QiskitCircuitParser:
                     self.parse_operation(instruction, qargs, cargs)
                     for instruction, qargs, cargs in qc.data
                 ],
-                "targets": [
-                    self._get_qubit_def(qubit) for qubit in qc.qubits + qc.ancillas
-                ],
+                "targets": self._get_qubit_list_def(qc.qubits + qc.ancillas),
             }
         ]
 
