@@ -134,7 +134,7 @@ class QiskitCircuitParser:
         self, instruction: Instruction, qargs: List[Qubit], cargs: List[Clbit]
     ) -> Optional[Dict]:
 
-        if isinstance(instruction, Barrier):
+        if isinstance(instruction, Barrier) or instruction.condition is not None:
             raise NotImplementedError
 
         op_dict = {"gate": instruction.name}
