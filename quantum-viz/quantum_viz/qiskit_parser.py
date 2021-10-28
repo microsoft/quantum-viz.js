@@ -1,4 +1,5 @@
 import json
+from enum import IntEnum
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -16,6 +17,18 @@ from qiskit.circuit.gate import Gate
 from qiskit.circuit.controlledgate import ControlledGate
 from qiskit.circuit.measure import Measure
 from qiskit.circuit.barrier import Barrier
+
+
+class RegisterType(IntEnum):
+    QUBIT = 0
+    CLASSICAL = 1
+
+
+class ConditionalRender(IntEnum):
+    ALWAYS = 0
+    ON_ZERO = 1
+    ON_ONE = 2
+    AS_GROUP = 3
 
 
 def qiskit2json(circ: qiskit.QuantumCircuit, indent=2) -> str:
