@@ -11,9 +11,8 @@ except ImportError:
         '`qiskit` was not found, try to `pip install "quantum-viz[qiskit]"`'
     )
 
-from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit, Clbit
+from qiskit.circuit import QuantumCircuit, Qubit, Clbit
 from qiskit.circuit.instruction import Instruction
-from qiskit.circuit.gate import Gate
 from qiskit.circuit.controlledgate import ControlledGate
 from qiskit.circuit.measure import Measure
 from qiskit.circuit.barrier import Barrier
