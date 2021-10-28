@@ -158,6 +158,7 @@ class QiskitCircuitParser:
             raise NotImplementedError
 
         op_dict = {"gate": instruction.name}
+
         if instruction.params:
             f"({', '.join(map('{:.2f}'.format, instruction.params))})"
             mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
@@ -173,8 +174,26 @@ class QiskitCircuitParser:
             op_dict["controls"] = {"qId": q_id}
             op_dict["targets"] = [{"qId": q_id, "cId": 0}]
             # TODO: update the clbit information in the "qubits"
+
         if isinstance(instruction, ControlledGate):
             ctrl_state = instruction.ctrl_state
-        op_dict["targets"] = [{"qId": self.qubit2id[qubit]} for qubit in qargs]
+            if not all([int(c) for c in str(ctrl_state)]):
+                raise NotImplementedError(
+                    f"The controlled gate {instruction} is controlled by a state that "
+                    f"is not all 1's: {ctrl_state}"
+                )
+            num_ctrl_qubits = instruction.num_ctrl_qubits
+            ctrl_qubits = qargs[:num_ctrl_qubits]
+            target_qubits = qargs[num_ctrl_qubits:]
+            op_dict["isControlled"] = True
+            op_dict["gate"] = instruction.base_gate.name
+            op_dict["controls"] = [
+                {"qId": self.qubit2id[qubit]} for qubit in ctrl_qubits
+            ]
+            op_dict["targets"] = [
+                {"qId": self.qubit2id[qubit]} for qubit in target_qubits
+            ]
+        else:
+            op_dict["targets"] = [{"qId": self.qubit2id[qubit]} for qubit in qargs]
         # + [{"cId": self.qubit2id[clbit]} for clbit in cargs]
         return op_dict
