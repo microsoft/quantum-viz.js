@@ -170,8 +170,8 @@ class QiskitCircuitParser:
             qubit = qargs[0]
             clbit = cargs[0]  # TODO: add it to "qubits"
             q_id = self.qubit2id[qubit]
-            op_dict["isMeasurement"] = 1
-            op_dict["controls"] = {"qId": q_id}
+            op_dict["isMeasurement"] = True
+            op_dict["controls"] = [{"qId": q_id}]
             op_dict["targets"] = [{"qId": q_id, "cId": 0}]
             # TODO: update the clbit information in the "qubits"
 
