@@ -16,6 +16,7 @@ from qiskit.circuit.instruction import Instruction
 from qiskit.circuit.controlledgate import ControlledGate
 from qiskit.circuit.measure import Measure
 from qiskit.circuit.barrier import Barrier
+from qiskit.circuit.reset import Reset
 from qiskit.circuit.library import IGate, SXGate, SXdgGate
 
 
@@ -131,7 +132,8 @@ class QiskitCircuitParser:
     def parse_operation(
         self, instruction: Instruction, qargs: List[Qubit], cargs: List[Clbit]
     ) -> Optional[Dict]:
-        if isinstance(instruction, Barrier):
+
+        if isinstance(instruction, (Barrier, Reset)):
             raise NotImplementedError
 
         op_dict = {"gate": instruction.name}
