@@ -50,7 +50,11 @@ def display(circuit: QuantumCircuit) -> str:
 
 if __name__ == "__main__":
     from qiskit.circuit.random import random_circuit
+    from qiskit.circuit.reset import Reset
 
     qc = random_circuit(4, 5, measure=True)
+    qc.rccx(0, 3, 2)
+    qc.sxdg(1)
+    qc.append(Reset(), [1])
     print(qc.draw())
     display(qc)

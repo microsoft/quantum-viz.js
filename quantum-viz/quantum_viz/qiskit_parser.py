@@ -19,6 +19,9 @@ from qiskit.circuit.barrier import Barrier
 from qiskit.circuit.reset import Reset
 from qiskit.circuit.library import IGate, SXGate, SXdgGate
 
+X_GATE_NAME = "X"
+MEASURE_NAME = Measure().name
+
 
 class RegisterType(IntEnum):
     QUBIT = 0
@@ -133,7 +136,7 @@ class QiskitCircuitParser:
         self, instruction: Instruction, qargs: List[Qubit], cargs: List[Clbit]
     ) -> Optional[Dict]:
 
-        if isinstance(instruction, (Barrier, Reset)):
+        if isinstance(instruction, Barrier):
             raise NotImplementedError
 
         op_dict = {"gate": instruction.name}
@@ -143,7 +146,10 @@ class QiskitCircuitParser:
             mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
             op_dict["displayArgs"] = f"({', '.join(mapper)})"
 
-        if isinstance(instruction, Measure):
+        if isinstance(instruction, Reset):
+            self.add_reset(op_dict, qubit=qargs[0])
+
+        elif isinstance(instruction, Measure):
             if len(qargs) != 1 or len(cargs) != 1:
                 raise ValueError
             qubit = qargs[0]
@@ -189,3 +195,31 @@ class QiskitCircuitParser:
                 ]
 
         return op_dict
+
+    def add_reset(self, op_dict: Dict, qubit: Qubit) -> None:
+        """Reset logic - measure and apply X gate if the measurement yields 1"""
+        qubit_def = self._get_qubit_def(qubit)
+        op_dict["targets"] = [qubit_def]
+        clbit_def = self._get_clbit_def(Clbit(), qubit)  # create a new classical bit
+
+        op_dict["children"] = [
+            {
+                "gate": MEASURE_NAME,
+                "isMeasurement": True,
+                "controls": [qubit_def],
+                "targets": [clbit_def],
+            },
+            {
+                "gate": "Conditional",
+                "isConditional": True,
+                "controls": [clbit_def],
+                "targets": [],
+                "children": [
+                    {
+                        "gate": X_GATE_NAME,
+                        "targets": [qubit_def],
+                        "conditionalRender": ConditionalRender.ON_ONE,
+                    }
+                ],
+            },
+        ]
