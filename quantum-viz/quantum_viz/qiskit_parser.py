@@ -48,12 +48,13 @@ class QiskitCircuitParser:
     def __init__(self, circuit: QuantumCircuit, precision=2) -> None:
         self.qc: QuantumCircuit = circuit
         self.precision = precision
-        self.qviz_dict: dict = {
+        self.qviz_dict: Dict[str, List] = {
             self.QUBITS_KEY: [],
             self.OPERATIONS_KEY: [],
         }
         self.qubit2id: Dict[Qubit, int] = dict()
         self.init_qubits()
+        self._clbit2id: Dict[Clbit, (Qubit, int)] = dict()
         self.update_qviz_dict()
 
     def init_qubits(self) -> None:
@@ -61,7 +62,39 @@ class QiskitCircuitParser:
         num_qubits = self.qc.num_qubits + self.qc.num_ancillas
         qubits_range = range(num_qubits)
         self.qubit2id = dict(zip(qubits, qubits_range))
-        self.qviz_dict[self.QUBITS_KEY] += [{"id": i} for i in qubits_range]
+        self.qviz_dict[self.QUBITS_KEY] = [{"id": i} for i in qubits_range]
+
+    @property
+    def qubits(self) -> List[Dict[str, int]]:
+        return self.qviz_dict[self.QUBITS_KEY]
+
+    @qubits.setter
+    def qubits(self, value: List[Dict[str, int]]) -> None:
+        self.qviz_dict[self.QUBITS_KEY] = value
+
+    def _get_qubit_def(self, qubit: Qubit) -> Dict[str, int]:
+        return {"qId": self.qubit2id[qubit]}
+
+    def _get_qubit_list_def(self, qubits: List[Qubit]) -> List[Dict[str, int]]:
+        return [self._get_qubit_def(qubit) for qubit in qubits]
+
+    def _get_clbit_def(
+        self, clbit: Clbit, qubit: Optional[Qubit] = None
+    ) -> Dict[str, int]:
+        if clbit in self._clbit2id:
+            qubit, c_id = self._clbit2id[clbit]
+            q_id = self.qubit2id[qubit]
+        else:
+            if qubit is None:
+                raise NotImplementedError(
+                    "A classical bit has to defined first as a measurement result of a "
+                    "qubit"
+                )
+            q_id = self.qubit2id[qubit]
+            c_id = self.qubits[q_id].get("numChildren", 0)
+            self.qubits[q_id]["numChildren"] = c_id + 1
+            self._clbit2id[clbit] = (qubit, c_id)
+        return {"type": RegisterType.CLASSICAL.value, "qId": q_id, "cId": c_id}
 
     def update_qviz_dict(self) -> None:
         qc = self.qc
@@ -73,7 +106,7 @@ class QiskitCircuitParser:
                     for instruction, qargs, cargs in qc.data
                 ],
                 "targets": [
-                    {"qId": self.qubit2id[qubit]} for qubit in qc.qubits + qc.ancillas
+                    self._get_qubit_def(qubit) for qubit in qc.qubits + qc.ancillas
                 ],
             }
         ]
@@ -95,14 +128,12 @@ class QiskitCircuitParser:
             if len(qargs) != 1 or len(cargs) != 1:
                 raise ValueError
             qubit = qargs[0]
-            clbit = cargs[0]  # TODO: add it to "qubits"
-            q_id = self.qubit2id[qubit]
+            clbit = cargs[0]
             op_dict["isMeasurement"] = True
-            op_dict["controls"] = [{"qId": q_id}]
-            op_dict["targets"] = [{"qId": q_id, "cId": 0}]
-            # TODO: update the clbit information in the "qubits"
+            op_dict["controls"] = [self._get_qubit_def(qubit)]
+            op_dict["targets"] = [self._get_clbit_def(clbit, qubit)]
 
-        if isinstance(instruction, ControlledGate):
+        elif isinstance(instruction, ControlledGate):
             ctrl_state = instruction.ctrl_state
             if not all([int(c) for c in str(ctrl_state)]):
                 raise NotImplementedError(
@@ -114,18 +145,16 @@ class QiskitCircuitParser:
             target_qubits = qargs[num_ctrl_qubits:]
             op_dict["isControlled"] = True
             op_dict["gate"] = instruction.base_gate.name
-            op_dict["controls"] = [
-                {"qId": self.qubit2id[qubit]} for qubit in ctrl_qubits
-            ]
-            op_dict["targets"] = [
-                {"qId": self.qubit2id[qubit]} for qubit in target_qubits
-            ]
+            op_dict["controls"] = self._get_qubit_list_def(ctrl_qubits)
+            op_dict["targets"] = self._get_qubit_list_def(target_qubits)
+
         else:
-            op_dict["targets"] = [{"qId": self.qubit2id[qubit]} for qubit in qargs]
-        # + [{"cId": self.qubit2id[clbit]} for clbit in cargs]
+            op_dict["targets"] = self._get_qubit_list_def(qargs)
+
         name = op_dict["gate"]
         if name in self.UPPERCASE:
             op_dict["gate"] = name.upper()
         elif name in self.CAPITALIZE:
             op_dict["gate"] = name.capitalize()
+
         return op_dict
