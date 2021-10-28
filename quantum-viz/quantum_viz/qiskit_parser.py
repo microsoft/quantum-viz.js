@@ -42,7 +42,7 @@ def qiskit2dict(circ: qiskit.QuantumCircuit) -> dict:
 class QiskitCircuitParser:
     QUBITS_KEY = "qubits"
     OPERATIONS_KEY = "operations"
-    UPPERCASE = ["x", "y", "z", "h", "s", "t", "swap"]
+    UPPERCASE = ["x", "y", "z", "h", "s", "t", "u", "swap"]
     CAPITALIZE = ["rx", "ry", "rz", "id", "rzz", "u1", "u2", "u3", "tdg", "sdg"]
 
     def __init__(self, circuit: QuantumCircuit, precision=2) -> None:
