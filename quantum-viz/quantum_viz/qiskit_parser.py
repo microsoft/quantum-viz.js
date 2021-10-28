@@ -1,5 +1,7 @@
 import json
 from typing import Dict
+from typing import List
+from typing import Optional
 
 try:
     import qiskit
@@ -8,8 +10,12 @@ except ImportError:
         '`qiskit` was not found, try to `pip install "quantum-viz[qiskit]"`'
     )
 
-from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit
+from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit, Clbit
 from qiskit.circuit.instruction import Instruction
+from qiskit.circuit.gate import Gate
+from qiskit.circuit.controlledgate import ControlledGate
+from qiskit.circuit.measure import Measure
+from qiskit.circuit.barrier import Barrier
 
 
 def qiskit2json(circ: qiskit.QuantumCircuit, indent=2) -> str:
@@ -135,13 +141,7 @@ class QiskitCircuitParser:
             {
                 "gate": qc.name,
                 "children": [
-                    {
-                        "gate": instruction.name,
-                        "targets": (
-                            [{"qId": self.qubit2id[qubit]} for qubit in qargs]
-                            # + [{"cId": self.qubit2id[clbit]} for clbit in cargs]
-                        ),
-                    }
+                    self.parse_operation(instruction, qargs, cargs)
                     for instruction, qargs, cargs in qc.data
                 ],
                 "targets": [
@@ -149,3 +149,27 @@ class QiskitCircuitParser:
                 ],
             }
         ]
+
+    def parse_operation(
+        self, instruction: Instruction, qargs: List[Qubit], cargs: List[Clbit]
+    ) -> Optional[Dict]:
+        if isinstance(instruction, Barrier):
+            raise NotImplementedError
+        if instruction.params:
+            raise NotImplementedError
+        op_dict = {"gate": instruction.name}
+        if isinstance(instruction, Measure):
+            if len(qargs) != 1 or len(cargs) != 1:
+                raise ValueError
+            qubit = qargs[0]
+            clbit = cargs[0]  # TODO: add it to "qubits"
+            q_id = self.qubit2id[qubit]
+            op_dict["isMeasurement"] = 1
+            op_dict["controls"] = {"qId": q_id}
+            op_dict["targets"] = [{"qId": q_id, "cId": 0}]
+            # TODO: update the clbit information in the "qubits"
+        if isinstance(instruction, ControlledGate):
+            ctrl_state = instruction.ctrl_state
+        op_dict["targets"] = [{"qId": self.qubit2id[qubit]} for qubit in qargs]
+        # + [{"cId": self.qubit2id[clbit]} for clbit in cargs]
+        return op_dict
