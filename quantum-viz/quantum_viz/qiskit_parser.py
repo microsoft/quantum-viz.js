@@ -118,8 +118,9 @@ class QiskitCircuitParser:
     QUBITS_KEY = "qubits"
     OPERATIONS_KEY = "operations"
 
-    def __init__(self, circuit: QuantumCircuit) -> None:
+    def __init__(self, circuit: QuantumCircuit, precision=2) -> None:
         self.qc: QuantumCircuit = circuit
+        self.precision = precision
         self.qviz_dict: dict = {
             self.QUBITS_KEY: [],
             self.OPERATIONS_KEY: [],
@@ -155,9 +156,13 @@ class QiskitCircuitParser:
     ) -> Optional[Dict]:
         if isinstance(instruction, Barrier):
             raise NotImplementedError
-        if instruction.params:
-            raise NotImplementedError
+
         op_dict = {"gate": instruction.name}
+        if instruction.params:
+            f"({', '.join(map('{:.2f}'.format, instruction.params))})"
+            mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
+            op_dict["displayArgs"] = f"({', '.join(mapper)})"
+
         if isinstance(instruction, Measure):
             if len(qargs) != 1 or len(cargs) != 1:
                 raise ValueError
