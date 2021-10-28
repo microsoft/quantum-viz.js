@@ -196,4 +196,6 @@ class QiskitCircuitParser:
         else:
             op_dict["targets"] = [{"qId": self.qubit2id[qubit]} for qubit in qargs]
         # + [{"cId": self.qubit2id[clbit]} for clbit in cargs]
+        if op_dict["gate"] in ("x", "swap"):
+            op_dict["gate"] = op_dict["gate"].upper()
         return op_dict
