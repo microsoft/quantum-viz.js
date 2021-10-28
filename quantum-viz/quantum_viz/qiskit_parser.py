@@ -117,6 +117,8 @@ def qiskit2dict(circ: qiskit.QuantumCircuit) -> dict:
 class QiskitCircuitParser:
     QUBITS_KEY = "qubits"
     OPERATIONS_KEY = "operations"
+    UPPERCASE = ["x", "y", "z", "h", "s", "t", "swap"]
+    CAPITALIZE = ["rx", "ry", "rz", "id", "rzz", "u1", "u2", "u3", "tdg", "sdg"]
 
     def __init__(self, circuit: QuantumCircuit, precision=2) -> None:
         self.qc: QuantumCircuit = circuit
@@ -196,6 +198,9 @@ class QiskitCircuitParser:
         else:
             op_dict["targets"] = [{"qId": self.qubit2id[qubit]} for qubit in qargs]
         # + [{"cId": self.qubit2id[clbit]} for clbit in cargs]
-        if op_dict["gate"] in ("x", "swap"):
-            op_dict["gate"] = op_dict["gate"].upper()
+        name = op_dict["gate"]
+        if name in self.UPPERCASE:
+            op_dict["gate"] = name.upper()
+        elif name in self.CAPITALIZE:
+            op_dict["gate"] = name.capitalize()
         return op_dict
