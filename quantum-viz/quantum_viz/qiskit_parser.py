@@ -16,6 +16,7 @@ from qiskit.circuit.instruction import Instruction
 from qiskit.circuit.controlledgate import ControlledGate
 from qiskit.circuit.measure import Measure
 from qiskit.circuit.barrier import Barrier
+from qiskit.circuit.library import TdgGate, SdgGate, SXdgGate
 
 
 class RegisterType(IntEnum):
@@ -43,6 +44,7 @@ class QiskitCircuitParser:
     OPERATIONS_KEY = "operations"
     UPPERCASE = ["x", "y", "z", "h", "s", "t", "u", "p", "r", "swap"]
     CAPITALIZE = ["rx", "ry", "rz", "id", "rzz", "u1", "u2", "u3", "tdg", "sdg"]
+    ADJOINTS = (TdgGate, SdgGate, SXdgGate)
 
     def __init__(self, circuit: QuantumCircuit, precision=2) -> None:
         self.qc: QuantumCircuit = circuit
@@ -155,6 +157,9 @@ class QiskitCircuitParser:
             op_dict["gate"] = name.upper()
         elif name in self.CAPITALIZE:
             op_dict["gate"] = name.capitalize()
+
+        if isinstance(instruction, self.ADJOINTS):
+            op_dict["isAdjoint"] = True
 
         if instruction.definition is not None:
             sub_circuit: QuantumCircuit = instruction.definition
