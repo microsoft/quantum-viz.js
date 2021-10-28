@@ -3,7 +3,6 @@ import tempfile
 import webbrowser
 from pathlib import Path
 from quantum_viz.qiskit_parser import qiskit2json
-from quantum_viz.qiskit_parser import QiskitCircuitParser
 
 from qiskit import QuantumCircuit
 
@@ -41,8 +40,7 @@ SUFFIX = "_qviz.html"
 
 
 def display(circuit: QuantumCircuit) -> str:
-    # json_str = qiskit2json(circuit)
-    json_str = json.dumps(QiskitCircuitParser(circuit).qviz_dict, indent=2)
+    json_str = qiskit2json(circuit)
     with tempfile.NamedTemporaryFile(suffix=SUFFIX, delete=False) as f:
         Path(f.name).write_text(HTML_TEMPLATE.format(json_str))
         print(f.name)
@@ -53,6 +51,6 @@ def display(circuit: QuantumCircuit) -> str:
 if __name__ == "__main__":
     from qiskit.circuit.random import random_circuit
 
-    qc = random_circuit(3, 5)
+    qc = random_circuit(6, 10)
     print(qc.draw())
     display(qc)
