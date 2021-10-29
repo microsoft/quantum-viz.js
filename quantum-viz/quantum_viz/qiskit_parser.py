@@ -35,12 +35,12 @@ class ConditionalRender(IntEnum):
     AS_GROUP = 3
 
 
-def qiskit2json(circ: qiskit.QuantumCircuit, indent=2) -> str:
-    return json.dumps(qiskit2dict(circ), indent=indent)
+def qiskit2json(circ: qiskit.QuantumCircuit, indent=2, **kwargs) -> str:
+    return json.dumps(qiskit2dict(circ, **kwargs), indent=indent)
 
 
-def qiskit2dict(circ: qiskit.QuantumCircuit) -> dict:
-    return QiskitCircuitParser(circ).qviz_dict
+def qiskit2dict(circ: qiskit.QuantumCircuit, **kwargs) -> dict:
+    return QiskitCircuitParser(circ, **kwargs).qviz_dict
 
 
 class QiskitCircuitParser:

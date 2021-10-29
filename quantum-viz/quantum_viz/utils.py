@@ -39,8 +39,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 SUFFIX = "_qviz.html"
 
 
-def display(circuit: QuantumCircuit) -> str:
-    json_str = qiskit2json(circuit)
+def display(circuit: QuantumCircuit, **kwargs) -> str:
+    json_str = qiskit2json(circuit, **kwargs)
     with tempfile.NamedTemporaryFile(suffix=SUFFIX, delete=False) as f:
         Path(f.name).write_text(HTML_TEMPLATE.format(json_str))
         print(f.name)
