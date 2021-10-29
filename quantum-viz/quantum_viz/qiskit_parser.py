@@ -66,9 +66,16 @@ class QiskitCircuitParser:
     SPECIAL_MAPPER = {IGate: "I", SXGate: "√X", SXdgGate: "√Xdg"}
     SPECIAL_GATES = tuple(SPECIAL_MAPPER.keys())
 
-    def __init__(self, circuit: QuantumCircuit, precision=2) -> None:
+    def __init__(self, circuit: QuantumCircuit, precision=2, max_depth=None) -> None:
+        """
+        :param circuit: qiskit quantum circuit to be parsed
+        :param precision: the decimal precision of the gate parameters to display
+        :param max_depth: the maximal recursion depth to parse, if None - parse until
+        the basis gates are reached
+        """
         self.qc: QuantumCircuit = circuit
         self.precision = precision
+        self.max_depth = max_depth
         self.qviz_dict: Dict[str, List] = {
             self.QUBITS_KEY: [],
             self.OPERATIONS_KEY: [],
@@ -123,15 +130,22 @@ class QiskitCircuitParser:
             {
                 "gate": qc.name,
                 "children": [
-                    self.parse_operation(instruction, qargs, cargs)
+                    self.parse_operation(instruction, qargs, cargs, depth=1)
                     for instruction, qargs, cargs in qc.data
                 ],
                 "targets": self._get_qubit_list_def(qc.qubits + qc.ancillas),
             }
         ]
 
+    def depth_excess(self, depth: int) -> bool:
+        return self.max_depth is not None and depth > self.max_depth
+
     def parse_operation(
-        self, instruction: Instruction, qargs: List[Qubit], cargs: List[Clbit]
+        self,
+        instruction: Instruction,
+        qargs: List[Qubit],
+        cargs: List[Clbit],
+        depth: Optional[int] = None,
     ) -> Optional[Dict]:
 
         if isinstance(instruction, Barrier) or instruction.condition is not None:
@@ -145,7 +159,7 @@ class QiskitCircuitParser:
             op_dict["displayArgs"] = f"({', '.join(mapper)})"
 
         if isinstance(instruction, Reset):
-            self.add_reset(op_dict, qubit=qargs[0])
+            self.add_reset(op_dict, qubit=qargs[0], depth=depth)
 
         elif isinstance(instruction, Measure):
             if len(qargs) != 1 or len(cargs) != 1:
@@ -182,42 +196,45 @@ class QiskitCircuitParser:
         elif isinstance(instruction, self.SPECIAL_GATES):
             op_dict["gate"] = self.SPECIAL_MAPPER[type(instruction)]
 
-        if instruction.definition is not None:
+        if instruction.definition is not None and not self.depth_excess(depth + 1):
             sub_circuit: QuantumCircuit = instruction.definition
             op_dict["children"] = []
             for sub_instruction, sub_qargs, sub_cargs in sub_circuit.data:
                 sub_qargs = [qargs[qubit.index] for qubit in sub_qargs]
                 sub_cargs = [cargs[clbit.index] for clbit in sub_cargs]
                 op_dict["children"] += [
-                    self.parse_operation(sub_instruction, sub_qargs, sub_cargs)
+                    self.parse_operation(
+                        sub_instruction, sub_qargs, sub_cargs, depth=depth + 1
+                    )
                 ]
 
         return op_dict
 
-    def add_reset(self, op_dict: Dict, qubit: Qubit) -> None:
+    def add_reset(self, op_dict: Dict, qubit: Qubit, depth: int) -> None:
         """Reset logic - measure and apply X gate if the measurement yields 1"""
         qubit_def = self._get_qubit_def(qubit)
         op_dict["targets"] = [qubit_def]
         clbit_def = self._get_clbit_def(Clbit(), qubit)  # create a new classical bit
 
-        op_dict["children"] = [
-            {
-                "gate": MEASURE_NAME,
-                "isMeasurement": True,
-                "controls": [qubit_def],
-                "targets": [clbit_def],
-            },
-            {
-                "gate": "Conditional",
-                "isConditional": True,
-                "controls": [clbit_def],
-                "targets": [],
-                "children": [
-                    {
-                        "gate": X_GATE_NAME,
-                        "targets": [qubit_def],
-                        "conditionalRender": ConditionalRender.ON_ONE,
-                    }
-                ],
-            },
-        ]
+        if not self.depth_excess(depth + 1):
+            op_dict["children"] = [
+                {
+                    "gate": MEASURE_NAME,
+                    "isMeasurement": True,
+                    "controls": [qubit_def],
+                    "targets": [clbit_def],
+                },
+                {
+                    "gate": "Conditional",
+                    "isConditional": True,
+                    "controls": [clbit_def],
+                    "targets": [],
+                    "children": [
+                        {
+                            "gate": X_GATE_NAME,
+                            "targets": [qubit_def],
+                            "conditionalRender": ConditionalRender.ON_ONE,
+                        }
+                    ],
+                },
+            ]

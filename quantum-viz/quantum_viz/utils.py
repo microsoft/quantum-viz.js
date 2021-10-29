@@ -57,4 +57,4 @@ if __name__ == "__main__":
     qc.sxdg(1)
     qc.append(Reset(), [1])
     print(qc.draw())
-    display(qc)
+    display(qc, max_depth=3)
