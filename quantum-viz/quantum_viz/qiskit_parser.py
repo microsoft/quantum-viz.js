@@ -200,6 +200,7 @@ class QiskitCircuitParser:
             sub_circuit: QuantumCircuit = instruction.definition
             op_dict["children"] = []
             for sub_instruction, sub_qargs, sub_cargs in sub_circuit.data:
+                # TODO: index property is deprecated for qubits and clbits
                 sub_qargs = [qargs[qubit.index] for qubit in sub_qargs]
                 sub_cargs = [cargs[clbit.index] for clbit in sub_cargs]
                 op_dict["children"] += [
