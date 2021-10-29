@@ -11,7 +11,7 @@ except ImportError:
         '`qiskit` was not found, try to `pip install "quantum-viz[qiskit]"`'
     )
 
-from qiskit.circuit import QuantumCircuit, Qubit, Clbit
+from qiskit.circuit import QuantumCircuit, Qubit, Clbit, ClassicalRegister
 from qiskit.circuit.instruction import Instruction
 from qiskit.circuit.controlledgate import ControlledGate
 from qiskit.circuit.measure import Measure
@@ -146,9 +146,9 @@ class QiskitCircuitParser:
         qargs: List[Qubit],
         cargs: List[Clbit],
         depth: Optional[int] = None,
-    ) -> Optional[Dict]:
+    ) -> Dict:
 
-        if isinstance(instruction, Barrier) or instruction.condition is not None:
+        if isinstance(instruction, Barrier):
             raise NotImplementedError
 
         op_dict = {"gate": instruction.name}
@@ -209,6 +209,9 @@ class QiskitCircuitParser:
                     )
                 ]
 
+        if instruction.condition:
+            op_dict = self.update_condition(op_dict, instruction)
+
         return op_dict
 
     def add_reset(self, op_dict: Dict, qubit: Qubit, depth: int) -> None:
@@ -239,3 +242,37 @@ class QiskitCircuitParser:
                     ],
                 },
             ]
+
+    def update_condition(self, op_dict: Dict, instruction: Instruction) -> Dict:
+        classical, val = instruction.condition
+        if isinstance(classical, ClassicalRegister) and classical.size > 1:
+            raise NotImplementedError(
+                "quantum-viz.js does not support conditioning an instruction on "
+                "more than a single classical bit"
+            )
+        if not (isinstance(val, bool) or val in (0, 1)):
+            raise ValueError(
+                "A single classical bit can hold only 0, 1 or a boolean, but the "
+                f"condition value is {val}"
+            )
+        if isinstance(classical, ClassicalRegister):
+            clbit = Clbit(classical, index=0)
+        else:
+            clbit: Clbit = classical
+
+        if val:
+            render_condition = ConditionalRender.ON_ONE
+        else:
+            render_condition = ConditionalRender.ON_ZERO
+
+        op_dict["conditionalRender"] = render_condition
+
+        conditioned_op_dict = {
+            "gate": "Conditional",
+            "isConditional": True,
+            "controls": [self._get_clbit_def(clbit)],
+            "targets": [],
+            "children": [op_dict],
+        }
+
+        return conditioned_op_dict

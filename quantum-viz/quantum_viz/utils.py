@@ -49,12 +49,24 @@ def display(circuit: QuantumCircuit, **kwargs) -> str:
 
 
 if __name__ == "__main__":
+    from qiskit import ClassicalRegister, QuantumRegister
     from qiskit.circuit.random import random_circuit
     from qiskit.circuit.reset import Reset
 
-    qc = random_circuit(4, 5, measure=True)
-    qc.rccx(0, 3, 2)
-    qc.sxdg(1)
-    qc.append(Reset(), [1])
+    # qc = random_circuit(4, 5, measure=True)
+    # qc.rccx(0, 3, 2)
+    # qc.sxdg(1)
+    # qc.append(Reset(), [1])
+
+    c = [ClassicalRegister(1) for _ in range(2)]
+    q = QuantumRegister(1)
+    qc = QuantumCircuit(q)
+    for register in c:
+        qc.add_register(register)
+    qc.h(q)
+    qc.measure(q, c[0])
+    qc.x(q[0]).c_if(c[0], 1)
+    qc.measure(q, c[1])
+
     print(qc.draw())
-    display(qc, max_depth=3)
+    display(qc)
