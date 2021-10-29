@@ -143,7 +143,7 @@ class QiskitCircuitParser:
         instruction: Instruction,
         qargs: List[Qubit],
         cargs: List[Clbit],
-        depth: Optional[int] = None,
+        depth: int,
     ) -> Dict:
 
         if isinstance(instruction, Barrier):
