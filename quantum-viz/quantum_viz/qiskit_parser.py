@@ -156,29 +156,14 @@ class QiskitCircuitParser:
 
         if isinstance(instruction, Reset):
             self.add_reset(op_dict, qubit=qargs[0], depth=depth)
-
         elif isinstance(instruction, Measure):
             self.add_measure(op_dict, qargs, cargs)
-
         elif isinstance(instruction, ControlledGate):
-            ctrl_state = instruction.ctrl_state
-            if not all([int(c) for c in str(ctrl_state)]):
-                raise NotImplementedError(
-                    f"The controlled gate {instruction} is controlled by a state that "
-                    f"is not all 1's: {ctrl_state}"
-                )
-            num_ctrl_qubits = instruction.num_ctrl_qubits
-            ctrl_qubits = qargs[:num_ctrl_qubits]
-            target_qubits = qargs[num_ctrl_qubits:]
-            op_dict["isControlled"] = True
-            op_dict["gate"] = instruction.base_gate.name
-            op_dict["controls"] = self._get_qubit_list_def(ctrl_qubits)
-            op_dict["targets"] = self._get_qubit_list_def(target_qubits)
-
+            self.add_controlled_gate(op_dict, instruction, qargs)
         else:
             op_dict["targets"] = self._get_qubit_list_def(qargs)
 
-        self.rename_gate(op_dict, instruction)
+        self.rename_gate(op_dict, instruction)  # a controlled gate may change the name
 
         if instruction.definition is not None and not self.depth_excess(depth + 1):
             sub_circuit: QuantumCircuit = instruction.definition
@@ -202,6 +187,23 @@ class QiskitCircuitParser:
             op_dict = self.update_condition(op_dict, instruction)
 
         return op_dict
+
+    def add_controlled_gate(
+        self, op_dict: Dict, cgate: ControlledGate, qargs: List[Qubit]
+    ) -> None:
+        ctrl_state = cgate.ctrl_state
+        if not all([int(c) for c in str(ctrl_state)]):
+            raise NotImplementedError(
+                f"The controlled gate {cgate} is controlled by a state that "
+                f"is not all 1's: {ctrl_state}"
+            )
+        num_ctrl_qubits = cgate.num_ctrl_qubits
+        ctrl_qubits = qargs[:num_ctrl_qubits]
+        target_qubits = qargs[num_ctrl_qubits:]
+        op_dict["isControlled"] = True
+        op_dict["gate"] = cgate.base_gate.name
+        op_dict["controls"] = self._get_qubit_list_def(ctrl_qubits)
+        op_dict["targets"] = self._get_qubit_list_def(target_qubits)
 
     def add_measure(
         self, op_dict: Dict, qargs: List[Qubit], cargs: List[Clbit]
