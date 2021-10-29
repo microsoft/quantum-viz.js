@@ -39,7 +39,7 @@ def qiskit2json(circ: qiskit.QuantumCircuit, indent=2, **kwargs) -> str:
     return json.dumps(qiskit2dict(circ, **kwargs), indent=indent)
 
 
-def qiskit2dict(circ: qiskit.QuantumCircuit, **kwargs) -> dict:
+def qiskit2dict(circ: qiskit.QuantumCircuit, **kwargs) -> Dict[str, List]:
     return QiskitCircuitParser(circ, **kwargs).qviz_dict
 
 
