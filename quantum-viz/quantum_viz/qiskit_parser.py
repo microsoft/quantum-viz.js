@@ -196,11 +196,16 @@ class QiskitCircuitParser:
 
         if instruction.definition is not None and not self.depth_excess(depth + 1):
             sub_circuit: QuantumCircuit = instruction.definition
+            # Since the `index` property of bits is deprecated - create mappers between
+            # the bits and their indices in the circuit.
+            # Use the builtin `QuantumCircuit.find_bit` method when it is released
+            qubits_mapper = dict(zip(sub_circuit.qubits, range(sub_circuit.num_qubits)))
+            clbits_mapper = dict(zip(sub_circuit.clbits, range(sub_circuit.num_clbits)))
             op_dict["children"] = []
             for sub_instruction, sub_qargs, sub_cargs in sub_circuit.data:
-                # TODO: index property is deprecated for qubits and clbits
-                sub_qargs = [qargs[qubit.index] for qubit in sub_qargs]
-                sub_cargs = [cargs[clbit.index] for clbit in sub_cargs]
+                # Update the args to those of the containing circuit
+                sub_qargs = [qargs[qubits_mapper[qubit]] for qubit in sub_qargs]
+                sub_cargs = [cargs[clbits_mapper[clbit]] for clbit in sub_cargs]
                 op_dict["children"] += [
                     self.parse_operation(
                         sub_instruction, sub_qargs, sub_cargs, depth=depth + 1
