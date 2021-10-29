@@ -66,16 +66,24 @@ class QiskitCircuitParser:
     SPECIAL_MAPPER = {IGate: "I", SXGate: "√X", SXdgGate: "√Xdg"}
     SPECIAL_GATES = tuple(SPECIAL_MAPPER.keys())
 
-    def __init__(self, circuit: QuantumCircuit, precision=2, max_depth=None) -> None:
+    def __init__(
+        self,
+        circuit: QuantumCircuit,
+        precision: int = 2,
+        max_depth: Optional[int] = None,
+        show_barrier: bool = False,
+    ) -> None:
         """
         :param circuit: qiskit quantum circuit to be parsed
         :param precision: the decimal precision of the gate parameters to display
         :param max_depth: the maximal recursion depth to parse, if None - parse until
         the basis gates are reached
+        :show_barrier
         """
-        self.qc: QuantumCircuit = circuit
+        self.qc = circuit
         self.precision = precision
         self.max_depth = max_depth
+        self.show_barrier = show_barrier
         self.qviz_dict: Dict[str, List] = {
             self.QUBITS_KEY: [],
             self.OPERATIONS_KEY: [],
