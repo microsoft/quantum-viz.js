@@ -165,6 +165,21 @@ class QiskitCircuitParser:
 
         self.rename_gate(op_dict, instruction)  # a controlled gate may change the name
 
+        self.add_children(op_dict, instruction, qargs, cargs, depth)
+
+        if instruction.condition:
+            op_dict = self.update_condition(op_dict, instruction)
+
+        return op_dict
+
+    def add_children(
+        self,
+        op_dict: Dict,
+        instruction: Instruction,
+        qargs: List[Qubit],
+        cargs: List[Clbit],
+        depth: int,
+    ) -> None:
         if instruction.definition is not None and not self.depth_excess(depth + 1):
             sub_circuit: QuantumCircuit = instruction.definition
             # Since the `index` property of bits is deprecated - create mappers between
@@ -182,11 +197,6 @@ class QiskitCircuitParser:
                         sub_instruction, sub_qargs, sub_cargs, depth=depth + 1
                     )
                 ]
-
-        if instruction.condition:
-            op_dict = self.update_condition(op_dict, instruction)
-
-        return op_dict
 
     def add_controlled_gate(
         self, op_dict: Dict, cgate: ControlledGate, qargs: List[Qubit]
