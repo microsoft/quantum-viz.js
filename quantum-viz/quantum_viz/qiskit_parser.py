@@ -152,9 +152,7 @@ class QiskitCircuitParser:
         op_dict = {"gate": instruction.name}
 
         if instruction.params:
-            f"({', '.join(map('{:.2f}'.format, instruction.params))})"
-            mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
-            op_dict["displayArgs"] = f"({', '.join(mapper)})"
+            self.add_params(op_dict, instruction)
 
         if isinstance(instruction, Reset):
             self.add_reset(op_dict, qubit=qargs[0], depth=depth)
@@ -210,6 +208,10 @@ class QiskitCircuitParser:
             op_dict = self.update_condition(op_dict, instruction)
 
         return op_dict
+
+    def add_params(self, op_dict: Dict, instruction: Instruction) -> None:
+        mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
+        op_dict["displayArgs"] = f"({', '.join(mapper)})"
 
     @classmethod
     def rename_gate(cls, op_dict: Dict, instruction: Instruction) -> None:
