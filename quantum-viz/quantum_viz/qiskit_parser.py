@@ -158,13 +158,7 @@ class QiskitCircuitParser:
             self.add_reset(op_dict, qubit=qargs[0], depth=depth)
 
         elif isinstance(instruction, Measure):
-            if len(qargs) != 1 or len(cargs) != 1:
-                raise ValueError
-            qubit = qargs[0]
-            clbit = cargs[0]
-            op_dict["isMeasurement"] = True
-            op_dict["controls"] = [self._get_qubit_def(qubit)]
-            op_dict["targets"] = [self._get_clbit_def(clbit, qubit)]
+            self.add_measure(op_dict, qargs, cargs)
 
         elif isinstance(instruction, ControlledGate):
             ctrl_state = instruction.ctrl_state
@@ -208,6 +202,17 @@ class QiskitCircuitParser:
             op_dict = self.update_condition(op_dict, instruction)
 
         return op_dict
+
+    def add_measure(
+        self, op_dict: Dict, qargs: List[Qubit], cargs: List[Clbit]
+    ) -> None:
+        if len(qargs) != 1 or len(cargs) != 1:
+            raise ValueError
+        qubit = qargs[0]
+        clbit = cargs[0]
+        op_dict["isMeasurement"] = True
+        op_dict["controls"] = [self._get_qubit_def(qubit)]
+        op_dict["targets"] = [self._get_clbit_def(clbit, qubit)]
 
     def add_params(self, op_dict: Dict, instruction: Instruction) -> None:
         mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
