@@ -228,6 +228,7 @@ class QiskitCircuitParser:
         clbit_def = self._get_clbit_def(Clbit(), qubit)  # create a new classical bit
 
         if not self.depth_excess(depth + 1):
+            # Add a simple logic for the reset instruction
             op_dict["children"] = [
                 {
                     "gate": MEASURE_NAME,
