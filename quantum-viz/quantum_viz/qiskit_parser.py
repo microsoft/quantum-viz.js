@@ -134,8 +134,6 @@ class QiskitCircuitParser:
 
     def update_qviz_dict(self) -> None:
         qc = self.qc
-        # TODO: maybe use `qc.to_instruction()` + `self.parse_operation`?
-        #  Answer: no - it changes the qc metadata (names of registers for example)
         self.qviz_dict[self.OPERATIONS_KEY] += [
             {
                 "gate": qc.name,
