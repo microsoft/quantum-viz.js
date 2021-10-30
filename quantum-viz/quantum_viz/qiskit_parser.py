@@ -91,11 +91,11 @@ class QiskitCircuitParser:
             self.OPERATIONS_KEY: [],
         }
         self.qubit2id: Dict[Qubit, int] = dict()
-        self.init_qubits()
+        self._init_qubits()
         self._clbit2id: Dict[Clbit, (Qubit, int)] = dict()
-        self.update_qviz_dict()
+        self._update_qviz_dict()
 
-    def init_qubits(self) -> None:
+    def _init_qubits(self) -> None:
         qubits_range = range(self.qc.num_qubits)
         self.qubit2id = dict(zip(self.qc.qubits, qubits_range))
         self.qviz_dict[self.QUBITS_KEY] = [{"id": i} for i in qubits_range]
@@ -132,30 +132,30 @@ class QiskitCircuitParser:
             self._clbit2id[clbit] = (qubit, c_id)
         return {"type": RegisterType.CLASSICAL.value, "qId": q_id, "cId": c_id}
 
-    def update_qviz_dict(self) -> None:
+    def _update_qviz_dict(self) -> None:
         qc = self.qc
         self.qviz_dict[self.OPERATIONS_KEY] += [
             {
                 "gate": qc.name,
                 "children": [
-                    self.parse_operation(instruction, qargs, cargs, depth=1)
-                    for instruction, qargs, cargs in self.filter_circuit_data(qc.data)
+                    self._parse_operation(instruction, qargs, cargs, depth=1)
+                    for instruction, qargs, cargs in self._filter_circuit_data(qc.data)
                     # TODO: what if this list is empty?
                 ],
                 "targets": self._get_qubit_list_def(qc.qubits),
             }
         ]
 
-    def filter_circuit_data(self, data: QuantumCircuitData) -> Iterator:
+    def _filter_circuit_data(self, data: QuantumCircuitData) -> Iterator:
         if self.skip_barriers:
             # check whether the instruction is not a barrier
             return filter(lambda elem: not isinstance(elem[0], Barrier), data)
         return data
 
-    def depth_excess(self, depth: int) -> bool:
+    def _depth_excess(self, depth: int) -> bool:
         return self.max_depth is not None and depth > self.max_depth
 
-    def parse_operation(
+    def _parse_operation(
         self,
         instruction: Instruction,
         qargs: List[Qubit],
@@ -166,27 +166,27 @@ class QiskitCircuitParser:
         op_dict = {"gate": instruction.name}
 
         if instruction.params:
-            self.add_params(op_dict, instruction)
+            self._add_params(op_dict, instruction)
 
         if isinstance(instruction, Reset):
-            self.add_reset(op_dict, qubit=qargs[0], depth=depth)
+            self._add_reset(op_dict, qubit=qargs[0], depth=depth)
         elif isinstance(instruction, Measure):
-            self.add_measure(op_dict, qargs, cargs)
+            self._add_measure(op_dict, qargs, cargs)
         elif isinstance(instruction, ControlledGate):
-            self.add_controlled_gate(op_dict, instruction, qargs)
+            self._add_controlled_gate(op_dict, instruction, qargs)
         else:
             op_dict["targets"] = self._get_qubit_list_def(qargs)
 
-        self.rename_gate(op_dict, instruction)  # a controlled gate may change the name
+        self._rename_gate(op_dict, instruction)  # a controlled gate may change the name
 
-        self.add_children(op_dict, instruction, qargs, cargs, depth)
+        self._add_children(op_dict, instruction, qargs, cargs, depth)
 
         if instruction.condition:
-            op_dict = self.update_condition(op_dict, instruction)
+            op_dict = self._update_condition(op_dict, instruction)
 
         return op_dict
 
-    def add_children(
+    def _add_children(
         self,
         op_dict: Dict,
         instruction: Instruction,
@@ -194,7 +194,7 @@ class QiskitCircuitParser:
         cargs: List[Clbit],
         depth: int,
     ) -> None:
-        if instruction.definition is not None and not self.depth_excess(depth + 1):
+        if instruction.definition is not None and not self._depth_excess(depth + 1):
             sub_circuit: QuantumCircuit = instruction.definition
             # Since the `index` property of bits is deprecated - create mappers between
             # the bits and their indices in the circuit.
@@ -202,20 +202,20 @@ class QiskitCircuitParser:
             qubits_mapper = dict(zip(sub_circuit.qubits, range(sub_circuit.num_qubits)))
             clbits_mapper = dict(zip(sub_circuit.clbits, range(sub_circuit.num_clbits)))
             op_dict["children"] = []
-            for sub_instruction, sub_qargs, sub_cargs in self.filter_circuit_data(
+            for sub_instruction, sub_qargs, sub_cargs in self._filter_circuit_data(
                 sub_circuit.data
             ):
                 # Update the args to those of the containing circuit
                 sub_qargs = [qargs[qubits_mapper[qubit]] for qubit in sub_qargs]
                 sub_cargs = [cargs[clbits_mapper[clbit]] for clbit in sub_cargs]
                 op_dict["children"] += [
-                    self.parse_operation(
+                    self._parse_operation(
                         sub_instruction, sub_qargs, sub_cargs, depth=depth + 1
                     )
                 ]
                 # TODO: what if this list is empty?
 
-    def add_controlled_gate(
+    def _add_controlled_gate(
         self, op_dict: Dict, cgate: ControlledGate, qargs: List[Qubit]
     ) -> None:
         ctrl_state = cgate.ctrl_state
@@ -232,7 +232,7 @@ class QiskitCircuitParser:
         op_dict["controls"] = self._get_qubit_list_def(ctrl_qubits)
         op_dict["targets"] = self._get_qubit_list_def(target_qubits)
 
-    def add_measure(
+    def _add_measure(
         self, op_dict: Dict, qargs: List[Qubit], cargs: List[Clbit]
     ) -> None:
         if len(qargs) != 1 or len(cargs) != 1:
@@ -243,13 +243,13 @@ class QiskitCircuitParser:
         op_dict["controls"] = [self._get_qubit_def(qubit)]
         op_dict["targets"] = [self._get_clbit_def(clbit, qubit)]
 
-    def add_params(self, op_dict: Dict, instruction: Instruction) -> None:
+    def _add_params(self, op_dict: Dict, instruction: Instruction) -> None:
         # TODO: what about non-numeric parameters?
         mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
         op_dict["displayArgs"] = f"({', '.join(mapper)})"
 
     @classmethod
-    def rename_gate(cls, op_dict: Dict, instruction: Instruction) -> None:
+    def _rename_gate(cls, op_dict: Dict, instruction: Instruction) -> None:
         name = op_dict["gate"]
         if name in cls.UPPERCASE:
             op_dict["gate"] = name.upper()
@@ -258,13 +258,13 @@ class QiskitCircuitParser:
         elif isinstance(instruction, cls.SPECIAL_GATES):
             op_dict["gate"] = cls.SPECIAL_MAPPER[type(instruction)]
 
-    def add_reset(self, op_dict: Dict, qubit: Qubit, depth: int) -> None:
+    def _add_reset(self, op_dict: Dict, qubit: Qubit, depth: int) -> None:
         """Reset logic - measure and apply X gate if the measurement yields 1"""
         qubit_def = self._get_qubit_def(qubit)
         op_dict["targets"] = [qubit_def]
         clbit_def = self._get_clbit_def(Clbit(), qubit)  # create a new classical bit
 
-        if not self.depth_excess(depth + 1):
+        if not self._depth_excess(depth + 1):
             # Add a simple logic for the reset instruction
             op_dict["children"] = [
                 {
@@ -288,7 +288,7 @@ class QiskitCircuitParser:
                 },
             ]
 
-    def update_condition(self, op_dict: Dict, instruction: Instruction) -> Dict:
+    def _update_condition(self, op_dict: Dict, instruction: Instruction) -> Dict:
         classical, val = instruction.condition
         if isinstance(classical, ClassicalRegister) and classical.size > 1:
             raise NotImplementedError(
