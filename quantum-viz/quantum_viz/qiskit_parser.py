@@ -152,11 +152,11 @@ class QiskitCircuitParser:
                 "children": [
                     self._parse_operation(instruction, qargs, cargs, depth=1)
                     for instruction, qargs, cargs in self._filter_circuit_data(qc.data)
-                    # TODO: what if this list is empty?
                 ],
                 "targets": self._get_qubit_list_def(qc.qubits),
             }
         ]
+        self._check_children(self.operations[0])
 
     def _filter_circuit_data(self, data: QuantumCircuitData) -> Iterator:
         if self.skip_barriers:
@@ -225,7 +225,14 @@ class QiskitCircuitParser:
                         sub_instruction, sub_qargs, sub_cargs, depth=depth + 1
                     )
                 ]
-                # TODO: what if this list is empty?
+
+            self._check_children(op_dict)
+
+    @staticmethod
+    def _check_children(op_dict: Dict) -> None:
+        """Remove the children key if empty"""
+        if not op_dict["children"]:
+            del op_dict["children"]
 
     def _add_controlled_gate(
         self, op_dict: Dict, cgate: ControlledGate, qargs: List[Qubit]
