@@ -71,19 +71,19 @@ class QiskitCircuitParser:
         circuit: QuantumCircuit,
         precision: int = 2,
         max_depth: Optional[int] = None,
-        show_barrier: bool = False,
+        skip_barriers: bool = True,
     ) -> None:
         """
         :param circuit: qiskit quantum circuit to be parsed
         :param precision: the decimal precision of the gate parameters to display
         :param max_depth: the maximal recursion depth to parse, if None - parse until
         the basis gates are reached
-        :show_barrier
+        :param skip_barriers: whether to omit barriers in the output or not
         """
         self.qc = circuit
         self.precision = precision
         self.max_depth = max_depth
-        self.show_barrier = show_barrier
+        self.skip_barriers = skip_barriers
         self.qviz_dict: Dict[str, List] = {
             self.QUBITS_KEY: [],
             self.OPERATIONS_KEY: [],
