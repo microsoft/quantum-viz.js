@@ -1,6 +1,7 @@
 import json
 from enum import IntEnum
 from typing import Dict
+from typing import Iterator
 from typing import List
 from typing import Optional
 
@@ -18,6 +19,7 @@ from qiskit.circuit.measure import Measure
 from qiskit.circuit.barrier import Barrier
 from qiskit.circuit.reset import Reset
 from qiskit.circuit.library import IGate, SXGate, SXdgGate
+from qiskit.circuit.quantumcircuitdata import QuantumCircuitData
 
 X_GATE_NAME = "X"
 MEASURE_NAME = Measure().name
@@ -137,11 +139,17 @@ class QiskitCircuitParser:
                 "gate": qc.name,
                 "children": [
                     self.parse_operation(instruction, qargs, cargs, depth=1)
-                    for instruction, qargs, cargs in qc.data
+                    for instruction, qargs, cargs in self.filter_circuit_data(qc.data)
                 ],
                 "targets": self._get_qubit_list_def(qc.qubits),
             }
         ]
+
+    def filter_circuit_data(self, data: QuantumCircuitData) -> Iterator:
+        if self.skip_barriers:
+            # check whether the instruction is not a barrier
+            return filter(lambda elem: not isinstance(elem[0], Barrier), data)
+        return data
 
     def depth_excess(self, depth: int) -> bool:
         return self.max_depth is not None and depth > self.max_depth
@@ -153,9 +161,6 @@ class QiskitCircuitParser:
         cargs: List[Clbit],
         depth: int,
     ) -> Dict:
-
-        if isinstance(instruction, Barrier):
-            raise NotImplementedError
 
         op_dict = {"gate": instruction.name}
 
@@ -196,7 +201,9 @@ class QiskitCircuitParser:
             qubits_mapper = dict(zip(sub_circuit.qubits, range(sub_circuit.num_qubits)))
             clbits_mapper = dict(zip(sub_circuit.clbits, range(sub_circuit.num_clbits)))
             op_dict["children"] = []
-            for sub_instruction, sub_qargs, sub_cargs in sub_circuit.data:
+            for sub_instruction, sub_qargs, sub_cargs in self.filter_circuit_data(
+                sub_circuit.data
+            ):
                 # Update the args to those of the containing circuit
                 sub_qargs = [qargs[qubits_mapper[qubit]] for qubit in sub_qargs]
                 sub_cargs = [cargs[clbits_mapper[clbit]] for clbit in sub_cargs]
