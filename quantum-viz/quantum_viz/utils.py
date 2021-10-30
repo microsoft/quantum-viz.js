@@ -1,8 +1,10 @@
-import json
 import tempfile
+import warnings
 import webbrowser
 from pathlib import Path
 from quantum_viz.qiskit_parser import qiskit2json
+from typing import Optional
+from typing import Union
 
 from qiskit import QuantumCircuit
 
@@ -18,9 +20,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     There was some error with the script
   </div>
   <div id="circuit_div"></div>
-  <script src="https://unpkg.com/@microsoft/quantum-viz.js"></script>
+  <script src="https://unpkg.com/@microsoft/quantum-viz.js{0}"></script>
   <script type="text/javascript">
-  var circuitString = `{}`;
+  var circuitString = `{1}
+  `;
   </script>
   <script type="text/javascript">
     var circuit = JSON.parse(circuitString);
@@ -28,7 +31,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       document.getElementById('msg').style.display = 'none';
       var displayDiv = document.getElementById('circuit_div');
       if (displayDiv != null) {{
-        qviz.draw(circuit, displayDiv, qviz.STYLES['Default']);
+        qviz.draw(circuit, displayDiv, qviz.STYLES['{2}']);
       }}
     }}
   </script>
@@ -37,15 +40,35 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 SUFFIX = "_qviz.html"
+STYLES = ("Default", "BlackAndWhite", "Inverted")  # Use Literal type in python 3.8
 
 
-def display(circuit: QuantumCircuit, **kwargs) -> str:
-    json_str = qiskit2json(circuit, **kwargs)
-    with tempfile.NamedTemporaryFile(suffix=SUFFIX, delete=False) as f:
-        Path(f.name).write_text(HTML_TEMPLATE.format(json_str))
-        print(f.name)
-        webbrowser.open(f"file://{f.name}")
-    return json_str
+def display(
+    circuit: QuantumCircuit,
+    filename: Union[str, Path, None] = None,
+    style: str = "Default",
+    version: Optional[str] = None,
+    **kwargs,
+) -> None:
+    if filename is None:
+        file = tempfile.NamedTemporaryFile(suffix=SUFFIX, delete=False)
+        file.close()
+        path = Path(file.name)
+    else:
+        path = Path(filename)
+    if style not in STYLES:
+        warnings.warn(
+            f"The selected style '{style}' is not supported and will be ignored.\n"
+            f"The supported styles are {STYLES}"
+        )
+    if version is None:
+        version = ""  # Use the latest version
+    else:
+        version = "@" + version
+    qviz_json = qiskit2json(circuit, **kwargs)
+    html = HTML_TEMPLATE.format(version, qviz_json, style)
+    path.write_text(html)
+    webbrowser.open(f"file://{path.absolute()}")
 
 
 if __name__ == "__main__":
@@ -70,4 +93,4 @@ if __name__ == "__main__":
     # qc.measure(q, c[1])
 
     print(qc.draw())
-    display(qc, skip_barriers=False)
+    display(qc, skip_barriers=False, style="BlackAndWhite", version="1.0.2")
