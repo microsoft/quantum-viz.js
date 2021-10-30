@@ -108,6 +108,18 @@ class QiskitCircuitParser:
     def qubits(self, value: List[Dict[str, int]]) -> None:
         self.qviz_dict[self.QUBITS_KEY] = value
 
+    @property
+    def operations(self) -> List[Dict]:
+        return self.qviz_dict[self.OPERATIONS_KEY]
+
+    @operations.setter
+    def operations(self, value: List[Dict]) -> None:
+        self.qviz_dict[self.OPERATIONS_KEY] = value
+
+    @operations.deleter
+    def operations(self) -> None:
+        del self.qviz_dict[self.OPERATIONS_KEY]
+
     def _get_qubit_def(self, qubit: Qubit) -> Dict[str, int]:
         return {"qId": self.qubit2id[qubit]}
 
@@ -134,7 +146,7 @@ class QiskitCircuitParser:
 
     def _update_qviz_dict(self) -> None:
         qc = self.qc
-        self.qviz_dict[self.OPERATIONS_KEY] += [
+        self.operations += [
             {
                 "gate": qc.name,
                 "children": [
