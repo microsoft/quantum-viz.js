@@ -134,12 +134,15 @@ class QiskitCircuitParser:
 
     def update_qviz_dict(self) -> None:
         qc = self.qc
+        # TODO: maybe use `qc.to_instruction()` + `self.parse_operation`?
+        #  Answer: no - it changes the qc metadata (names of registers for example)
         self.qviz_dict[self.OPERATIONS_KEY] += [
             {
                 "gate": qc.name,
                 "children": [
                     self.parse_operation(instruction, qargs, cargs, depth=1)
                     for instruction, qargs, cargs in self.filter_circuit_data(qc.data)
+                    # TODO: what if this list is empty?
                 ],
                 "targets": self._get_qubit_list_def(qc.qubits),
             }
@@ -212,6 +215,7 @@ class QiskitCircuitParser:
                         sub_instruction, sub_qargs, sub_cargs, depth=depth + 1
                     )
                 ]
+                # TODO: what if this list is empty?
 
     def add_controlled_gate(
         self, op_dict: Dict, cgate: ControlledGate, qargs: List[Qubit]
@@ -242,6 +246,7 @@ class QiskitCircuitParser:
         op_dict["targets"] = [self._get_clbit_def(clbit, qubit)]
 
     def add_params(self, op_dict: Dict, instruction: Instruction) -> None:
+        # TODO: what about non-numeric parameters?
         mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
         op_dict["displayArgs"] = f"({', '.join(mapper)})"
 
