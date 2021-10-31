@@ -229,7 +229,8 @@ class QiskitCircuitParser:
     @staticmethod
     def _check_children(op_dict: Dict) -> None:
         """Remove the children key if empty"""
-        if not op_dict["children"]:
+        children = op_dict.get("children")
+        if (children is not None) and (not children):
             del op_dict["children"]
 
     def _add_controlled_gate(
