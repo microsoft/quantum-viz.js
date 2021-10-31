@@ -118,10 +118,6 @@ class QiskitCircuitParser:
     def operations(self, value: List[Dict]) -> None:
         self.qviz_dict[self.OPERATIONS_KEY] = value
 
-    @operations.deleter
-    def operations(self) -> None:
-        del self.qviz_dict[self.OPERATIONS_KEY]
-
     def _get_qubit_def(self, qubit: Qubit) -> Dict[str, int]:
         return {"qId": self.qubit2id[qubit]}
 
