@@ -4,6 +4,7 @@ from typing import Dict
 from typing import Iterator
 from typing import List
 from typing import Optional
+from typing import Union
 
 try:
     import qiskit
@@ -18,6 +19,7 @@ from qiskit.circuit.controlledgate import ControlledGate
 from qiskit.circuit.measure import Measure
 from qiskit.circuit.barrier import Barrier
 from qiskit.circuit.reset import Reset
+from qiskit.circuit.parameter import Parameter
 from qiskit.circuit.library import IGate, SXGate, SXdgGate
 from qiskit.circuit.quantumcircuitdata import QuantumCircuitData
 
@@ -77,7 +79,7 @@ class QiskitCircuitParser:
     ) -> None:
         """
         :param circuit: qiskit quantum circuit to be parsed
-        :param precision: the decimal precision of the gate parameters to display
+        :param precision: the decimal precision of float gate parameters to display
         :param max_depth: the maximal recursion depth to parse, if None - parse until
         the basis gates are reached
         :param skip_barriers: whether to omit barriers in the output or not
@@ -262,10 +264,14 @@ class QiskitCircuitParser:
         op_dict["controls"] = [self._get_qubit_def(qubit)]
         op_dict["targets"] = [self._get_clbit_def(clbit, qubit)]
 
+    def _param_formatter(self, param: Union[int, float, Parameter]) -> str:
+        if isinstance(param, float):
+            return f"{param:.{self.precision}f}"
+        return str(param)
+
     def _add_params(self, op_dict: Dict, instruction: Instruction) -> None:
-        # TODO: what about non-numeric parameters?
-        mapper = map(f"{{:.{self.precision}f}}".format, instruction.params)
-        op_dict["displayArgs"] = f"({', '.join(mapper)})"
+        params_map = map(self._param_formatter, instruction.params)
+        op_dict["displayArgs"] = f"({', '.join(params_map)})"
 
     @classmethod
     def _rename_gate(cls, op_dict: Dict, instruction: Instruction) -> None:
