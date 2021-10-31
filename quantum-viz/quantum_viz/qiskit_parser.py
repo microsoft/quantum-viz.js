@@ -74,19 +74,19 @@ class QiskitCircuitParser:
         self,
         circuit: QuantumCircuit,
         precision: int = 2,
-        max_depth: Optional[int] = None,
+        max_recursion_depth: Optional[int] = None,
         skip_barriers: bool = True,
     ) -> None:
         """
         :param circuit: qiskit quantum circuit to be parsed
         :param precision: the decimal precision of float gate parameters to display
-        :param max_depth: the maximal recursion depth to parse, if None - parse until
-        the basis gates are reached
+        :param max_recursion_depth: the maximal recursion depth to parse, if None -
+        parse until the basis gates are reached
         :param skip_barriers: whether to omit barriers in the output or not
         """
         self.qc = circuit
         self.precision = precision
-        self.max_depth = max_depth
+        self.max_recursion_depth = max_recursion_depth
         self.skip_barriers = skip_barriers
         self.qviz_dict: Dict[str, List] = {
             self.QUBITS_KEY: [],
@@ -162,8 +162,8 @@ class QiskitCircuitParser:
             return filter(lambda elem: not isinstance(elem[0], Barrier), data)
         return data
 
-    def _depth_excess(self, depth: int) -> bool:
-        return self.max_depth is not None and depth > self.max_depth
+    def _is_recursion_depth_exceeded(self, depth: int) -> bool:
+        return self.max_recursion_depth is not None and depth > self.max_recursion_depth
 
     def _parse_operation(
         self,
@@ -204,7 +204,9 @@ class QiskitCircuitParser:
         cargs: List[Clbit],
         depth: int,
     ) -> None:
-        if instruction.definition is not None and not self._depth_excess(depth + 1):
+        if (instruction.definition is not None) and (
+            not self._is_recursion_depth_exceeded(depth + 1)
+        ):
             sub_circuit: QuantumCircuit = instruction.definition
             # Since the `index` property of bits is deprecated - create mappers between
             # the bits and their indices in the circuit.
@@ -287,7 +289,7 @@ class QiskitCircuitParser:
         op_dict["targets"] = [qubit_def]
         clbit_def = self._get_clbit_def(Clbit(), qubit)  # create a new classical bit
 
-        if not self._depth_excess(depth + 1):
+        if not self._is_recursion_depth_exceeded(depth + 1):
             # Add a simple logic for the reset instruction
             op_dict["children"] = [
                 {
