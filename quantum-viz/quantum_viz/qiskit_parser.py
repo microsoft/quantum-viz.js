@@ -277,11 +277,12 @@ class QiskitCircuitParser:
     def _rename_gate(cls, op_dict: Dict, instruction: Instruction) -> None:
         name = op_dict["gate"]
         if name in cls.UPPERCASE:
-            op_dict["gate"] = name.upper()
+            name = name.upper()
         elif name in cls.CAPITALIZE:
-            op_dict["gate"] = name.capitalize()
+            name = name.capitalize()
         elif isinstance(instruction, cls.SPECIAL_GATES):
-            op_dict["gate"] = cls.SPECIAL_MAPPER[type(instruction)]
+            name = cls.SPECIAL_MAPPER[type(instruction)]
+        op_dict["gate"] = name
 
     def _add_reset(self, op_dict: Dict, qubit: Qubit, depth: int) -> None:
         """Reset logic - measure and apply X gate if the measurement yields 1"""
