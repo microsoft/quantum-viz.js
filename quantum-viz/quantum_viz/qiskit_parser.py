@@ -100,7 +100,7 @@ class QiskitCircuitParser:
     def _init_qubits(self) -> None:
         qubits_range = range(self.qc.num_qubits)
         self.qubit2id = dict(zip(self.qc.qubits, qubits_range))
-        self.qviz_dict[self.QUBITS_KEY] = [{"id": i} for i in qubits_range]
+        self.qubits = [{"id": i} for i in qubits_range]
 
     @property
     def qubits(self) -> List[Dict[str, int]]:
