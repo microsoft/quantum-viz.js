@@ -7,7 +7,7 @@ from typing import Optional
 from typing import Union
 
 try:
-    import qiskit
+    import qiskit  # noqa: F401
 except ImportError:
     raise ImportError(
         '`qiskit` was not found, try to `pip install "quantum-viz[qiskit]"`'
