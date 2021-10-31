@@ -154,7 +154,7 @@ class QiskitCircuitParser:
                 "targets": self._get_qubit_list_def(qc.qubits),
             }
         ]
-        self._check_children(self.operations[0])
+        self._remove_empty_children(self.operations[0])
 
     def _filter_circuit_data(self, data: QuantumCircuitData) -> Iterator:
         if self.skip_barriers:
@@ -224,10 +224,10 @@ class QiskitCircuitParser:
                     )
                 ]
 
-            self._check_children(op_dict)
+            self._remove_empty_children(op_dict)
 
     @staticmethod
-    def _check_children(op_dict: Dict) -> None:
+    def _remove_empty_children(op_dict: Dict) -> None:
         """Remove the children key if empty"""
         children = op_dict.get("children")
         if (children is not None) and (not children):
