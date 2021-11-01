@@ -135,7 +135,7 @@ class QiskitCircuitParser:
         }
         self.qubit2id: Dict[Qubit, int] = dict()
         self._init_qubits()
-        self._clbit2id: Dict[Clbit, (Qubit, int)] = dict()
+        self._clbit2id: Dict[Clbit, (int, int)] = dict()
         self._update_qviz_dict()
 
     def _init_qubits(self) -> None:
@@ -169,8 +169,7 @@ class QiskitCircuitParser:
         self, clbit: Clbit, qubit: Optional[Qubit] = None
     ) -> Dict[str, int]:
         if clbit in self._clbit2id:
-            qubit, c_id = self._clbit2id[clbit]
-            q_id = self.qubit2id[qubit]
+            q_id, c_id = self._clbit2id[clbit]
         else:
             if qubit is None:
                 raise NotImplementedError(
@@ -180,7 +179,7 @@ class QiskitCircuitParser:
             q_id = self.qubit2id[qubit]
             c_id = self.qubits[q_id].get("numChildren", 0)
             self.qubits[q_id]["numChildren"] = c_id + 1
-            self._clbit2id[clbit] = (qubit, c_id)
+            self._clbit2id[clbit] = (q_id, c_id)
         return {"type": RegisterType.CLASSICAL.value, "qId": q_id, "cId": c_id}
 
     def _update_qviz_dict(self) -> None:
