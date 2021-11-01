@@ -188,14 +188,13 @@ class QiskitCircuitParser:
         self.operations += [
             {
                 "gate": qc.name,
-                "children": [
-                    self._parse_operation(instruction, qargs, cargs, depth=1)
-                    for instruction, qargs, cargs in self._filter_circuit_data(qc.data)
-                ],
                 "targets": self._get_qubit_list_def(qc.qubits),
             }
         ]
-        self._remove_empty_children(self.operations[0])
+        for instruction, qargs, cargs in self._filter_circuit_data(qc.data):
+            self.operations[0]["children"] = self.operations[0].get("children", []) + [
+                self._parse_operation(instruction, qargs, cargs, depth=1)
+            ]
 
     def _filter_circuit_data(self, data: QuantumCircuitData) -> Iterator:
         if self.skip_barriers:
@@ -253,27 +252,17 @@ class QiskitCircuitParser:
             # Use the builtin `QuantumCircuit.find_bit` method when it is released
             qubits_mapper = dict(zip(sub_circuit.qubits, range(sub_circuit.num_qubits)))
             clbits_mapper = dict(zip(sub_circuit.clbits, range(sub_circuit.num_clbits)))
-            op_dict["children"] = []
             for sub_instruction, sub_qargs, sub_cargs in self._filter_circuit_data(
                 sub_circuit.data
             ):
                 # Update the args to those of the containing circuit
                 sub_qargs = [qargs[qubits_mapper[qubit]] for qubit in sub_qargs]
                 sub_cargs = [cargs[clbits_mapper[clbit]] for clbit in sub_cargs]
-                op_dict["children"] += [
+                op_dict["children"] = op_dict.get("children", []) + [
                     self._parse_operation(
                         sub_instruction, sub_qargs, sub_cargs, depth=depth + 1
                     )
                 ]
-
-            self._remove_empty_children(op_dict)
-
-    @staticmethod
-    def _remove_empty_children(op_dict: Dict) -> None:
-        """Remove the children key if empty"""
-        children = op_dict.get("children")
-        if (children is not None) and (not children):
-            del op_dict["children"]
 
     def _add_controlled_gate(
         self, op_dict: Dict, cgate: ControlledGate, qargs: List[Qubit]
