@@ -4,6 +4,7 @@ from typing import Dict
 from typing import Iterator
 from typing import List
 from typing import Optional
+from typing import Type
 from typing import Union
 
 try:
@@ -20,11 +21,70 @@ from qiskit.circuit.measure import Measure
 from qiskit.circuit.barrier import Barrier
 from qiskit.circuit.reset import Reset
 from qiskit.circuit.parameter import Parameter
-from qiskit.circuit.library import IGate, SXGate, SXdgGate
+from qiskit.circuit.library import (
+    IGate,
+    XGate,
+    YGate,
+    ZGate,
+    HGate,
+    UGate,
+    U1Gate,
+    U2Gate,
+    U3Gate,
+    PhaseGate,
+    RGate,
+    SwapGate,
+    RXGate,
+    RYGate,
+    RZGate,
+    RXXGate,
+    RYYGate,
+    RZXGate,
+    RZZGate,
+    iSwapGate,
+    DCXGate,
+    SGate,
+    SdgGate,
+    TGate,
+    TdgGate,
+    SXGate,
+    SXdgGate,
+)
 from qiskit.circuit.quantumcircuitdata import QuantumCircuitData
 
-X_GATE_NAME = "X"
-MEASURE_NAME = Measure().name
+INSTRUCTION_TYPE_TO_NAME: Dict[Type[Instruction], str] = {
+    IGate: "I",
+    XGate: "X",
+    YGate: "Y",
+    ZGate: "Z",
+    HGate: "H",
+    UGate: "U",
+    U1Gate: "U1",
+    U2Gate: "U2",
+    U3Gate: "U3",
+    PhaseGate: "P",
+    RGate: "R",
+    SwapGate: "SWAP",
+    RXGate: "Rx",
+    RYGate: "Ry",
+    RZGate: "Rz",
+    RXXGate: "Rxx",
+    RYYGate: "Ryy",
+    RZXGate: "Rzx",
+    RZZGate: "Rzz",
+    iSwapGate: "Iswap",
+    DCXGate: "Dcx",
+    SGate: "S",
+    SdgGate: "Sdg",
+    TGate: "T",
+    TdgGate: "Tdg",
+    SXGate: "√X",
+    SXdgGate: "√Xdg",
+    Measure: "measure",
+}
+
+X_GATE_NAME = INSTRUCTION_TYPE_TO_NAME[XGate]
+MEASURE_NAME = INSTRUCTION_TYPE_TO_NAME[Measure]
 
 
 class RegisterType(IntEnum):
@@ -50,25 +110,6 @@ def qiskit2dict(circ: QuantumCircuit, **kwargs) -> Dict[str, List]:
 class QiskitCircuitParser:
     QUBITS_KEY = "qubits"
     OPERATIONS_KEY = "operations"
-    UPPERCASE = ["x", "y", "z", "h", "s", "t", "u", "p", "r", "swap"]
-    CAPITALIZE = [
-        "rx",
-        "ry",
-        "rz",
-        "rxx",
-        "ryy",
-        "rzx",
-        "rzz",
-        "u1",
-        "u2",
-        "u3",
-        "tdg",
-        "sdg",
-        "iswap",
-        "dcx",
-    ]
-    SPECIAL_MAPPER = {IGate: "I", SXGate: "√X", SXdgGate: "√Xdg"}
-    SPECIAL_GATES = tuple(SPECIAL_MAPPER.keys())
 
     def __init__(
         self,
@@ -173,7 +214,7 @@ class QiskitCircuitParser:
         depth: int,
     ) -> Dict:
 
-        op_dict = {"gate": instruction.name}
+        op_dict = {"gate": self._get_instruction_name(instruction)}
 
         if instruction.params:
             self._add_params(op_dict, instruction)
@@ -183,11 +224,10 @@ class QiskitCircuitParser:
         elif isinstance(instruction, Measure):
             self._add_measure(op_dict, qargs, cargs)
         elif isinstance(instruction, ControlledGate):
+            # a controlled gate may change the gate name (i.e. CX -> X)
             self._add_controlled_gate(op_dict, instruction, qargs)
         else:
             op_dict["targets"] = self._get_qubit_list_def(qargs)
-
-        self._rename_gate(op_dict, instruction)  # a controlled gate may change the name
 
         self._add_children(op_dict, instruction, qargs, cargs, depth)
 
@@ -248,7 +288,7 @@ class QiskitCircuitParser:
         ctrl_qubits = qargs[:num_ctrl_qubits]
         target_qubits = qargs[num_ctrl_qubits:]
         op_dict["isControlled"] = True
-        op_dict["gate"] = cgate.base_gate.name
+        op_dict["gate"] = self._get_instruction_name(cgate.base_gate)
         op_dict["controls"] = self._get_qubit_list_def(ctrl_qubits)
         op_dict["targets"] = self._get_qubit_list_def(target_qubits)
 
@@ -273,16 +313,9 @@ class QiskitCircuitParser:
         params_map = map(self._param_formatter, instruction.params)
         op_dict["displayArgs"] = f"({', '.join(params_map)})"
 
-    @classmethod
-    def _rename_gate(cls, op_dict: Dict, instruction: Instruction) -> None:
-        name = op_dict["gate"]
-        if name in cls.UPPERCASE:
-            name = name.upper()
-        elif name in cls.CAPITALIZE:
-            name = name.capitalize()
-        elif isinstance(instruction, cls.SPECIAL_GATES):
-            name = cls.SPECIAL_MAPPER[type(instruction)]
-        op_dict["gate"] = name
+    @staticmethod
+    def _get_instruction_name(instruction: Instruction) -> str:
+        return INSTRUCTION_TYPE_TO_NAME.get(type(instruction), instruction.name)
 
     def _add_reset(self, op_dict: Dict, qubit: Qubit, depth: int) -> None:
         """Reset logic - measure and apply X gate if the measurement yields 1"""
