@@ -231,6 +231,7 @@ class QiskitCircuitParser:
         self._add_children(op_dict, instruction, qargs, cargs, depth)
 
         if instruction.condition:
+            # _update_condition must update op_dict last (after any other method)
             op_dict = self._update_condition(op_dict, instruction)
 
         return op_dict
