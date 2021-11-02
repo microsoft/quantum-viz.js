@@ -1,17 +1,17 @@
 module.exports = {
     semi: true,
-    trailingComma: "all",
+    trailingComma: 'all',
     singleQuote: true,
-    endOfLine: "lf",
+    endOfLine: 'lf',
     printWidth: 120,
     tabWidth: 4,
-    parser: "typescript",
+    parser: 'typescript',
     overrides: [
         {
-            files: ["*.md", "*.json", "*.yml", "*.yaml"],
+            files: ['*.md', '*.json', '*.yml', '*.yaml'],
             options: {
-                tabWidth: 2
-            }
-        }
-    ]
+                tabWidth: 2,
+            },
+        },
+    ],
 };

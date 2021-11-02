@@ -43,6 +43,10 @@ qviz.draw(sampleCircuit, sampleDiv, qviz.STYLES['Default']);
 
 Refer to the [`example`](./example) folder for an example on how to use quantum-viz.js. Notice that in order to open the contents of this folder in a browser you will need first to install from source (see [below](#running-from-source)).
 
+## Python usage
+
+To use this package with Python, use [quantum-viz](/quantum-viz).
+
 ## Running from source
 
 ### Installing
@@ -50,7 +54,7 @@ To build and install this project from source, run the following commands from t
 ```bash
 # Install dependencies
 > npm install
-# Build 
+# Build
 > npm run build:prod
 ```
 
