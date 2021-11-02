@@ -21,7 +21,6 @@ jobs:
           - { python-version: 3.9, os: ubuntu-latest, session: "typeguard" }
           - { python-version: 3.9, os: ubuntu-latest, session: "xdoctest" }
           - { python-version: 3.9, os: ubuntu-latest, session: "build"}
-          - { python-version: 3.9, os: ubuntu-latest, session: "docs-build" }
 
     env:
       NOXSESSION: ${{ matrix.session }}
@@ -86,6 +85,12 @@ jobs:
         with:
           name: coverage-data
           path: "quantum-viz/.coverage.*"
+      
+      - name: Combine coverage data and display human readable report
+        if: always() && matrix.session == 'tests'
+        run: |
+          nox --force-color --session=coverage
+        working-directory: quantum-viz
 
       - name: Create coverage report
         if: always() && matrix.session == 'tests'
@@ -117,10 +122,3 @@ jobs:
         with:
           name: dist
           path: quantum-viz/dist/*
-
-      - name: Upload quantum-viz documentation
-        if: matrix.session == 'docs-build'
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: docs
-          path: quantum-viz/docs/_build
