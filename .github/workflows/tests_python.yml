@@ -87,12 +87,6 @@ jobs:
           name: coverage-data
           path: "quantum-viz/.coverage.*"
 
-      - name: Combine coverage data and display human readable report
-        if: always() && matrix.session == 'tests'
-        run: |
-          nox --force-color --session=coverage
-        working-directory: quantum-viz
-
       - name: Create coverage report
         if: always() && matrix.session == 'tests'
         run: |

@@ -20,7 +20,7 @@ Example
 
 .. code:: python
 
-   from quantum_viz import QViz
+   from quantum_viz import Viewer
 
    # Create a quantum circuit that prepares a Bell state
    circuit = {
@@ -45,7 +45,7 @@ Example
       ],
    }
 
-   QViz(circuit)
+   Viewer(circuit)
 
 
 .. image:: https://user-images.githubusercontent.com/4041805/137230540-b523dc76-29c7-48e2-baa3-34d4ee0a17a1.PNG

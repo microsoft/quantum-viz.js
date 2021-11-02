@@ -1,9 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-QViz.
-
-Module for Jupyter Widget that displays the quantum-viz.js
+quantum-viz Viewer: a Jupyter Widget that displays the quantum-viz.js
 circuit visualizer.
 """
 import uuid
@@ -28,14 +26,11 @@ require.config({{
     }}
 }});
 require(['qviz'], function(qviz) {{
-    function renderQuantumCircuit(circuit) {{
-        const targetDiv = document.getElementById('JSApp_{uid}');
-        if (targetDiv != null) {{
-            qviz.draw(circuit, targetDiv, qviz.STYLES['Default']);
-        }}
+    const circuit = {data};
+    const targetDiv = document.getElementById('JSApp_{uid}');
+    if (targetDiv != null) {{
+        qviz.draw(circuit, targetDiv, qviz.STYLES['Default']);
     }}
-    const data = {data};
-    renderQuantumCircuit(data);
 }});
 </script>
 <div id="JSApp_{uid}"></div>
@@ -43,14 +38,14 @@ require(['qviz'], function(qviz) {{
 """
 
 
-class QViz:
+class Viewer:
     """Jupyter widget for displaying Quantum-viz quantum circuit."""
 
     n = 0
 
     def __init__(self, circuit: Dict[str, Any], width: int = 400, height: int = 350):
         """
-        Create QViz instance.
+        Create Viewer instance.
 
         :param circuit: Quantum circuit
         :type circuit: dict
@@ -84,7 +79,7 @@ class QViz:
         :return: HTML string for displaying widget
         :rtype: str
         """
-        QViz.n += 1
+        Viewer.n += 1
         return _HTML_STR_FORMAT.format(
             base_url=BASE_URL, js_source=JS_SOURCE, uid=uid, data=self.value
         )
@@ -92,5 +87,5 @@ class QViz:
     def _ipython_display_(self) -> None:
         """Display the widget."""
         uid = self._gen_uid()
-        qviz = HTML(self.html_str(uid=uid))
-        display(qviz)
+        viewer = HTML(self.html_str(uid=uid))
+        display(viewer)

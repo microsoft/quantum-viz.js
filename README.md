@@ -10,10 +10,6 @@
 
 **quantum-viz.js** (or **qviz**) is a configurable tool for rendering quantum circuits. With the increasing demand for quantum libraries and educational tools, quantum circuits provide an intuitive way to visualize and understand quantum algorithms. quantum-viz.js is a lightweight library that can be easily integrated into any project. It aims to be easily configurable while allowing complex user interactions, such as toggling between different measurement outcomes.
 
-## Python widget
-
-To use this package with Python, use [quantum-viz](/quantum-viz).
-
 ## Getting Started
 ### Installation
 Include `quantum-viz.js` in your HTML page by using it directly from CDN:
@@ -46,6 +42,10 @@ qviz.draw(sampleCircuit, sampleDiv, qviz.STYLES['Default']);
 ```
 
 Refer to the [`example`](./example) folder for an example on how to use quantum-viz.js. Notice that in order to open the contents of this folder in a browser you will need first to install from source (see [below](#running-from-source)).
+
+## Python usage
+
+To use this package with Python, use [quantum-viz](/quantum-viz).
 
 ## Running from source
 
