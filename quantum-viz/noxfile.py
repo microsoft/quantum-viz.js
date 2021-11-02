@@ -27,8 +27,6 @@ nox.options.sessions = (
     "safety",
     "tests",
     "typeguard",
-    "xdoctest",
-    "docs-build",
 )
 
 

@@ -19,7 +19,6 @@ jobs:
           - { python-version: 3.9, os: windows-latest, session: "tests" }
           - { python-version: 3.9, os: macos-latest, session: "tests" }
           - { python-version: 3.9, os: ubuntu-latest, session: "typeguard" }
-          - { python-version: 3.9, os: ubuntu-latest, session: "xdoctest" }
           - { python-version: 3.9, os: ubuntu-latest, session: "build"}
 
     env:
@@ -85,7 +84,7 @@ jobs:
         with:
           name: coverage-data
           path: "quantum-viz/.coverage.*"
-      
+
       - name: Combine coverage data and display human readable report
         if: always() && matrix.session == 'tests'
         run: |

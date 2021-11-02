@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/microsoft/quantum-viz.js"
 repository = "https://github.com/microsoft/quantum-viz.js"
-documentation = "https://quantum-viz.readthedocs.io"
+documentation = "https://github.com/microsoft/quantum-viz.js"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3.6",
