@@ -48,26 +48,26 @@ If you would like to create a virtual environment for development, use
 `venv`:
 
 ```bash
-$ python3 -m venv quantum-viz-env
+python3 -m venv quantum-viz-env
 ```
 
 Activate your virtual environment. On Windows, run:
 
 ```bash
-$ quantum-viz-env\Scripts\activate.bat
+quantum-viz-env\Scripts\activate.bat
 ```
 
 On Unix or MacOS, run:
 
 ```bash
-$ source quantum-viz-env/bin/activate
+source quantum-viz-env/bin/activate
 ```
 
 Then, install the quantum-viz package with development requirements:
 
 ```bash
-$ pip install poetry nox nox-poetry
-$ poetry install
+pip install poetry nox nox-poetry
+poetry install
 ```
 
 This installs all dependencies as defined in the poetry.lock file.
@@ -78,20 +78,20 @@ How to test the project
 Run the full test suite:
 
 ```bash
-$ nox
+nox
 ```
 
 List the available Nox sessions (defined in quantum-viz/noxfile.py):
 
 ```bash
-$ nox --list-sessions
+nox --list-sessions
 ```
 
 You can also run a specific Nox session. For example, invoke the unit
 test suite like this:
 
 ```bash
-$ nox --session=tests
+nox --session=tests
 ```
 
 Unit tests are located in the `tests` directory, and are written using
@@ -117,7 +117,7 @@ you can install pre-commit as a Git hook by running the following
 command:
 
 ```bash
-$ nox --session=pre-commit -- install
+nox --session=pre-commit -- install
 ```
 
 It is recommended to open an issue before starting work on anything.
