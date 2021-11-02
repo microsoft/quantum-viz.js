@@ -1,4 +1,4 @@
-name: Tests for quantum-viz package
+name: Python Tests
 
 on:
   - pull_request
