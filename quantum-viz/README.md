@@ -47,3 +47,7 @@ widget # Display the widget
 ```
 
 ![quantum-viz example](https://user-images.githubusercontent.com/4041805/137230540-b523dc76-29c7-48e2-baa3-34d4ee0a17a1.PNG)
+
+## Contributing
+
+Check out our [contributing guidelines](./CONTRIBUTING.md) to find out how you can contribute to quantum-viz.
