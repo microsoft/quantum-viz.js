@@ -293,7 +293,6 @@ class QiskitCircuitParser:
         op_dict["targets"] = [self._get_clbit_def(clbit, qubit)]
 
     def _format_param(self, param: Union[int, float, complex, Parameter]) -> str:
-        # TODO: check ParameterExpression
         if isinstance(param, (float, complex)):
             return f"{param:.{self.precision}f}"
         return str(param)
