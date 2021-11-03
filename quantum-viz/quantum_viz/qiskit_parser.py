@@ -330,7 +330,7 @@ class QiskitCircuitParser:
                         {
                             "gate": X_GATE_NAME,
                             "targets": [qubit_def],
-                            "conditionalRender": ConditionalRender.ON_ONE,
+                            "conditionalRender": ConditionalRender.ON_ONE.value,
                         }
                     ],
                 },
@@ -354,9 +354,9 @@ class QiskitCircuitParser:
             clbit: Clbit = classical
 
         if val:
-            render_condition = ConditionalRender.ON_ONE
+            render_condition = ConditionalRender.ON_ONE.value
         else:
-            render_condition = ConditionalRender.ON_ZERO
+            render_condition = ConditionalRender.ON_ZERO.value
 
         op_dict["conditionalRender"] = render_condition
 
