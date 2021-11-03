@@ -292,14 +292,14 @@ class QiskitCircuitParser:
         op_dict["controls"] = [self._get_qubit_def(qubit)]
         op_dict["targets"] = [self._get_clbit_def(clbit, qubit)]
 
-    def _param_formatter(self, param: Union[int, float, complex, Parameter]) -> str:
+    def _format_param(self, param: Union[int, float, complex, Parameter]) -> str:
         # TODO: check ParameterExpression
         if isinstance(param, (float, complex)):
             return f"{param:.{self.precision}f}"
         return str(param)
 
     def _add_params(self, op_dict: Dict, instruction: Instruction) -> None:
-        params_map = map(self._param_formatter, instruction.params)
+        params_map = map(self._format_param, instruction.params)
         op_dict["displayArgs"] = f"({', '.join(params_map)})"
 
     @staticmethod
