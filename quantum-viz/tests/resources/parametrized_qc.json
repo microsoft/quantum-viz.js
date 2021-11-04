@@ -1,0 +1,160 @@
+{
+  "qubits": [
+    {
+      "id": 0
+    },
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    },
+    {
+      "id": 3
+    }
+  ],
+  "operations": [
+    {
+      "gate": "parametrized_qc",
+      "targets": [
+        {
+          "qId": 0
+        },
+        {
+          "qId": 1
+        },
+        {
+          "qId": 2
+        },
+        {
+          "qId": 3
+        }
+      ],
+      "children": [
+        {
+          "gate": "U",
+          "displayArgs": "(\u03b8, 1.04, 0, 2)",
+          "isControlled": true,
+          "controls": [
+            {
+              "qId": 3
+            }
+          ],
+          "targets": [
+            {
+              "qId": 1
+            }
+          ],
+          "children": [
+            {
+              "gate": "P",
+              "displayArgs": "(2)",
+              "targets": [
+                {
+                  "qId": 3
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U",
+                  "displayArgs": "(0, 0, 2)",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "gate": "P",
+              "displayArgs": "(0.52)",
+              "targets": [
+                {
+                  "qId": 3
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U",
+                  "displayArgs": "(0, 0, 0.52)",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "gate": "P",
+              "displayArgs": "(-0.52)",
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U",
+                  "displayArgs": "(0, 0, -0.52)",
+                  "targets": [
+                    {
+                      "qId": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "gate": "X",
+              "isControlled": true,
+              "controls": [
+                {
+                  "qId": 3
+                }
+              ],
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ]
+            },
+            {
+              "gate": "U",
+              "displayArgs": "(-0.5*\u03b8, 0, -0.52)",
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ]
+            },
+            {
+              "gate": "X",
+              "isControlled": true,
+              "controls": [
+                {
+                  "qId": 3
+                }
+              ],
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ]
+            },
+            {
+              "gate": "U",
+              "displayArgs": "(\u03b8/2, 1.04, 0)",
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

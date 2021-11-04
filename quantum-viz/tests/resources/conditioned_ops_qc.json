@@ -1,0 +1,331 @@
+{
+  "qubits": [
+    {
+      "id": 0,
+      "numChildren": 2
+    },
+    {
+      "id": 1,
+      "numChildren": 2
+    },
+    {
+      "id": 2,
+      "numChildren": 2
+    }
+  ],
+  "operations": [
+    {
+      "gate": "conditioned_ops_qc",
+      "targets": [
+        {
+          "qId": 0
+        },
+        {
+          "qId": 1
+        },
+        {
+          "qId": 2
+        }
+      ],
+      "children": [
+        {
+          "gate": "H",
+          "targets": [
+            {
+              "qId": 0
+            }
+          ],
+          "children": [
+            {
+              "gate": "U2",
+              "displayArgs": "(0, 3.14)",
+              "targets": [
+                {
+                  "qId": 0
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(1.57, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 0
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 0
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "H",
+          "targets": [
+            {
+              "qId": 1
+            }
+          ],
+          "children": [
+            {
+              "gate": "U2",
+              "displayArgs": "(0, 3.14)",
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(1.57, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 1
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "H",
+          "targets": [
+            {
+              "qId": 2
+            }
+          ],
+          "children": [
+            {
+              "gate": "U2",
+              "displayArgs": "(0, 3.14)",
+              "targets": [
+                {
+                  "qId": 2
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(1.57, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 2
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 2
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "measure",
+          "isMeasurement": true,
+          "controls": [
+            {
+              "qId": 0
+            }
+          ],
+          "targets": [
+            {
+              "type": 1,
+              "qId": 0,
+              "cId": 0
+            }
+          ]
+        },
+        {
+          "gate": "Conditional",
+          "isConditional": true,
+          "controls": [
+            {
+              "type": 1,
+              "qId": 0,
+              "cId": 0
+            }
+          ],
+          "targets": [],
+          "children": [
+            {
+              "gate": "X",
+              "targets": [
+                {
+                  "qId": 0
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(3.14, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 0
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(3.14, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 0
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "conditionalRender": 2
+            }
+          ]
+        },
+        {
+          "gate": "measure",
+          "isMeasurement": true,
+          "controls": [
+            {
+              "qId": 1
+            }
+          ],
+          "targets": [
+            {
+              "type": 1,
+              "qId": 1,
+              "cId": 0
+            }
+          ]
+        },
+        {
+          "gate": "reset",
+          "targets": [
+            {
+              "qId": 2
+            }
+          ],
+          "children": [
+            {
+              "gate": "measure",
+              "isMeasurement": true,
+              "controls": [
+                {
+                  "qId": 2
+                }
+              ],
+              "targets": [
+                {
+                  "type": 1,
+                  "qId": 2,
+                  "cId": 0
+                }
+              ]
+            },
+            {
+              "gate": "Conditional",
+              "isConditional": true,
+              "controls": [
+                {
+                  "type": 1,
+                  "qId": 2,
+                  "cId": 0
+                }
+              ],
+              "targets": [],
+              "children": [
+                {
+                  "gate": "X",
+                  "targets": [
+                    {
+                      "qId": 2
+                    }
+                  ],
+                  "conditionalRender": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "measure",
+          "isMeasurement": true,
+          "controls": [
+            {
+              "qId": 0
+            }
+          ],
+          "targets": [
+            {
+              "type": 1,
+              "qId": 0,
+              "cId": 1
+            }
+          ]
+        },
+        {
+          "gate": "measure",
+          "isMeasurement": true,
+          "controls": [
+            {
+              "qId": 1
+            }
+          ],
+          "targets": [
+            {
+              "type": 1,
+              "qId": 1,
+              "cId": 1
+            }
+          ]
+        },
+        {
+          "gate": "measure",
+          "isMeasurement": true,
+          "controls": [
+            {
+              "qId": 2
+            }
+          ],
+          "targets": [
+            {
+              "type": 1,
+              "qId": 2,
+              "cId": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

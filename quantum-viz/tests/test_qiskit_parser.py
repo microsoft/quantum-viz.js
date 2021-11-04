@@ -12,6 +12,6 @@ def _get_saved_dict(qc) -> str:
         return json.load(fp)
 
 
-@pytest.mark.parametrize("qc", [empty_qc(), no_ops_qc(), no_ops_regs_qc()])
+@pytest.mark.parametrize("qc", [empty_qc(), no_ops_qc(), no_ops_regs_qc(), simple_qc(), conditioned_ops_qc(), parametrized_qc()])
 def test_qviz_dict(qc):
     assert qiskit2dict(qc) == _get_saved_dict(qc)
