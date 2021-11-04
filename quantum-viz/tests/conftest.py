@@ -1,10 +1,12 @@
 from pathlib import Path
-
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, AncillaRegister
-from qiskit.circuit import Parameter
-
 from quantum_viz.qiskit_parser import qiskit2json
 from quantum_viz.utils import display
+
+from qiskit import AncillaRegister
+from qiskit import ClassicalRegister
+from qiskit import QuantumCircuit
+from qiskit import QuantumRegister
+from qiskit.circuit import Parameter
 
 
 def qc_to_path(qc: QuantumCircuit) -> Path:
@@ -65,6 +67,13 @@ def conditioned_ops_qc(name: str = "conditioned_ops_qc") -> QuantumCircuit:
 
 
 def test_generate_results() -> None:
-    for qc in [empty_qc(), no_ops_qc(), no_ops_regs_qc(), simple_qc(), parametrized_qc(), conditioned_ops_qc()]:
+    for qc in [
+        empty_qc(),
+        no_ops_qc(),
+        no_ops_regs_qc(),
+        simple_qc(),
+        parametrized_qc(),
+        conditioned_ops_qc(),
+    ]:
         display(qc)
         qc_to_path(qc).write_text(qiskit2json(qc))
