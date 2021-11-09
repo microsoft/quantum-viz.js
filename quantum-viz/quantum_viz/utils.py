@@ -2,11 +2,11 @@ import tempfile
 import warnings
 import webbrowser
 from pathlib import Path
-from quantum_viz.qiskit_parser import qiskit2json
 from typing import Optional
 from typing import Union
 
 from qiskit import QuantumCircuit
+from quantum_viz.qiskit_parser import qiskit2json
 
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">

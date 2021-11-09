@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
-from quantum_viz.qiskit_parser import qiskit2dict
 
 import pytest
-from conftest import *  # noqa: F403
+from quantum_viz.qiskit_parser import qiskit2dict
+from tests.conftest import *  # noqa: F403
 
 
 def _get_saved_dict(qc) -> str:

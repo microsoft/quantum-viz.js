@@ -1,12 +1,12 @@
 from pathlib import Path
-from quantum_viz.qiskit_parser import qiskit2json
-from quantum_viz.utils import display
 
 from qiskit import AncillaRegister
 from qiskit import ClassicalRegister
 from qiskit import QuantumCircuit
 from qiskit import QuantumRegister
 from qiskit.circuit import Parameter
+from quantum_viz.qiskit_parser import qiskit2json
+from quantum_viz.utils import display
 
 
 def qc_to_path(qc: QuantumCircuit) -> Path:

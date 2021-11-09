@@ -1,7 +1,7 @@
-from quantum_viz.widget import Viewer
 from unittest.mock import patch
 
 import pytest
+from quantum_viz.widget import Viewer
 
 
 @pytest.fixture
