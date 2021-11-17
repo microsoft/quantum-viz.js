@@ -1,3 +1,4 @@
+import pytest
 from pathlib import Path
 
 from qiskit import AncillaRegister
@@ -13,14 +14,17 @@ def qc_to_path(qc: QuantumCircuit) -> Path:
     return Path(__file__).parent / f"resources/{qc.name}.json"
 
 
+@pytest.fixture()
 def empty_qc(name: str = "empty_circ") -> QuantumCircuit:
     return QuantumCircuit(name=name)
 
 
+@pytest.fixture()
 def no_ops_qc(name: str = "no_ops_qc") -> QuantumCircuit:
     return QuantumCircuit(4, 3, name=name)
 
 
+@pytest.fixture()
 def no_ops_regs_qc(name: str = "no_ops_regs_qc") -> QuantumCircuit:
     qreg1 = QuantumRegister(6, "q1")
     qreg2 = QuantumRegister(6, "q2")
@@ -29,6 +33,7 @@ def no_ops_regs_qc(name: str = "no_ops_regs_qc") -> QuantumCircuit:
     return QuantumCircuit(qreg1, qreg2, creg, areg, name=name)
 
 
+@pytest.fixture()
 def simple_qc(name: str = "simple_qc") -> QuantumCircuit:
     num_qubits = 5
     num_clbits = 3
@@ -43,6 +48,7 @@ def simple_qc(name: str = "simple_qc") -> QuantumCircuit:
     return qc
 
 
+@pytest.fixture()
 def parametrized_qc(name: str = "parametrized_qc") -> QuantumCircuit:
     qc = QuantumCircuit(4, name=name)
     theta = Parameter("θ")
@@ -50,6 +56,7 @@ def parametrized_qc(name: str = "parametrized_qc") -> QuantumCircuit:
     return qc
 
 
+@pytest.fixture()
 def conditioned_ops_qc(name: str = "conditioned_ops_qc") -> QuantumCircuit:
     cregs = [ClassicalRegister(1) for _ in range(2)]
     q = QuantumRegister(3)
@@ -66,14 +73,16 @@ def conditioned_ops_qc(name: str = "conditioned_ops_qc") -> QuantumCircuit:
     return qc
 
 
-def test_generate_results() -> None:
-    for qc in [
-        empty_qc(),
-        no_ops_qc(),
-        no_ops_regs_qc(),
-        simple_qc(),
-        parametrized_qc(),
-        conditioned_ops_qc(),
+def test_generate_results(
+    empty_qc, no_ops_qc, no_ops_regs_qc, simple_qc, parametrized_qc, conditioned_ops_qc
+) -> None:
+    for circuit in [
+        empty_qc,
+        no_ops_qc,
+        no_ops_regs_qc,
+        simple_qc,
+        parametrized_qc,
+        conditioned_ops_qc
     ]:
-        display(qc)
-        qc_to_path(qc).write_text(qiskit2json(qc))
+        display(circuit)
+        qc_to_path(circuit).write_text(qiskit2json(circuit))
