@@ -1,7 +1,12 @@
 name: Python Tests
 
 on:
-  - pull_request
+  # Triggers the workflow on all PRs and push events to the main branch
+  pull_request:
+  push:
+    branches: [ main ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   tests:
