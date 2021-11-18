@@ -1,12 +1,11 @@
-import pytest
+from pathlib import Path
 
+import pytest
 from qiskit import AncillaRegister
 from qiskit import ClassicalRegister
 from qiskit import QuantumCircuit
 from qiskit import QuantumRegister
 from qiskit.circuit import Parameter
-
-from pathlib import Path
 
 
 def qc_to_path(qc: QuantumCircuit) -> Path:
