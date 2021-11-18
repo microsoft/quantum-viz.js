@@ -1,6 +1,6 @@
-from quantum_viz.utils import display
 from qiskit.circuit.random import random_circuit
 from qiskit.circuit.reset import Reset
+from quantum_viz.utils import display
 
 qc = random_circuit(4, 5, measure=False, reset=True, conditional=False)
 qc.barrier()

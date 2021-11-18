@@ -10,12 +10,7 @@ def _get_saved_dict(qc) -> str:
 
 
 def test_qviz_dict(
-    empty_qc,
-    no_ops_qc,
-    no_ops_regs_qc,
-    simple_qc,
-    parametrized_qc,
-    conditioned_ops_qc
+    empty_qc, no_ops_qc, no_ops_regs_qc, simple_qc, parametrized_qc, conditioned_ops_qc
 ) -> None:
     for circuit in [
         empty_qc,
@@ -23,6 +18,6 @@ def test_qviz_dict(
         no_ops_regs_qc,
         simple_qc,
         parametrized_qc,
-        conditioned_ops_qc
+        conditioned_ops_qc,
     ]:
         assert qiskit2dict(circuit) == _get_saved_dict(circuit)

@@ -24,7 +24,7 @@ python = "^3.6.1"
 click = "^8.0.1"
 ipython = "<8.0.0"
 varname = "^0.8.1"
-qiskit-terra = "^0.18.3"
+qiskit-terra = {extras = ["qiskit"], version = "^0.18.3"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
