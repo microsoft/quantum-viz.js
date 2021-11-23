@@ -47,7 +47,7 @@ STYLES = ("Default", "BlackAndWhite", "Inverted")  # Use Literal type in python 
 
 
 def display(
-    circuit: QuantumCircuit,
+    circuit: Union["QuantumCircuit", Dict[str, any]],
     filename: Union[str, Path, None] = None,
     style: str = "Default",
     version: Optional[str] = None,
