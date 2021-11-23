@@ -1,12 +1,13 @@
+import json
 import tempfile
 import warnings
 import webbrowser
 from pathlib import Path
+from typing import Any
+from typing import Dict
 from typing import Optional
-from typing import Union
 from typing import TYPE_CHECKING
-
-from quantum_viz.qiskit_parser import qiskit2json
+from typing import Union
 
 if TYPE_CHECKING:
     from qiskit import QuantumCircuit
@@ -47,28 +48,38 @@ STYLES = ("Default", "BlackAndWhite", "Inverted")  # Use Literal type in python 
 
 
 def display(
-    circuit: Union["QuantumCircuit", Dict[str, any]],
+    circuit: Union[Dict[str, Any], "QuantumCircuit"],
     filename: Union[str, Path, None] = None,
     style: str = "Default",
     version: Optional[str] = None,
     **kwargs,
 ) -> None:
+
     if filename is None:
         file = tempfile.NamedTemporaryFile(suffix=SUFFIX, delete=False)
         file.close()
         path = Path(file.name)
     else:
         path = Path(filename)
+
     if style not in STYLES:
         warnings.warn(
             f"The selected style '{style}' is not supported and will be ignored.\n"
             f"The supported styles are {STYLES}"
         )
+
     if version is None:
         version = ""  # Use the latest version
     else:
         version = "@" + version
-    qviz_json = qiskit2json(circuit, **kwargs)
+
+    if isinstance(circuit, dict):
+        qviz_json = json.dumps(circuit, indent=kwargs.get("indent", 2))
+    else:
+        from quantum_viz.qiskit_parser import qiskit2json
+
+        qviz_json = qiskit2json(circuit, **kwargs)
+
     html = HTML_TEMPLATE.format(version, qviz_json, style)
     path.write_text(html)
     webbrowser.open(f"file://{path.absolute()}")
