@@ -4,9 +4,12 @@ import webbrowser
 from pathlib import Path
 from typing import Optional
 from typing import Union
+from typing import TYPE_CHECKING
 
-from qiskit import QuantumCircuit
 from quantum_viz.qiskit_parser import qiskit2json
+
+if TYPE_CHECKING:
+    from qiskit import QuantumCircuit
 
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
