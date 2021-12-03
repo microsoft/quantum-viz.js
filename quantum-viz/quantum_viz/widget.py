@@ -5,6 +5,7 @@ quantum-viz Viewer: a Jupyter Widget that displays the quantum-viz.js
 circuit visualizer.
 """
 import uuid
+import json
 from typing import Any
 from typing import Dict
 from typing import List
@@ -61,7 +62,7 @@ class Viewer:
 
         self.width = width
         self.height = height
-        self.value = circuit
+        self.value = json.dumps(circuit)
         self._uids: List[str] = []
 
     def _gen_uid(self) -> str:
