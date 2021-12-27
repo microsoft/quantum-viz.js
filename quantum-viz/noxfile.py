@@ -28,9 +28,9 @@ nox.options.sessions = (
     "mypy",
     "safety",
     "typeguard",
-    "coverage",
     "xdoctest",
     "tests",
+    "coverage",
 )
 
 
