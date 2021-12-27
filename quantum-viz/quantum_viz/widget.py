@@ -4,8 +4,8 @@
 quantum-viz Viewer: a Jupyter Widget that displays the quantum-viz.js
 circuit visualizer.
 """
-import uuid
 import json
+import uuid
 from typing import Any
 from typing import Dict
 from typing import List
