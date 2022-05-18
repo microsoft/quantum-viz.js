@@ -48,6 +48,39 @@ widget # Display the widget
 
 ![quantum-viz example](https://user-images.githubusercontent.com/4041805/137230540-b523dc76-29c7-48e2-baa3-34d4ee0a17a1.PNG)
 
+## Qiskit Integration
+
+By installing the optional `[qiskit]` dependency, you can leverage Qiskit's `QuantumCircuit` APIs
+to define the circuit and render it using the `Viewer` widget on Jupyter, for example:
+
+```python
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
+from quantum_viz import Viewer
+
+qr = QuantumRegister(3, 'q')
+anc = QuantumRegister(1, 'ancilla')
+cr = ClassicalRegister(3, 'c')
+qc = QuantumCircuit(qr, anc, cr)
+
+
+qc.h(qr[0:3])
+qc.x(anc[0])
+qc.h(anc[0])
+qc.cx(qr[0:3], anc[0])
+qc.h(qr[0:3])
+qc.barrier(qr)
+qc.measure(qr, cr)
+
+Viewer(qc)
+```
+
+Optionally, you can also import the `display` method from `quantum_viz.utils` to render the circuit on a new browser window:
+
+```python
+from quantum_viz.utils import display
+display(qc)
+```
+
 ## Contributing
 
 Check out our [contributing guidelines](./CONTRIBUTING.md) to find out how you can contribute to quantum-viz.

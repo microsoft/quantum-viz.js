@@ -9,6 +9,7 @@ import uuid
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Union
 
 from IPython.core.display import display
 from IPython.core.display import HTML
@@ -44,7 +45,7 @@ class Viewer:
 
     n = 0
 
-    def __init__(self, circuit: Dict[str, Any], width: int = 400, height: int = 350):
+    def __init__(self, circuit: Union[Dict[str, Any], "QuantumCircuit"], width: int = 400, height: int = 350):
         """
         Create Viewer instance.
 
@@ -59,6 +60,10 @@ class Viewer:
             self.name = varname()
         except ImproperUseError:
             self.name = "_"
+
+        if not isinstance(circuit, dict):
+            from .qiskit_parser import qiskit2dict
+            circuit = qiskit2dict(circuit)
 
         self.width = width
         self.height = height
