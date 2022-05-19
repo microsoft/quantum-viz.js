@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "quantum-viz"
-version = "0.0.0"
+version = "1.0.4"
 description = "quantum-viz.js Python tools"
 authors = ["Microsoft Corporation <que-contacts@microsoft.com>"]
 license = "MIT"
