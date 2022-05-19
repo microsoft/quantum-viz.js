@@ -170,6 +170,7 @@ export class Sqore {
         svg.setAttribute('class', 'qviz');
         svg.setAttribute('width', width.toString());
         svg.setAttribute('height', height.toString());
+        svg.style.setProperty('max-width', 'fit-content');
 
         // Add styles
         const css = document.createElement('style');
@@ -341,9 +342,10 @@ export class Sqore {
             if (op.dataAttributes == null) return op;
             const opId: string = op.dataAttributes['id'];
             // Collapse parent gate and its children
-            if (opId.startsWith(parentId)) op.conditionalRender = ConditionalRender.Always;
-            // Allow parent gate to be interactive again
-            if (opId === parentId) delete op.dataAttributes['expanded'];
+            if (opId.startsWith(parentId)) {
+                op.conditionalRender = ConditionalRender.Always;
+                delete op.dataAttributes['expanded'];
+            }
         });
     }
 }

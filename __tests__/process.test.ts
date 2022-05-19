@@ -1468,6 +1468,7 @@ describe('Testing _opToMetadata', () => {
             targetsY: [startY, startY + registerHeight],
             label: '',
             width: minGateWidth + groupBoxPadding * 2,
+            dataAttributes: { expanded: 'true' },
             children: [
                 {
                     type: GateType.X,
@@ -2365,6 +2366,7 @@ describe('Testing processOperations', () => {
             targetsY: [startY, startY + registerHeight],
             label: '',
             width: minGateWidth * 2 + gatePadding * 2 + groupBoxPadding * 2,
+            dataAttributes: { expanded: 'true' },
             children: [
                 {
                     type: GateType.X,
@@ -2463,6 +2465,7 @@ describe('Testing processOperations', () => {
             targetsY: [startY, startY + registerHeight],
             label: '',
             width: minGateWidth * 2 + gatePadding * 2 + groupBoxPadding * 4,
+            dataAttributes: { expanded: 'true' },
             children: [
                 {
                     type: GateType.Group,
@@ -2471,6 +2474,7 @@ describe('Testing processOperations', () => {
                     targetsY: [startY],
                     label: '',
                     width: minGateWidth * 2 + gatePadding * 2 + groupBoxPadding * 2,
+                    dataAttributes: { expanded: 'true' },
                     children: [
                         {
                             type: GateType.X,
