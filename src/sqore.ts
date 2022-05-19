@@ -170,6 +170,7 @@ export class Sqore {
         svg.setAttribute('class', 'qviz');
         svg.setAttribute('width', width.toString());
         svg.setAttribute('height', height.toString());
+        svg.style.setProperty('max-width', 'fit-content');
 
         // Add styles
         const css = document.createElement('style');
