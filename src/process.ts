@@ -260,6 +260,9 @@ const _opToMetadata = (op: Operation | null, registers: RegisterMap): Metadata =
         const childrenInstrs = processOperations(children as Operation[], registers);
         metadata.type = GateType.Group;
         metadata.children = childrenInstrs.metadataList;
+        // _zoomButton function in gateFormatter.ts relies on
+        // 'expanded' attribute to render zoom button
+        metadata.dataAttributes = { expanded: 'true' };
         // Subtract startX (left-side) and add inner box padding (minus nested gate padding) for dashed box
         metadata.width = childrenInstrs.svgWidth - startX + (groupBoxPadding - gatePadding) * 2;
     } else if (isMeasurement) {
@@ -287,8 +290,8 @@ const _opToMetadata = (op: Operation | null, registers: RegisterMap): Metadata =
     // Set gate width
     metadata.width = getGateWidth(metadata);
 
-    // Set custom user-provided gate metadata
-    if (dataAttributes != null) metadata.dataAttributes = dataAttributes;
+    // Extend existing data attributes with user-provided data attributes
+    if (dataAttributes != null) metadata.dataAttributes = { ...metadata.dataAttributes, ...dataAttributes };
 
     return metadata;
 };
