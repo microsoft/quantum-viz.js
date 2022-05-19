@@ -1,9 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-"""
-quantum-viz Viewer: a Jupyter Widget that displays the quantum-viz.js
-circuit visualizer.
-"""
+"""quantum-viz Viewer is a Jupyter Widget that displays the quantum-viz.js circuit
+visualizer.
+"""  # noqa: D400, D205
 import uuid
 from typing import Any
 from typing import Dict

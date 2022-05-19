@@ -24,9 +24,13 @@ python_versions = ["3.9", "3.8", "3.7"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
+    "flake8",
+    "mypy",
     "safety",
-    "tests",
     "typeguard",
+    "xdoctest",
+    "tests",
+    "coverage",
 )
 
 
@@ -125,7 +129,7 @@ def safety(session: Session) -> None:
 @session(python=python_versions)
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
-    args = session.posargs or ["quantum_viz", "docs/conf.py"]
+    args = session.posargs or ["quantum_viz"]
     session.install(".")
     session.install("mypy", "pytest")
     session.run("mypy", *args)
