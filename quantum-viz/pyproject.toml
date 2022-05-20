@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "quantum-viz"
-version = "0.0.0"
+version = "1.0.4"
 description = "quantum-viz.js Python tools"
 authors = ["Microsoft Corporation <que-contacts@microsoft.com>"]
 license = "MIT"
@@ -71,6 +71,10 @@ pretty = true
 show_column_numbers = true
 show_error_codes = true
 show_error_context = true
+
+[[tool.mypy.overrides]]
+module = ["IPython.core.display", "varname.*"]
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

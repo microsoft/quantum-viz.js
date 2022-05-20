@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 if (typeof qviz != 'undefined') {
-    document.getElementById('msg').style.display = 'none';
+    document.getElementById('message').remove();
 
     /* These examples shows how to draw circuits into containers. */
     const entangleDiv = document.getElementById('entangle');
@@ -24,4 +24,6 @@ if (typeof qviz != 'undefined') {
     if (groverDiv != null) {
         qviz.draw(grover, groverDiv, qviz.STYLES['Default']);
     }
+} else {
+    document.getElementById('group').remove();
 }
