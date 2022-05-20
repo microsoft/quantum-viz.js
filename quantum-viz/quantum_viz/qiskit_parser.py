@@ -1,6 +1,5 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-import json
 from enum import IntEnum
 from typing import Dict
 from typing import Iterator
@@ -12,10 +11,10 @@ from typing import Union
 
 try:
     import qiskit  # noqa: F401
-except ImportError:
+except ImportError as e:
     raise ImportError(
         '`qiskit` was not found, try to `pip install "quantum-viz[qiskit]"`'
-    )
+    ) from e
 
 from qiskit.circuit import QuantumCircuit, Qubit, Clbit, ClassicalRegister
 from qiskit.circuit.instruction import Instruction
@@ -118,10 +117,12 @@ class QiskitCircuitParser:
         skip_barriers: bool = True,
     ) -> None:
         """
+        Create a QiskitCircuitParser object.
+
         :param circuit: qiskit quantum circuit to be parsed
         :param precision: the decimal precision of float gate parameters to display
         :param max_recursion_depth: the maximal recursion depth to parse, if None -
-        parse until the basis gates are reached
+          parse until the basis gates are reached
         :param skip_barriers: whether to omit barriers in the output or not
         """
         self.qc = circuit
@@ -305,7 +306,7 @@ class QiskitCircuitParser:
         return INSTRUCTION_TYPE_TO_NAME.get(type(instruction), instruction.name)
 
     def _add_reset(self, op_dict: Dict, qubit: Qubit, depth: int) -> None:
-        """Reset logic - measure and apply X gate if the measurement yields 1"""
+        """Reset logic - measure and apply X gate if the measurement yields 1."""
         qubit_def = self._get_qubit_def(qubit)
         op_dict["targets"] = [qubit_def]
         clbit_def = self._get_clbit_def(Clbit(), qubit)  # create a new classical bit
