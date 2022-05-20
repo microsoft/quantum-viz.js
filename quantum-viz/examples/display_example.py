@@ -1,3 +1,9 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+##
+# This script shows how to display a Qiskit circuit on a new browser window rendered using the Viewer.
+##
 from qiskit.circuit.random import random_circuit
 from qiskit.circuit.reset import Reset
 from quantum_viz.utils import display

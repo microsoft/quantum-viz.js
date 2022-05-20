@@ -101,10 +101,6 @@ class ConditionalRender(IntEnum):
     AS_GROUP = 3
 
 
-def qiskit2json(circ: QuantumCircuit, indent=2, **kwargs) -> str:
-    return json.dumps(qiskit2dict(circ, **kwargs), indent=indent)
-
-
 def qiskit2dict(circ: QuantumCircuit, **kwargs) -> Dict[str, List]:
     return QiskitCircuitParser(circ, **kwargs).qviz_dict
 

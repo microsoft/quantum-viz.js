@@ -28,11 +28,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <div id="circuit_div"></div>
   <script src="https://unpkg.com/@microsoft/quantum-viz.js{0}"></script>
   <script type="text/javascript">
-  var circuitString = `{1}
-  `;
-  </script>
-  <script type="text/javascript">
-    var circuit = JSON.parse(circuitString);
+    var circuit = {1};
     if (typeof qviz != 'undefined' && typeof circuit != undefined) {{
       document.getElementById('msg').style.display = 'none';
       var displayDiv = document.getElementById('circuit_div');
@@ -75,12 +71,11 @@ def display(
     else:
         version = "@" + version
 
-    if isinstance(circuit, dict):
-        qviz_json = json.dumps(circuit, indent=kwargs.get("indent", 2))
-    else:
-        from quantum_viz.qiskit_parser import qiskit2json
+    if not isinstance(circuit, dict):
+        from quantum_viz.qiskit_parser import qiskit2dict
+        circuit = qiskit2dict(circuit)
 
-        qviz_json = qiskit2json(circuit, **kwargs)
+    qviz_json = json.dumps(circuit)
 
     html = HTML_TEMPLATE.format(version, qviz_json, style)
     path.write_text(html)
