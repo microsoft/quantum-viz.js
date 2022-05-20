@@ -11,6 +11,8 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
+from widget import Viewer
+
 if TYPE_CHECKING:
     from qiskit import QuantumCircuit
 
@@ -73,6 +75,7 @@ def display(
 
     if not isinstance(circuit, dict):
         from quantum_viz.qiskit_parser import qiskit2dict
+
         circuit = qiskit2dict(circuit)
 
     qviz_json = json.dumps(circuit)

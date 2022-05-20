@@ -1,6 +1,5 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-
 ##
 # This script shows how to display a Qiskit circuit on a new browser window rendered using the Viewer.
 ##

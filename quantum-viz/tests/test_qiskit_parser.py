@@ -5,12 +5,13 @@ import json
 from quantum_viz.qiskit_parser import qiskit2dict
 from tests.conftest import *  # noqa: F403
 
+
 def _get_snapshot(qc) -> str:
     """
-    gets the snapshoft of the dictionary created by qiskit2dict 
+    gets the snapshoft of the dictionary created by qiskit2dict
 
     if a snapshot of the circuit is not found, then
-    one is automatically created and returned.    
+    one is automatically created and returned.
     """
     path = qc_to_path(qc)
     if path.exists():
