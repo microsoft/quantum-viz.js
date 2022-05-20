@@ -6,6 +6,7 @@ from typing import Dict
 from typing import Iterator
 from typing import List
 from typing import Optional
+from typing import Tuple
 from typing import Type
 from typing import Union
 
@@ -133,7 +134,7 @@ class QiskitCircuitParser:
         }
         self.qubit2id: Dict[Qubit, int] = dict()
         self._init_qubits()
-        self._clbit2id: Dict[Clbit, (int, int)] = dict()
+        self._clbit2id: Dict[Clbit, Tuple[int, int]] = dict()
         self._update_qviz_dict()
 
     def _init_qubits(self) -> None:
@@ -210,7 +211,7 @@ class QiskitCircuitParser:
         depth: int,
     ) -> Dict:
 
-        op_dict = {"gate": self._get_instruction_name(instruction)}
+        op_dict: Dict = {"gate": self._get_instruction_name(instruction)}
 
         if instruction.params:
             self._add_params(op_dict, instruction)
@@ -348,7 +349,7 @@ class QiskitCircuitParser:
         if isinstance(classical, ClassicalRegister):
             clbit = Clbit(classical, index=0)
         else:
-            clbit: Clbit = classical
+            clbit = classical
 
         if val:
             render_condition = ConditionalRender.ON_ONE.value

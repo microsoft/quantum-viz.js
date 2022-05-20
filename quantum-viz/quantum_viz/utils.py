@@ -11,7 +11,8 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
-from widget import Viewer
+from .widget import DEFAULT_STYLE
+from .widget import Style
 
 if TYPE_CHECKING:
     from qiskit import QuantumCircuit
@@ -44,13 +45,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 SUFFIX = "_qviz.html"
-STYLES = ("Default", "BlackAndWhite", "Inverted")  # Use Literal type in python 3.8
+
+STYLES = list(Style)
+
+
+class UnsupportedStyleWarning(UserWarning):
+    """A warning raised when an unsupported style is chosen."""
 
 
 def display(
     circuit: Union[Dict[str, Any], "QuantumCircuit"],
     filename: Union[str, Path, None] = None,
-    style: str = "Default",
+    style: Style = DEFAULT_STYLE,
     version: Optional[str] = None,
     **kwargs,
 ) -> None:
@@ -65,7 +71,8 @@ def display(
     if style not in STYLES:
         warnings.warn(
             f"The selected style '{style}' is not supported and will be ignored.\n"
-            f"The supported styles are {STYLES}"
+            f"The supported styles are {STYLES}",
+            UnsupportedStyleWarning,
         )
 
     if version is None:
@@ -74,9 +81,9 @@ def display(
         version = "@" + version
 
     if not isinstance(circuit, dict):
-        from quantum_viz.qiskit_parser import qiskit2dict
+        from .qiskit_parser import qiskit2dict
 
-        circuit = qiskit2dict(circuit)
+        circuit = qiskit2dict(circuit, **kwargs)
 
     qviz_json = json.dumps(circuit)
 

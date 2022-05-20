@@ -73,7 +73,7 @@ show_error_codes = true
 show_error_context = true
 
 [[tool.mypy.overrides]]
-module = ["IPython.core.display", "varname.*"]
+module = ["IPython.*", "varname.*", "qiskit.*"]
 ignore_missing_imports = true
 
 [build-system]
