@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+"""This module provides methods to serialize a Qiskit circuit into a dictionary
+   that can be rendered using quantum-viz."""
 from enum import IntEnum
 from typing import Dict
 from typing import Iterator
@@ -102,10 +104,13 @@ class ConditionalRender(IntEnum):
 
 
 def qiskit2dict(circ: QuantumCircuit, **kwargs) -> Dict[str, List]:
+    """Converts a Qiskit circuit to a dictionary that can be used to render the circuit using qviz."""
     return QiskitCircuitParser(circ, **kwargs).qviz_dict
 
 
 class QiskitCircuitParser:
+    """ This class parses a Qiskit circuit into a dictionary that can be used by quantum-viz.js """
+
     QUBITS_KEY = "qubits"
     OPERATIONS_KEY = "operations"
 
@@ -145,6 +150,8 @@ class QiskitCircuitParser:
 
     @property
     def qubits(self) -> List[Dict[str, int]]:
+        """ The list of qubits used by the circuit."""
+        return self.qviz_dict[self.QUBITS_KEY]
         return self.qviz_dict[self.QUBITS_KEY]
 
     @qubits.setter
@@ -153,6 +160,7 @@ class QiskitCircuitParser:
 
     @property
     def operations(self) -> List[Dict]:
+        """ The list of operations used by the circuit."""
         return self.qviz_dict[self.OPERATIONS_KEY]
 
     @operations.setter

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+"""This module provides utilities to display quantum-viz from a Python script."""
 import json
 import tempfile
 import warnings
@@ -52,15 +53,13 @@ STYLES = list(Style)
 class UnsupportedStyleWarning(UserWarning):
     """A warning raised when an unsupported style is chosen."""
 
-
-def display(
+def _create_file (
     circuit: Union[Dict[str, Any], "QuantumCircuit"],
     filename: Union[str, Path, None] = None,
     style: Style = DEFAULT_STYLE,
     version: Optional[str] = None,
     **kwargs,
-) -> None:
-
+) -> Path:
     if filename is None:
         file = tempfile.NamedTemporaryFile(suffix=SUFFIX, delete=False)
         file.close()
@@ -82,11 +81,21 @@ def display(
 
     if not isinstance(circuit, dict):
         from .qiskit_parser import qiskit2dict
-
         circuit = qiskit2dict(circuit, **kwargs)
 
     qviz_json = json.dumps(circuit)
 
     html = HTML_TEMPLATE.format(version, qviz_json, style)
     path.write_text(html)
+    return path
+
+def display(
+    circuit: Union[Dict[str, Any], "QuantumCircuit"],
+    filename: Union[str, Path, None] = None,
+    style: Style = DEFAULT_STYLE,
+    version: Optional[str] = None,
+    **kwargs,
+) -> None:
+    """Renders the given circuit using quantum-viz on a new browser window."""
+    path = _create_file(circuit, filename, style, version, **kwargs)
     webbrowser.open(f"file://{path.absolute()}")
