@@ -73,9 +73,12 @@ def test_widget_qiskit(simple_qc):
 
     html = widget.html_str("simple_qc_widget")
     assert html.index("qviz.draw(circuit, targetDiv") > 0
-    assert html.index("targetDiv = document.getElementById('JSApp_simple_qc_widget');") > 0
+    assert (
+        html.index("targetDiv = document.getElementById('JSApp_simple_qc_widget');") > 0
+    )
     assert html.index("const circuit = {") > 0
-            
+
+
 def test_widget_no_version(circuit):
     widget = Viewer(circuit=circuit, version=None)
     assert widget

@@ -53,7 +53,8 @@ STYLES = list(Style)
 class UnsupportedStyleWarning(UserWarning):
     """A warning raised when an unsupported style is chosen."""
 
-def _create_file (
+
+def _create_file(
     circuit: Union[Dict[str, Any], "QuantumCircuit"],
     filename: Union[str, Path, None] = None,
     style: Style = DEFAULT_STYLE,
@@ -81,6 +82,7 @@ def _create_file (
 
     if not isinstance(circuit, dict):
         from .qiskit_parser import qiskit2dict
+
         circuit = qiskit2dict(circuit, **kwargs)
 
     qviz_json = json.dumps(circuit)
@@ -88,6 +90,7 @@ def _create_file (
     html = HTML_TEMPLATE.format(version, qviz_json, style)
     path.write_text(html)
     return path
+
 
 def display(
     circuit: Union[Dict[str, Any], "QuantumCircuit"],
