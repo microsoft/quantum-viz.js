@@ -20,7 +20,7 @@ Changelog = "https://github.com/microsoft/quantum-viz.js/releases"
 [tool.poetry.dependencies]
 python = "^3.8"
 click = "^8.0.1"
-ipython = "<8.0.0"
+ipython = "^8.0.3"
 varname = "^0.8.1"
 
 [tool.poetry.dev-dependencies]
