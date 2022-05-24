@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-"""This module provides methods to serialize a Qiskit circuit into a dictionary
-   that can be rendered using quantum-viz."""
+"""This module provides methods to serialize a Qiskit circuit into a qviz dictionary."""  # noqa: B950
 from enum import IntEnum
 from typing import Dict
 from typing import Iterator
@@ -91,12 +90,12 @@ X_GATE_NAME = INSTRUCTION_TYPE_TO_NAME[XGate]
 MEASURE_NAME = INSTRUCTION_TYPE_TO_NAME[Measure]
 
 
-class RegisterType(IntEnum):
+class RegisterType(IntEnum):  # noqa: D101
     QUBIT = 0
     CLASSICAL = 1
 
 
-class ConditionalRender(IntEnum):
+class ConditionalRender(IntEnum):  # noqa: D101
     ALWAYS = 0
     ON_ZERO = 1
     ON_ONE = 2
@@ -104,12 +103,12 @@ class ConditionalRender(IntEnum):
 
 
 def qiskit2dict(circ: QuantumCircuit, **kwargs) -> Dict[str, List]:
-    """Converts a Qiskit circuit to a dictionary that can be used to render the circuit using qviz."""
+    """Convert a Qiskit circuit to a qviz dictionary."""
     return QiskitCircuitParser(circ, **kwargs).qviz_dict
 
 
 class QiskitCircuitParser:
-    """ This class parses a Qiskit circuit into a dictionary that can be used by quantum-viz.js """
+    """This class parses a Qiskit circuit into a qviz dictionary."""
 
     QUBITS_KEY = "qubits"
     OPERATIONS_KEY = "operations"
@@ -150,7 +149,7 @@ class QiskitCircuitParser:
 
     @property
     def qubits(self) -> List[Dict[str, int]]:
-        """ The list of qubits used by the circuit."""
+        """Get the list of qubits used by the circuit."""
         return self.qviz_dict[self.QUBITS_KEY]
         return self.qviz_dict[self.QUBITS_KEY]
 
@@ -160,7 +159,7 @@ class QiskitCircuitParser:
 
     @property
     def operations(self) -> List[Dict]:
-        """ The list of operations used by the circuit."""
+        """Get the list of operations used by the circuit."""
         return self.qviz_dict[self.OPERATIONS_KEY]
 
     @operations.setter

@@ -99,6 +99,6 @@ def display(
     version: Optional[str] = None,
     **kwargs,
 ) -> None:
-    """Renders the given circuit using quantum-viz on a new browser window."""
+    """Render the given circuit using quantum-viz on a new browser window."""
     path = _create_file(circuit, filename, style, version, **kwargs)
     webbrowser.open(f"file://{path.absolute()}")
