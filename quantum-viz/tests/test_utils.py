@@ -1,11 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+import os
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-import os
-
-from pathlib import Path
 from quantum_viz.utils import _create_file
 from tests.conftest import simple_qc
 
@@ -47,8 +46,10 @@ def test_create_file(circuit):
 
     os.remove(path)
 
+
 def test_create_file_with_path(circuit):
     import tempfile
+
     fd, original_path = tempfile.mkstemp(suffix=".html")
     print(original_path)
     path = _create_file(circuit, original_path)
@@ -64,6 +65,7 @@ def test_create_file_with_path(circuit):
     os.close(fd)
     os.remove(original_path)
 
+
 def test_create_file_with_version(circuit):
     path = _create_file(circuit, version="1.2.3.4")
     assert path.exists()
@@ -74,6 +76,7 @@ def test_create_file_with_version(circuit):
 
     os.remove(path)
 
+
 def test_create_file_with_qiskit(simple_qc):
     path = _create_file(simple_qc)
     assert path.exists()
@@ -83,7 +86,8 @@ def test_create_file_with_qiskit(simple_qc):
     assert content.index("var circuit = {") > 0
 
     os.remove(path)
-    
+
+
 def test_create_file_with_invalid_style(circuit):
     path = _create_file(circuit, style="invalid")
     assert path.exists()
