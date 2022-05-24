@@ -19,8 +19,8 @@ except ImportError:
     raise SystemExit(dedent(message))
 
 
-package = "quantum_viz"
-python_versions = ["3.9", "3.8", "3.7"]
+package = "quantum-viz"
+python_versions = ["3.9", "3.8"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",

@@ -10,8 +10,6 @@ repository = "https://github.com/microsoft/quantum-viz.js"
 documentation = "https://github.com/microsoft/quantum-viz.js"
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
 ]
@@ -20,7 +18,7 @@ classifiers = [
 Changelog = "https://github.com/microsoft/quantum-viz.js/releases"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = "^3.8"
 click = "^8.0.1"
 ipython = "<8.0.0"
 varname = "^0.8.1"
