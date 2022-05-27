@@ -10,8 +10,6 @@ repository = "https://github.com/microsoft/quantum-viz.js"
 documentation = "https://github.com/microsoft/quantum-viz.js"
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
 ]
@@ -20,9 +18,9 @@ classifiers = [
 Changelog = "https://github.com/microsoft/quantum-viz.js/releases"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = "^3.8"
 click = "^8.0.1"
-ipython = "<8.0.0"
+ipython = "^8.0.3"
 varname = "^0.8.1"
 qiskit-terra = {version = ">=0.19.1, <1", optional = true}
 
@@ -37,8 +35,9 @@ sphinx = "^4.1.1"
 sphinx-autobuild = "^2021.3.14"
 pre-commit = "^2.13.0"
 flake8 = "^3.9.2"
-black = "^20.8b1"
-flake8-bandit = "^2.1.2"
+bandit = "1.7.2"
+black = "^22.3.0"
+flake8-bandit = "2.1.2"
 flake8-bugbear = "^21.4.3"
 flake8-docstrings = "^1.6.0"
 flake8-rst-docstrings = "^0.2.3"

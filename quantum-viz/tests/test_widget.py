@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 from quantum_viz.widget import Viewer
+from tests.conftest import simple_qc
 
 
 @pytest.fixture
@@ -62,4 +63,27 @@ def test_widget(circuit):
 
 
 def test_widget_no_varname(circuit):
-    Viewer(circuit=circuit)
+    widget = Viewer(circuit=circuit)
+    assert widget
+
+
+def test_widget_qiskit(simple_qc):
+    widget = Viewer(circuit=simple_qc)
+    assert widget
+
+    html = widget.html_str("simple_qc_widget")
+    assert html.index("qviz.draw(circuit, targetDiv") > 0
+    assert (
+        html.index("targetDiv = document.getElementById('JSApp_simple_qc_widget');") > 0
+    )
+    assert html.index("const circuit = {") > 0
+
+
+def test_widget_no_version(circuit):
+    widget = Viewer(circuit=circuit, version=None)
+    assert widget
+
+    html = widget.html_str("_widget_")
+    assert html.index("qviz.draw(circuit, targetDiv") > 0
+    assert html.index("targetDiv = document.getElementById('JSApp__widget_');") > 0
+    assert html.index("""https://unpkg.com/@microsoft/quantum-viz.js""") > 0
