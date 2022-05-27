@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 from unittest.mock import patch
 
 import pytest
@@ -38,7 +40,7 @@ def test_widget(circuit):
         display.assert_called_once()
         assert (
             widget.html_str("test")
-            == "\
+            == """\
 \n<script type=\"text/javascript\">\
 \nrequire.config({\
 \n    paths: {\
@@ -46,7 +48,7 @@ def test_widget(circuit):
 \n    }\
 \n});\
 \nrequire(['qviz'], function(qviz) {\
-\n    const circuit = {'qubits': [{'id': 0}, {'id': 1, 'numChildren': 1}], 'operations': [{'gate': 'H', 'targets': [{'qId': 0}]}, {'gate': 'X', 'isControlled': 'True', 'controls': [{'qId': 0}], 'targets': [{'qId': 1}]}, {'gate': 'Measure', 'isMeasurement': 'True', 'controls': [{'qId': 1}], 'targets': [{'type': 1, 'qId': 1, 'cId': 0}]}]};\
+\n    const circuit = {"qubits": [{"id": 0}, {"id": 1, "numChildren": 1}], "operations": [{"gate": "H", "targets": [{"qId": 0}]}, {"gate": "X", "isControlled": "True", "controls": [{"qId": 0}], "targets": [{"qId": 1}]}, {"gate": "Measure", "isMeasurement": "True", "controls": [{"qId": 1}], "targets": [{"type": 1, "qId": 1, "cId": 0}]}]};\
 \n    const targetDiv = document.getElementById('JSApp_test');\
 \n    if (targetDiv != null) {\
 \n        qviz.draw(circuit, targetDiv, qviz.STYLES['Default']);\
@@ -55,7 +57,7 @@ def test_widget(circuit):
 \n</script>\
 \n<div id=\"JSApp_test\"></div>\
 \n<div id=\"msg\"></div>\
-\n"
+\n"""
         )
 
 

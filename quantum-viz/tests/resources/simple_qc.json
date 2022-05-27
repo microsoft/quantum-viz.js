@@ -1,0 +1,967 @@
+{
+  "qubits": [
+    {
+      "id": 0
+    },
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    },
+    {
+      "id": 3,
+      "numChildren": 1
+    },
+    {
+      "id": 4,
+      "numChildren": 1
+    }
+  ],
+  "operations": [
+    {
+      "gate": "simple_qc",
+      "targets": [
+        {
+          "qId": 0
+        },
+        {
+          "qId": 1
+        },
+        {
+          "qId": 2
+        },
+        {
+          "qId": 3
+        },
+        {
+          "qId": 4
+        }
+      ],
+      "children": [
+        {
+          "gate": "H",
+          "targets": [
+            {
+              "qId": 0
+            }
+          ],
+          "children": [
+            {
+              "gate": "U2",
+              "displayArgs": "(0, 3.14)",
+              "targets": [
+                {
+                  "qId": 0
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(1.57, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 0
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 0
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "H",
+          "targets": [
+            {
+              "qId": 1
+            }
+          ],
+          "children": [
+            {
+              "gate": "U2",
+              "displayArgs": "(0, 3.14)",
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(1.57, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 1
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "H",
+          "targets": [
+            {
+              "qId": 2
+            }
+          ],
+          "children": [
+            {
+              "gate": "U2",
+              "displayArgs": "(0, 3.14)",
+              "targets": [
+                {
+                  "qId": 2
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(1.57, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 2
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 2
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "H",
+          "targets": [
+            {
+              "qId": 3
+            }
+          ],
+          "children": [
+            {
+              "gate": "U2",
+              "displayArgs": "(0, 3.14)",
+              "targets": [
+                {
+                  "qId": 3
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(1.57, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 3
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "H",
+          "targets": [
+            {
+              "qId": 4
+            }
+          ],
+          "children": [
+            {
+              "gate": "U2",
+              "displayArgs": "(0, 3.14)",
+              "targets": [
+                {
+                  "qId": 4
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U3",
+                  "displayArgs": "(1.57, 0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 4
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 4
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "SWAP",
+          "isControlled": true,
+          "controls": [
+            {
+              "qId": 2
+            }
+          ],
+          "targets": [
+            {
+              "qId": 1
+            },
+            {
+              "qId": 3
+            }
+          ],
+          "children": [
+            {
+              "gate": "X",
+              "isControlled": true,
+              "controls": [
+                {
+                  "qId": 3
+                }
+              ],
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ]
+            },
+            {
+              "gate": "X",
+              "isControlled": true,
+              "controls": [
+                {
+                  "qId": 2
+                },
+                {
+                  "qId": 1
+                }
+              ],
+              "targets": [
+                {
+                  "qId": 3
+                }
+              ],
+              "children": [
+                {
+                  "gate": "H",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U2",
+                      "displayArgs": "(0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 3
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(1.57, 0, 3.14)",
+                          "targets": [
+                            {
+                              "qId": 3
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(1.57, 0, 3.14)",
+                              "targets": [
+                                {
+                                  "qId": 3
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "X",
+                  "isControlled": true,
+                  "controls": [
+                    {
+                      "qId": 1
+                    }
+                  ],
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ]
+                },
+                {
+                  "gate": "Tdg",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U1",
+                      "displayArgs": "(-0.79)",
+                      "targets": [
+                        {
+                          "qId": 3
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(0, 0, -0.79)",
+                          "targets": [
+                            {
+                              "qId": 3
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(0, 0, -0.79)",
+                              "targets": [
+                                {
+                                  "qId": 3
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "X",
+                  "isControlled": true,
+                  "controls": [
+                    {
+                      "qId": 2
+                    }
+                  ],
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ]
+                },
+                {
+                  "gate": "T",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U1",
+                      "displayArgs": "(0.79)",
+                      "targets": [
+                        {
+                          "qId": 3
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(0, 0, 0.79)",
+                          "targets": [
+                            {
+                              "qId": 3
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(0, 0, 0.79)",
+                              "targets": [
+                                {
+                                  "qId": 3
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "X",
+                  "isControlled": true,
+                  "controls": [
+                    {
+                      "qId": 1
+                    }
+                  ],
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ]
+                },
+                {
+                  "gate": "Tdg",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U1",
+                      "displayArgs": "(-0.79)",
+                      "targets": [
+                        {
+                          "qId": 3
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(0, 0, -0.79)",
+                          "targets": [
+                            {
+                              "qId": 3
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(0, 0, -0.79)",
+                              "targets": [
+                                {
+                                  "qId": 3
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "X",
+                  "isControlled": true,
+                  "controls": [
+                    {
+                      "qId": 2
+                    }
+                  ],
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ]
+                },
+                {
+                  "gate": "T",
+                  "targets": [
+                    {
+                      "qId": 1
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U1",
+                      "displayArgs": "(0.79)",
+                      "targets": [
+                        {
+                          "qId": 1
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(0, 0, 0.79)",
+                          "targets": [
+                            {
+                              "qId": 1
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(0, 0, 0.79)",
+                              "targets": [
+                                {
+                                  "qId": 1
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "T",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U1",
+                      "displayArgs": "(0.79)",
+                      "targets": [
+                        {
+                          "qId": 3
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(0, 0, 0.79)",
+                          "targets": [
+                            {
+                              "qId": 3
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(0, 0, 0.79)",
+                              "targets": [
+                                {
+                                  "qId": 3
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "H",
+                  "targets": [
+                    {
+                      "qId": 3
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U2",
+                      "displayArgs": "(0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 3
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(1.57, 0, 3.14)",
+                          "targets": [
+                            {
+                              "qId": 3
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(1.57, 0, 3.14)",
+                              "targets": [
+                                {
+                                  "qId": 3
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "X",
+                  "isControlled": true,
+                  "controls": [
+                    {
+                      "qId": 2
+                    }
+                  ],
+                  "targets": [
+                    {
+                      "qId": 1
+                    }
+                  ]
+                },
+                {
+                  "gate": "T",
+                  "targets": [
+                    {
+                      "qId": 2
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U1",
+                      "displayArgs": "(0.79)",
+                      "targets": [
+                        {
+                          "qId": 2
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(0, 0, 0.79)",
+                          "targets": [
+                            {
+                              "qId": 2
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(0, 0, 0.79)",
+                              "targets": [
+                                {
+                                  "qId": 2
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "Tdg",
+                  "targets": [
+                    {
+                      "qId": 1
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U1",
+                      "displayArgs": "(-0.79)",
+                      "targets": [
+                        {
+                          "qId": 1
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U3",
+                          "displayArgs": "(0, 0, -0.79)",
+                          "targets": [
+                            {
+                              "qId": 1
+                            }
+                          ],
+                          "children": [
+                            {
+                              "gate": "U",
+                              "displayArgs": "(0, 0, -0.79)",
+                              "targets": [
+                                {
+                                  "qId": 1
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "gate": "X",
+                  "isControlled": true,
+                  "controls": [
+                    {
+                      "qId": 2
+                    }
+                  ],
+                  "targets": [
+                    {
+                      "qId": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "gate": "X",
+              "isControlled": true,
+              "controls": [
+                {
+                  "qId": 3
+                }
+              ],
+              "targets": [
+                {
+                  "qId": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "\u221aXdg",
+          "targets": [
+            {
+              "qId": 0
+            }
+          ],
+          "children": [
+            {
+              "gate": "S",
+              "targets": [
+                {
+                  "qId": 0
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U1",
+                  "displayArgs": "(1.57)",
+                  "targets": [
+                    {
+                      "qId": 0
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U3",
+                      "displayArgs": "(0, 0, 1.57)",
+                      "targets": [
+                        {
+                          "qId": 0
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U",
+                          "displayArgs": "(0, 0, 1.57)",
+                          "targets": [
+                            {
+                              "qId": 0
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "gate": "H",
+              "targets": [
+                {
+                  "qId": 0
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U2",
+                  "displayArgs": "(0, 3.14)",
+                  "targets": [
+                    {
+                      "qId": 0
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U3",
+                      "displayArgs": "(1.57, 0, 3.14)",
+                      "targets": [
+                        {
+                          "qId": 0
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U",
+                          "displayArgs": "(1.57, 0, 3.14)",
+                          "targets": [
+                            {
+                              "qId": 0
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "gate": "S",
+              "targets": [
+                {
+                  "qId": 0
+                }
+              ],
+              "children": [
+                {
+                  "gate": "U1",
+                  "displayArgs": "(1.57)",
+                  "targets": [
+                    {
+                      "qId": 0
+                    }
+                  ],
+                  "children": [
+                    {
+                      "gate": "U3",
+                      "displayArgs": "(0, 0, 1.57)",
+                      "targets": [
+                        {
+                          "qId": 0
+                        }
+                      ],
+                      "children": [
+                        {
+                          "gate": "U",
+                          "displayArgs": "(0, 0, 1.57)",
+                          "targets": [
+                            {
+                              "qId": 0
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "gate": "measure",
+          "isMeasurement": true,
+          "controls": [
+            {
+              "qId": 3
+            }
+          ],
+          "targets": [
+            {
+              "type": 1,
+              "qId": 3,
+              "cId": 0
+            }
+          ]
+        },
+        {
+          "gate": "reset",
+          "targets": [
+            {
+              "qId": 4
+            }
+          ],
+          "children": [
+            {
+              "gate": "measure",
+              "isMeasurement": true,
+              "controls": [
+                {
+                  "qId": 4
+                }
+              ],
+              "targets": [
+                {
+                  "type": 1,
+                  "qId": 4,
+                  "cId": 0
+                }
+              ]
+            },
+            {
+              "gate": "Conditional",
+              "isConditional": true,
+              "controls": [
+                {
+                  "type": 1,
+                  "qId": 4,
+                  "cId": 0
+                }
+              ],
+              "targets": [],
+              "children": [
+                {
+                  "gate": "X",
+                  "targets": [
+                    {
+                      "qId": 4
+                    }
+                  ],
+                  "conditionalRender": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

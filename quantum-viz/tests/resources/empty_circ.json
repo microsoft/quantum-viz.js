@@ -1,0 +1,9 @@
+{
+  "qubits": [],
+  "operations": [
+    {
+      "gate": "empty_circ",
+      "targets": []
+    }
+  ]
+}

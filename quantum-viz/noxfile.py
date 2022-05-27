@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 """Nox sessions."""
 import shutil
 import sys
@@ -19,7 +21,7 @@ except ImportError:
     raise SystemExit(dedent(message))
 
 
-package = "quantum_viz"
+package = "quantum-viz"
 python_versions = ["3.9", "3.8", "3.7"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
@@ -140,7 +142,7 @@ def mypy(session: Session) -> None:
 @session(python=python_versions)
 def tests(session: Session) -> None:
     """Run the test suite."""
-    session.install(".")
+    session.install(".[qiskit]")
     session.install("coverage[toml]", "pytest", "pygments")
     try:
         session.run("coverage", "run", "--parallel", "-m", "pytest", *session.posargs)
@@ -165,7 +167,7 @@ def coverage(session: Session) -> None:
 @session(python=python_versions)
 def typeguard(session: Session) -> None:
     """Runtime type checking using Typeguard."""
-    session.install(".")
+    session.install(".[qiskit]")
     session.install("pytest", "typeguard", "pygments")
     session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
 
