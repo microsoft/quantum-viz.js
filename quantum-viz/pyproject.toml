@@ -22,6 +22,7 @@ python = "^3.8"
 click = "^8.0.1"
 ipython = "^8.0.3"
 varname = "^0.8.1"
+qiskit-terra = {version = ">=0.19.1, <1", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
@@ -35,7 +36,6 @@ sphinx-autobuild = "^2021.3.14"
 pre-commit = "^2.13.0"
 flake8 = "^3.9.2"
 black = "^22.3.0"
-bandit = "1.7.2"
 flake8-bandit = "2.1.2"
 flake8-bugbear = "^21.4.3"
 flake8-docstrings = "^1.6.0"
@@ -47,6 +47,10 @@ pre-commit-hooks = "^4.0.1"
 sphinx-rtd-theme = "^0.5.2"
 sphinx-click = "^3.0.1"
 Pygments = "^2.9.0"
+qiskit-terra = ">=0.19.1, <1"
+
+[tool.poetry.extras]
+qiskit = ["qiskit-terra"]
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -57,7 +61,7 @@ source = ["quantum_viz"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 100
+fail_under = 90
 
 [tool.mypy]
 strict = false
@@ -67,7 +71,7 @@ show_error_codes = true
 show_error_context = true
 
 [[tool.mypy.overrides]]
-module = ["IPython.core.display", "varname.*"]
+module = ["IPython.*", "varname.*", "qiskit.*"]
 ignore_missing_imports = true
 
 [build-system]
