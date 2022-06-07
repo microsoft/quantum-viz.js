@@ -40,7 +40,7 @@ const addEditable = (container: HTMLElement, sqore: Sqore): void => {
 
 // Commands
 
-const addCustomStyles = (container: HTMLElement) => {
+const addCustomStyles = (container: HTMLElement): void => {
     const style = container.querySelector<HTMLStyleElement>('style');
     if (style) {
         style.innerHTML += `
@@ -70,7 +70,7 @@ const addCustomStyles = (container: HTMLElement) => {
     }
 };
 
-const addDropzones = (container: HTMLElement) => {
+const addDropzones = (container: HTMLElement): void => {
     const gateElems = getGateElems(container);
     gateElems.forEach((gateElem) => {
         const { x, y, width, height } = gateElem.getBBox({ stroke: true });
@@ -80,7 +80,7 @@ const addDropzones = (container: HTMLElement) => {
     });
 };
 
-const addDocumentEvents = (container: HTMLElement) => {
+const addDocumentEvents = (container: HTMLElement): void => {
     container.addEventListener('click', (ev: MouseEvent) => {
         _sourceTarget = null;
         if (ev.ctrlKey) return;
@@ -94,7 +94,7 @@ const addDocumentEvents = (container: HTMLElement) => {
     });
 };
 
-const addDropzoneEvents = (context: Context) => {
+const addDropzoneEvents = (context: Context): void => {
     const { container } = context;
     const dropzoneElems = container.querySelectorAll<SVGRectElement>('.dropzone');
     dropzoneElems.forEach((dropzoneElem) => {
@@ -102,7 +102,7 @@ const addDropzoneEvents = (context: Context) => {
     });
 };
 
-const addMouseEvents = (context: Context) => {
+const addMouseEvents = (context: Context): void => {
     const { container } = context;
     const gateElems = getGateElems(container);
     gateElems.forEach((gateElem) => {
@@ -111,7 +111,7 @@ const addMouseEvents = (context: Context) => {
 };
 
 // Event handlers
-const handleGateMouseDown = (ev: MouseEvent, container: HTMLElement) => {
+const handleGateMouseDown = (ev: MouseEvent, container: HTMLElement): void => {
     ev.stopPropagation();
     _sourceTarget = ev.currentTarget as SVGGElement;
 
@@ -119,7 +119,7 @@ const handleGateMouseDown = (ev: MouseEvent, container: HTMLElement) => {
     ev.ctrlKey ? cursorCopy(container, true) : cursorMove(container, true);
 };
 
-const handleDropzoneMouseUp = (ev: MouseEvent, context: Context) => {
+const handleDropzoneMouseUp = (ev: MouseEvent, context: Context): void | false => {
     ev.stopPropagation();
 
     const { container, operations, wires, renderFn } = context;
@@ -184,7 +184,7 @@ const getGateElems = (container: HTMLElement): SVGGElement[] => {
     return Array.from(container.querySelectorAll('g.gate'));
 };
 
-const getWireElems = (container: HTMLElement) => {
+const getWireElems = (container: HTMLElement): SVGGElement[] => {
     // elems include qubit wires and lines of measure gates
     const elems = container.querySelectorAll<SVGGElement>('svg > g:nth-child(3) > g');
     // filter out <g> elements having more than 2 elements because
@@ -270,7 +270,7 @@ const getWireElemText = (wireElem: SVGGElement): string => {
     return textElem.textContent;
 };
 
-const getClosestWireY = (offsetY: number, wires: { [y: number]: string }) => {
+const getClosestWireY = (offsetY: number, wires: { [y: number]: string }): number | null => {
     let wireY;
     Object.entries(wires).forEach((wire) => {
         const y = wire[0];
@@ -283,8 +283,10 @@ const getClosestWireY = (offsetY: number, wires: { [y: number]: string }) => {
     return wireY || null;
 };
 
-const getDropzonePosition = (element: SVGElement) => {
-    return element.getAttribute('data-dropzone-position');
+const getDropzonePosition = (element: SVGElement): string => {
+    const position = element.getAttribute('data-dropzone-position');
+    if (position == null) throw new Error('Position not found');
+    return position;
 };
 
 const insertBefore = (parent: Operation[], index: number, newGate: Operation): void => {
@@ -299,11 +301,11 @@ const deleteAt = (parent: Operation[], index: number): void => {
     parent.splice(index, 1);
 };
 
-const cursorMove = (container: HTMLElement, value: boolean) => {
+const cursorMove = (container: HTMLElement, value: boolean): void => {
     value ? container.classList.add('moving') : container.classList.remove('moving');
 };
 
-const cursorCopy = (container: HTMLElement, value: boolean) => {
+const cursorCopy = (container: HTMLElement, value: boolean): void => {
     value ? container.classList.add('copying') : container.classList.remove('copying');
 };
 
