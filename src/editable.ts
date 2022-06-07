@@ -16,6 +16,14 @@ interface Wires {
 
 let _sourceTarget: SVGElement | null;
 
+/**
+ * Add editable elements and events.
+ *
+ * @param container     HTML element for rendering visualization into.
+ * @param sqore         Sqore object
+ *
+ */
+
 const addEditable = (container: HTMLElement, sqore: Sqore): void => {
     const context: Context = {
         container: container,
