@@ -18,9 +18,11 @@ export const draw = (
     container: HTMLElement,
     style: StyleConfig | string = {},
     renderDepth = 0,
+    editable = false,
 ): void => {
     const sqore = new Sqore(circuit, style);
-    sqore.draw(container, renderDepth);
+
+    sqore.draw(container, renderDepth, editable);
 };
 
 export { STYLES } from './styles';

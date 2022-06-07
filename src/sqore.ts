@@ -10,6 +10,7 @@ import { Metadata, GateType } from './metadata';
 import { StyleConfig, style, STYLES } from './styles';
 import { createUUID } from './utils';
 import { svgNS } from './constants';
+import { addEditable } from './editable';
 
 /**
  * Contains metadata for visualization.
@@ -56,7 +57,7 @@ export class Sqore {
      * @param container HTML element for rendering visualization into.
      * @param renderDepth Initial layer depth at which to render gates.
      */
-    draw(container: HTMLElement, renderDepth = 0): void {
+    draw(container: HTMLElement, renderDepth = 0, editable = false): void {
         // Inject into container
         if (container == null) throw new Error(`Container not provided.`);
 
@@ -78,8 +79,7 @@ export class Sqore {
             const id: string = circuit.operations[0].dataAttributes['id'];
             this.expandOperation(circuit.operations, id);
         }
-
-        this.renderCircuit(container, circuit);
+        this.renderCircuit(container, circuit, editable);
     }
 
     /**
@@ -107,13 +107,17 @@ export class Sqore {
      * @param container HTML element for rendering visualization into.
      * @param circuit Circuit object to be rendered.
      */
-    private renderCircuit(container: HTMLElement, circuit: Circuit): void {
+    public renderCircuit(container: HTMLElement, circuit: Circuit, editable: boolean): void {
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(circuit);
         const svg: SVGElement = this.generateSvg(composedSqore);
         container.innerHTML = '';
         container.appendChild(svg);
-        this.addGateClickHandlers(container, circuit);
+        this.addGateClickHandlers(container, circuit, editable);
+
+        if (editable) {
+            addEditable(container, this);
+        }
     }
 
     /**
@@ -231,9 +235,9 @@ export class Sqore {
      * @param circuit Circuit to be visualized.
      *
      */
-    private addGateClickHandlers(container: HTMLElement, circuit: Circuit): void {
+    private addGateClickHandlers(container: HTMLElement, circuit: Circuit, editable: boolean): void {
         this.addClassicalControlHandlers(container);
-        this.addZoomHandlers(container, circuit);
+        this.addZoomHandlers(container, circuit, editable);
     }
 
     /**
@@ -291,7 +295,7 @@ export class Sqore {
      * @param circuit Circuit to be visualized.
      *
      */
-    private addZoomHandlers(container: HTMLElement, circuit: Circuit): void {
+    private addZoomHandlers(container: HTMLElement, circuit: Circuit, editable: boolean): void {
         container.querySelectorAll('.gate .gate-control').forEach((ctrl) => {
             // Zoom in on clicked gate
             ctrl.addEventListener('click', (ev: Event) => {
@@ -302,8 +306,7 @@ export class Sqore {
                     } else if (ctrl.classList.contains('gate-expand')) {
                         this.expandOperation(circuit.operations, gateId);
                     }
-                    this.renderCircuit(container, circuit);
-
+                    this.renderCircuit(container, circuit, editable);
                     ev.stopPropagation();
                 }
             });

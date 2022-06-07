@@ -12,7 +12,7 @@ if (typeof qviz != 'undefined') {
 
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
-        qviz.draw(sample, sampleDiv, qviz.STYLES['Default']);
+        qviz.draw(sample, sampleDiv, qviz.STYLES['Default'], 0, true);
     }
 
     const teleportDiv = document.getElementById('teleport');
