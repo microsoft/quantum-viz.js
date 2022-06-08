@@ -264,9 +264,10 @@ const getWireElemsY = (container: HTMLElement): Wires => {
 
 const getWireElemY = (wireElem: SVGGElement): number => {
     const lineElem = wireElem.querySelector<SVGLineElement>('line');
-    if (lineElem == null || lineElem.y1.baseVal.value == null) throw Error('y not found');
-    return lineElem.y1.baseVal.value;
+    if (lineElem == null || lineElem.getAttribute('y1') == null) throw Error('y not found');
+    return Number(lineElem.getAttribute('y1'));
 };
+
 const getWireElemText = (wireElem: SVGGElement): string => {
     const textElem = wireElem.querySelector<SVGTextElement>('text');
     if (textElem == null || textElem.textContent == null || textElem.textContent === '')
@@ -323,6 +324,7 @@ const exportedForTesting = {
     insertAfter,
     getDropzonePosition,
     getWireElemText,
+    getWireElemY,
 };
 
 export { addEditable, exportedForTesting };

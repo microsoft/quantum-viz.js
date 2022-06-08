@@ -12,6 +12,7 @@ const {
     insertAfter,
     getDropzonePosition,
     getWireElemText,
+    getWireElemY,
 } = exportedForTesting;
 
 // Utlities
@@ -357,5 +358,36 @@ describe('Testing getWireElementText', () => {
     test('should return q1', () => {
         textElem.textContent = 'q1';
         expect(getWireElemText(groupElem)).toEqual('q1');
+    });
+});
+
+describe('Testing getWireElemY', () => {
+    let svgElem: SVGElement;
+    let groupElem: SVGGElement;
+    let lineElem: SVGGElement;
+    beforeEach(() => {
+        svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as SVGElement;
+        groupElem = document.createElementNS('http://www.w3.org/2000/svg', 'g') as SVGGElement;
+        lineElem = document.createElementNS('http://www.w3.org/2000/svg', 'line') as SVGLineElement;
+        groupElem.append(lineElem);
+        svgElem.append(groupElem);
+    });
+    test('line element not exists', () => {
+        lineElem.remove();
+        expect(() => getWireElemY(groupElem)).toThrowError('y not found');
+    });
+    test('get y element without y value', () => {
+        expect(() => getWireElemY(groupElem)).toThrowError('y not found');
+    });
+    test('get text element empty textContent', () => {
+        expect(() => getWireElemY(groupElem)).toThrowError('y not found');
+    });
+    test('should return 40', () => {
+        lineElem.setAttribute('y1', '40');
+        expect(getWireElemY(groupElem)).toEqual(40);
+    });
+    test('should return 99', () => {
+        lineElem.setAttribute('y1', '99');
+        expect(getWireElemY(groupElem)).toEqual(99);
     });
 });
