@@ -326,6 +326,7 @@ const exportedForTesting = {
     getGate,
     getParent,
     addCustomStyles,
+    addDocumentEvents,
 };
 
 export { addEditable, exportedForTesting };

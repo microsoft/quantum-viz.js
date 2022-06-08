@@ -35,6 +35,10 @@ exports[`Testing addCustomStyles verify css 2`] = `
 </div>
 `;
 
+exports[`Testing addDocumentEvents verify document events 1`] = `<div />`;
+
+exports[`Testing addDocumentEvents verify document events 2`] = `<div />`;
+
 exports[`Testing cursorCopy turn off copy cursor 1`] = `
 <div
   class="copying"

@@ -16,6 +16,7 @@ const {
     getGate,
     getParent,
     addCustomStyles,
+    addDocumentEvents,
 } = exportedForTesting;
 
 // Utlities
@@ -758,6 +759,16 @@ describe('Testing addCustomStyles', () => {
         container.append(style);
         expect(container).toMatchSnapshot();
         addCustomStyles(container);
+        expect(container).toMatchSnapshot();
+    });
+});
+
+// Untestable
+describe('Testing addDocumentEvents', () => {
+    test('verify document events', () => {
+        const container = document.createElement('div');
+        expect(container).toMatchSnapshot();
+        addDocumentEvents(container);
         expect(container).toMatchSnapshot();
     });
 });
