@@ -325,6 +325,8 @@ const exportedForTesting = {
     getDropzonePosition,
     getWireElemText,
     getWireElemY,
+    getGate,
+    getParent,
 };
 
 export { addEditable, exportedForTesting };

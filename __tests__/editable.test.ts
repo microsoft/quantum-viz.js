@@ -13,6 +13,8 @@ const {
     getDropzonePosition,
     getWireElemText,
     getWireElemY,
+    getGate,
+    getParent,
 } = exportedForTesting;
 
 // Utlities
@@ -389,5 +391,361 @@ describe('Testing getWireElemY', () => {
     test('should return 99', () => {
         lineElem.setAttribute('y1', '99');
         expect(getWireElemY(groupElem)).toEqual(99);
+    });
+});
+
+describe('Testing getParent', () => {
+    test('with level 0 gate', () => {
+        const operations = [
+            {
+                gate: 'H',
+                targets: [{ qId: 0 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 0 }],
+                targets: [{ qId: 1 }],
+            },
+            {
+                gate: 'Measure',
+                isMeasurement: true,
+                controls: [{ qId: 1 }],
+                targets: [{ type: 1, qId: 1, cId: 0 }],
+            },
+        ];
+        expect(getParent('0', operations)).toStrictEqual([
+            {
+                gate: 'H',
+                targets: [{ qId: 0 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 0 }],
+                targets: [{ qId: 1 }],
+            },
+            {
+                gate: 'Measure',
+                isMeasurement: true,
+                controls: [{ qId: 1 }],
+                targets: [{ type: 1, qId: 1, cId: 0 }],
+            },
+        ]);
+    });
+    test('with level 1 gate', () => {
+        const operations = [
+            {
+                gate: 'Foo',
+                conditionalRender: 3,
+                targets: [{ qId: 0 }, { qId: 1 }],
+                children: [
+                    {
+                        gate: 'H',
+                        targets: [{ qId: 1 }],
+                    },
+                    {
+                        gate: 'RX',
+                        displayArgs: '(0.25)',
+                        isControlled: true,
+                        controls: [{ qId: 1 }],
+                        targets: [{ qId: 0 }],
+                    },
+                ],
+            },
+            {
+                gate: 'X',
+                targets: [{ qId: 3 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 1 }],
+                targets: [{ qId: 2 }, { qId: 3 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 2 }, { qId: 3 }],
+                targets: [{ qId: 1 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 1 }, { qId: 3 }],
+                targets: [{ qId: 2 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 2 }],
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+            {
+                gate: 'measure',
+                isMeasurement: true,
+                controls: [{ qId: 0 }],
+                targets: [{ type: 1, qId: 0, cId: 0 }],
+            },
+            {
+                gate: 'ApplyIfElseR',
+                isConditional: true,
+                controls: [{ type: 1, qId: 0, cId: 0 }],
+                targets: [],
+                children: [
+                    {
+                        gate: 'H',
+                        targets: [{ qId: 1 }],
+                        conditionalRender: 1,
+                    },
+                    {
+                        gate: 'X',
+                        targets: [{ qId: 1 }],
+                        conditionalRender: 1,
+                    },
+                    {
+                        gate: 'X',
+                        isControlled: true,
+                        controls: [{ qId: 0 }],
+                        targets: [{ qId: 1 }],
+                        conditionalRender: 2,
+                    },
+                    {
+                        gate: 'Foo',
+                        targets: [{ qId: 3 }],
+                        conditionalRender: 2,
+                    },
+                ],
+            },
+            {
+                gate: 'SWAP',
+                targets: [{ qId: 0 }, { qId: 2 }],
+                children: [
+                    { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                    { gate: 'X', isControlled: true, controls: [{ qId: 2 }], targets: [{ qId: 0 }] },
+                    { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                ],
+            },
+            {
+                gate: 'ZZ',
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+            {
+                gate: 'ZZ',
+                targets: [{ qId: 0 }, { qId: 1 }],
+            },
+            {
+                gate: 'XX',
+                isControlled: true,
+                controls: [{ qId: 0 }],
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+            {
+                gate: 'XX',
+                isControlled: true,
+                controls: [{ qId: 2 }],
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+            {
+                gate: 'XX',
+                isControlled: true,
+                controls: [{ qId: 0 }, { qId: 2 }],
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+        ];
+        expect(getParent('0-1', operations)).toStrictEqual([
+            {
+                gate: 'H',
+                targets: [{ qId: 1 }],
+            },
+            {
+                gate: 'RX',
+                displayArgs: '(0.25)',
+                isControlled: true,
+                controls: [{ qId: 1 }],
+                targets: [{ qId: 0 }],
+            },
+        ]);
+    });
+});
+
+describe('Testing getGate', () => {
+    test('should return H gate', () => {
+        const operations = [
+            {
+                gate: 'H',
+                targets: [{ qId: 0 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 0 }],
+                targets: [{ qId: 1 }],
+            },
+            {
+                gate: 'Measure',
+                isMeasurement: true,
+                controls: [{ qId: 1 }],
+                targets: [{ type: 1, qId: 1, cId: 0 }],
+            },
+        ];
+        expect(getGate('0', operations)).toStrictEqual({
+            gate: 'H',
+            targets: [{ qId: 0 }],
+        });
+    });
+    test('should return X gate', () => {
+        const operations = [
+            {
+                gate: 'H',
+                targets: [{ qId: 0 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 0 }],
+                targets: [{ qId: 1 }],
+            },
+            {
+                gate: 'Measure',
+                isMeasurement: true,
+                controls: [{ qId: 1 }],
+                targets: [{ type: 1, qId: 1, cId: 0 }],
+            },
+        ];
+        expect(getGate('1', operations)).toStrictEqual({
+            gate: 'X',
+            isControlled: true,
+            controls: [{ qId: 0 }],
+            targets: [{ qId: 1 }],
+        });
+    });
+    test('should return RX', () => {
+        const operations = [
+            {
+                gate: 'Foo',
+                conditionalRender: 3,
+                targets: [{ qId: 0 }, { qId: 1 }],
+                children: [
+                    {
+                        gate: 'H',
+                        targets: [{ qId: 1 }],
+                    },
+                    {
+                        gate: 'RX',
+                        displayArgs: '(0.25)',
+                        isControlled: true,
+                        controls: [{ qId: 1 }],
+                        targets: [{ qId: 0 }],
+                    },
+                ],
+            },
+            {
+                gate: 'X',
+                targets: [{ qId: 3 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 1 }],
+                targets: [{ qId: 2 }, { qId: 3 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 2 }, { qId: 3 }],
+                targets: [{ qId: 1 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 1 }, { qId: 3 }],
+                targets: [{ qId: 2 }],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [{ qId: 2 }],
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+            {
+                gate: 'measure',
+                isMeasurement: true,
+                controls: [{ qId: 0 }],
+                targets: [{ type: 1, qId: 0, cId: 0 }],
+            },
+            {
+                gate: 'ApplyIfElseR',
+                isConditional: true,
+                controls: [{ type: 1, qId: 0, cId: 0 }],
+                targets: [],
+                children: [
+                    {
+                        gate: 'H',
+                        targets: [{ qId: 1 }],
+                        conditionalRender: 1,
+                    },
+                    {
+                        gate: 'X',
+                        targets: [{ qId: 1 }],
+                        conditionalRender: 1,
+                    },
+                    {
+                        gate: 'X',
+                        isControlled: true,
+                        controls: [{ qId: 0 }],
+                        targets: [{ qId: 1 }],
+                        conditionalRender: 2,
+                    },
+                    {
+                        gate: 'Foo',
+                        targets: [{ qId: 3 }],
+                        conditionalRender: 2,
+                    },
+                ],
+            },
+            {
+                gate: 'SWAP',
+                targets: [{ qId: 0 }, { qId: 2 }],
+                children: [
+                    { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                    { gate: 'X', isControlled: true, controls: [{ qId: 2 }], targets: [{ qId: 0 }] },
+                    { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                ],
+            },
+            {
+                gate: 'ZZ',
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+            {
+                gate: 'ZZ',
+                targets: [{ qId: 0 }, { qId: 1 }],
+            },
+            {
+                gate: 'XX',
+                isControlled: true,
+                controls: [{ qId: 0 }],
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+            {
+                gate: 'XX',
+                isControlled: true,
+                controls: [{ qId: 2 }],
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+            {
+                gate: 'XX',
+                isControlled: true,
+                controls: [{ qId: 0 }, { qId: 2 }],
+                targets: [{ qId: 1 }, { qId: 3 }],
+            },
+        ];
+        expect(getGate('0-1', operations)).toStrictEqual({
+            gate: 'RX',
+            displayArgs: '(0.25)',
+            isControlled: true,
+            controls: [{ qId: 1 }],
+            targets: [{ qId: 0 }],
+        });
     });
 });
