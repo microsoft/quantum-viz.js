@@ -107,7 +107,7 @@ export class Sqore {
      * @param container HTML element for rendering visualization into.
      * @param circuit Circuit object to be rendered.
      */
-    public renderCircuit(container: HTMLElement, circuit: Circuit, editable: boolean): void {
+    private renderCircuit(container: HTMLElement, circuit: Circuit, editable: boolean): void {
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(circuit);
         const svg: SVGElement = this.generateSvg(composedSqore);
