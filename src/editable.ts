@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Operation } from './circuit';
 import { leftPadding } from './constants';
 import { box } from './formatters/formatUtils';
