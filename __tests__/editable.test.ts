@@ -15,6 +15,7 @@ const {
     getWireElemY,
     getGate,
     getParent,
+    addCustomStyles,
 } = exportedForTesting;
 
 // Utlities
@@ -747,5 +748,16 @@ describe('Testing getGate', () => {
             controls: [{ qId: 1 }],
             targets: [{ qId: 0 }],
         });
+    });
+});
+
+describe('Testing addCustomStyles', () => {
+    test('verify css', () => {
+        const container = document.createElement('div');
+        const style = document.createElement('style');
+        container.append(style);
+        expect(container).toMatchSnapshot();
+        addCustomStyles(container);
+        expect(container).toMatchSnapshot();
     });
 });

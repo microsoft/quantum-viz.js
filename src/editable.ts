@@ -46,30 +46,28 @@ const addEditable = (container: HTMLElement, sqore: Sqore): void => {
 const addCustomStyles = (container: HTMLElement): void => {
     const style = container.querySelector<HTMLStyleElement>('style');
     if (style) {
-        style.innerHTML += `
-            .dropzone {
-                fill: transparent;
-                stroke: transparent;
-            }
-            .dropzone:hover{
-                fill: red;
-                opacity: 25%;
-            }
-            text {
-                user-select: none;
-            }
-            .copying {
-                cursor: copy;
-            }
-            .moving {
-                cursor: move;
-            }
-            .detail-panel {
-                display: flex;
-                align-content: center;
-                gap: 12px;
-            }
-        `;
+        style.innerHTML += `.dropzone {
+        fill: transparent;
+        stroke: transparent;
+    }
+    .dropzone:hover{
+        fill: red;
+        opacity: 25%;
+    }
+    text {
+        user-select: none;
+    }
+    .copying {
+        cursor: copy;
+    }
+    .moving {
+        cursor: move;
+    }
+    .detail-panel {
+        display: flex;
+        align-content: center;
+        gap: 12px;
+    }`;
     }
 };
 
@@ -327,6 +325,7 @@ const exportedForTesting = {
     getWireElemY,
     getGate,
     getParent,
+    addCustomStyles,
 };
 
 export { addEditable, exportedForTesting };

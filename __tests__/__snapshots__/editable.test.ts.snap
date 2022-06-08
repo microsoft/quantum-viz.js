@@ -1,5 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Testing addCustomStyles verify css 1`] = `
+<div>
+  <style />
+</div>
+`;
+
+exports[`Testing addCustomStyles verify css 2`] = `
+<div>
+  <style>
+    .dropzone {
+        fill: transparent;
+        stroke: transparent;
+    }
+    .dropzone:hover{
+        fill: red;
+        opacity: 25%;
+    }
+    text {
+        user-select: none;
+    }
+    .copying {
+        cursor: copy;
+    }
+    .moving {
+        cursor: move;
+    }
+    .detail-panel {
+        display: flex;
+        align-content: center;
+        gap: 12px;
+    }
+  </style>
+</div>
+`;
+
 exports[`Testing cursorCopy turn off copy cursor 1`] = `
 <div
   class="copying"
