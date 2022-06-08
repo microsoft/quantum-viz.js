@@ -54,7 +54,7 @@ const addCustomStyles = (container: HTMLElement): void => {
             }
             text {
                 user-select: none;
-            } 
+            }
             .copying {
                 cursor: copy;
             }
