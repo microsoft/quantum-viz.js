@@ -247,7 +247,7 @@ const getDataId = (element: Element): string => {
 };
 
 const splitDataId = (dataId: string): number[] => {
-    return dataId.split('-').map(Number);
+    return dataId === '' ? [] : dataId.split('-').map(Number);
 };
 
 const getWireElemsY = (container: HTMLElement): Wires => {
@@ -266,7 +266,8 @@ const getWireElemY = (wireElem: SVGGElement): number => {
 };
 const getWireElemText = (wireElem: SVGGElement): string => {
     const textElem = wireElem.querySelector<SVGTextElement>('text');
-    if (textElem == null || textElem.textContent == null) throw new Error('Text not found');
+    if (textElem == null || textElem.textContent == null || textElem.textContent === '')
+        throw new Error('Text not found');
     return textElem.textContent;
 };
 
@@ -309,4 +310,16 @@ const cursorCopy = (container: HTMLElement, value: boolean): void => {
     value ? container.classList.add('copying') : container.classList.remove('copying');
 };
 
-export { addEditable };
+const exportedForTesting = {
+    getDataId,
+    splitDataId,
+    cursorMove,
+    cursorCopy,
+    deleteAt,
+    insertBefore,
+    insertAfter,
+    getDropzonePosition,
+    getWireElemText,
+};
+
+export { addEditable, exportedForTesting };

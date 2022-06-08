@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing cursorCopy turn off copy cursor 1`] = `
+<div
+  class="copying"
+/>
+`;
+
+exports[`Testing cursorCopy turn off copy cursor 2`] = `
+<div
+  class=""
+/>
+`;
+
+exports[`Testing cursorCopy turn on and off copy cursor 1`] = `
+<div
+  class=""
+/>
+`;
+
+exports[`Testing cursorCopy turn on and off copy cursor 2`] = `
+<div
+  class=""
+/>
+`;
+
+exports[`Testing cursorCopy turn on copy cursor 1`] = `<div />`;
+
+exports[`Testing cursorCopy turn on copy cursor 2`] = `
+<div
+  class="copying"
+/>
+`;
+
+exports[`Testing cursorMove turn off move cursor 1`] = `
+<div
+  class="moving"
+/>
+`;
+
+exports[`Testing cursorMove turn off move cursor 2`] = `
+<div
+  class=""
+/>
+`;
+
+exports[`Testing cursorMove turn on and off move cursor 1`] = `
+<div
+  class=""
+/>
+`;
+
+exports[`Testing cursorMove turn on and off move cursor 2`] = `
+<div
+  class=""
+/>
+`;
+
+exports[`Testing cursorMove turn on move cursor 1`] = `<div />`;
+
+exports[`Testing cursorMove turn on move cursor 2`] = `
+<div
+  class="moving"
+/>
+`;
