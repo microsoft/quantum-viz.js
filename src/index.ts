@@ -12,17 +12,20 @@ import { StyleConfig } from './styles';
  * @param container HTML element for rendering visualization into.
  * @param style Custom visualization style.
  * @param renderDepth Initial layer depth at which to render gates.
+ * @param isEditable Optional value enabling/disabling editable feature
+ * @param callbackFn Optional function to trigger when changing elements in circuit
  */
 export const draw = (
     circuit: Circuit,
     container: HTMLElement,
     style: StyleConfig | string = {},
     renderDepth = 0,
-    editable = false,
+    isEditable?: boolean,
+    callbackFn?: () => void,
 ): void => {
     const sqore = new Sqore(circuit, style);
 
-    sqore.draw(container, renderDepth, editable);
+    sqore.draw(container, renderDepth, isEditable, callbackFn);
 };
 
 export { STYLES } from './styles';

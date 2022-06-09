@@ -24,15 +24,16 @@ let _sourceTarget: SVGElement | null;
  *
  * @param container     HTML element for rendering visualization into.
  * @param sqore         Sqore object
+ * @param callbackFn    User-provided callback function triggered when circuit is changed
  *
  */
 
-const addEditable = (container: HTMLElement, sqore: Sqore): void => {
+const addEditable = (container: HTMLElement, sqore: Sqore, callbackFn?: () => void): void => {
     const context: Context = {
         container: container,
         operations: sqore.circuit.operations,
         wires: getWireElemsY(container),
-        renderFn: () => sqore.draw(container, 0, true),
+        renderFn: getRenderFn(container, sqore, callbackFn),
     };
     addCustomStyles(container);
     addDropzones(container);
@@ -74,7 +75,7 @@ const addCustomStyles = (container: HTMLElement): void => {
 const addDropzones = (container: HTMLElement): void => {
     const gateElems = getGateElems(container);
     gateElems.forEach((gateElem) => {
-        const { x, y, width, height } = gateElem.getBBox({ stroke: true });
+        const { x, y, width, height } = gateElem.getBBox();
         const dataId = getDataId(gateElem);
         gateElem.append(createLeftDropzone(x, y, height, dataId));
         gateElem.append(createRightDropzone(x, y, width, height, dataId));
@@ -147,7 +148,6 @@ const handleDropzoneMouseUp = (ev: MouseEvent, context: Context): void | false =
 
     // Not allow Measure gate to move vertically
     if (wireY != null && newGate.gate !== 'measure') {
-        console.log(wires[wireY]);
         // wires[wireY] returns qubit name (i.e: 'q0')
         // this remove 'q' and assign an index (i.e: 0)
         const index = Number(wires[wireY].slice(1));
@@ -249,6 +249,13 @@ const getGate = (dataId: string, operations: Operation[]): Operation => {
 };
 
 // Utilities
+const getRenderFn = (container: HTMLElement, sqore: Sqore, callbackFn?: () => void): (() => void) => {
+    return () => {
+        sqore.draw(container, 0, true, callbackFn);
+        if (callbackFn) callbackFn();
+    };
+};
+
 const getDataId = (element: Element): string => {
     return element.getAttribute('data-id') || '';
 };
@@ -320,7 +327,7 @@ const cursorCopy = (container: HTMLElement, value: boolean): void => {
 const exportedForTesting = {
     // addEditable
     addCustomStyles,
-    // addDropzones
+    addDropzones,
     addDocumentEvents,
     addDropzoneEvents,
     addMouseEvents,
@@ -334,6 +341,7 @@ const exportedForTesting = {
     getParent,
     getGate,
     getDataId,
+    getRenderFn,
     splitDataId,
     getWireElemsY,
     getWireElemY,

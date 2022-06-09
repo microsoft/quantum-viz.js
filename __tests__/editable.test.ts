@@ -1,7 +1,8 @@
-import { Operation } from '../src/circuit';
+import { Circuit, Operation } from '../src/circuit';
 import { exportedForTesting } from '../src/editable';
 import { RegisterType } from '../src/register';
 import { draw, STYLES } from '../src/index';
+import { Sqore } from '../src/sqore';
 
 const {
     // addEditable
@@ -19,6 +20,7 @@ const {
     createRightDropzone,
     getParent,
     getGate,
+    getRenderFn,
     getDataId,
     splitDataId,
     getWireElemsY,
@@ -1247,5 +1249,48 @@ describe('Testing addMouseEvents', () => {
         if (svgElem != null) svgElem.removeAttribute('id');
         addMouseEvents(context);
         expect(container).toMatchSnapshot();
+    });
+});
+
+describe('Testing getRenderFn', () => {
+    test('check console.log displaying "callbackFn is triggered"', () => {
+        Object.defineProperty(window.SVGElement.prototype, 'getBBox', {
+            writable: true,
+            value: () => ({
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0,
+            }),
+        });
+        const container = document.createElement('div');
+        const circuit: Circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        const sqore = new Sqore(circuit, STYLES['default']);
+        const callbackFn = () => console.log('callbackFn is triggered');
+        const renderFn = getRenderFn(container, sqore, callbackFn);
+
+        jest.spyOn(console, 'log');
+        renderFn();
+        expect(console.log).toHaveBeenCalledWith('callbackFn is triggered');
     });
 });

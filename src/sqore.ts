@@ -56,8 +56,10 @@ export class Sqore {
      *
      * @param container HTML element for rendering visualization into.
      * @param renderDepth Initial layer depth at which to render gates.
+     * @param isEditable Optional value enabling/disabling editable feature
+     * @param callbackFn Optional function to trigger when changing elements in circuit
      */
-    draw(container: HTMLElement, renderDepth = 0, editable = false): void {
+    draw(container: HTMLElement, renderDepth = 0, isEditable?: boolean, callbackFn?: () => void): void {
         // Inject into container
         if (container == null) throw new Error(`Container not provided.`);
 
@@ -79,7 +81,7 @@ export class Sqore {
             const id: string = circuit.operations[0].dataAttributes['id'];
             this.expandOperation(circuit.operations, id);
         }
-        this.renderCircuit(container, circuit, editable);
+        this.renderCircuit(container, circuit, isEditable, callbackFn);
     }
 
     /**
@@ -106,17 +108,24 @@ export class Sqore {
      *
      * @param container HTML element for rendering visualization into.
      * @param circuit Circuit object to be rendered.
+     * @param isEditable Optional value enabling/disabling editable feature
+     * @param callbackFn Optional function to trigger when changing elements in circuit
      */
-    private renderCircuit(container: HTMLElement, circuit: Circuit, editable: boolean): void {
+    private renderCircuit(
+        container: HTMLElement,
+        circuit: Circuit,
+        isEditable?: boolean,
+        callbackFn?: () => void,
+    ): void {
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(circuit);
         const svg: SVGElement = this.generateSvg(composedSqore);
         container.innerHTML = '';
         container.appendChild(svg);
-        this.addGateClickHandlers(container, circuit, editable);
+        this.addGateClickHandlers(container, circuit, isEditable, callbackFn);
 
-        if (editable) {
-            addEditable(container, this);
+        if (isEditable) {
+            addEditable(container, this, callbackFn);
         }
     }
 
@@ -233,11 +242,18 @@ export class Sqore {
      *
      * @param container HTML element containing visualized circuit.
      * @param circuit Circuit to be visualized.
+     * @param isEditable Optional value enabling/disabling editable feature
+     * @param callbackFn Optional function to trigger when changing elements in circuit
      *
      */
-    private addGateClickHandlers(container: HTMLElement, circuit: Circuit, editable: boolean): void {
+    private addGateClickHandlers(
+        container: HTMLElement,
+        circuit: Circuit,
+        isEditable?: boolean,
+        callbackFn?: () => void,
+    ): void {
         this.addClassicalControlHandlers(container);
-        this.addZoomHandlers(container, circuit, editable);
+        this.addZoomHandlers(container, circuit, isEditable, callbackFn);
     }
 
     /**
@@ -293,9 +309,16 @@ export class Sqore {
      *
      * @param container HTML element containing visualized circuit.
      * @param circuit Circuit to be visualized.
+     * @param isEditable Optional value enabling/disabling editable feature
+     * @param callbackFn Optional function to trigger when changing elements in circuit
      *
      */
-    private addZoomHandlers(container: HTMLElement, circuit: Circuit, editable: boolean): void {
+    private addZoomHandlers(
+        container: HTMLElement,
+        circuit: Circuit,
+        isEditable?: boolean,
+        callbackFn?: () => void,
+    ): void {
         container.querySelectorAll('.gate .gate-control').forEach((ctrl) => {
             // Zoom in on clicked gate
             ctrl.addEventListener('click', (ev: Event) => {
@@ -306,7 +329,7 @@ export class Sqore {
                     } else if (ctrl.classList.contains('gate-expand')) {
                         this.expandOperation(circuit.operations, gateId);
                     }
-                    this.renderCircuit(container, circuit, editable);
+                    this.renderCircuit(container, circuit, isEditable, callbackFn);
                     ev.stopPropagation();
                 }
             });
