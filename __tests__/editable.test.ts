@@ -25,6 +25,8 @@ const {
     createLeftDropzone,
     createRightDropzone,
     getClosestWireY,
+    getWireElemsY,
+    addDropzoneEvents,
 } = exportedForTesting;
 
 // Utlities
@@ -982,5 +984,227 @@ describe('Testing getClosestWireY', () => {
         const wires = { '40': 'q0', '100': 'q1' };
         draw(circuit, container, STYLES['default']);
         expect(getClosestWireY(120, wires)).toEqual(null);
+    });
+});
+
+describe('test getWireElemsY', () => {
+    test('get 2 wires', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        const expected = { '40': 'q0', '100': 'q1' };
+        draw(circuit, container, STYLES['default']);
+        expect(getWireElemsY(container)).toStrictEqual(expected);
+    });
+    test('get 4 wires', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0, numChildren: 1 }, { id: 1 }, { id: 2 }, { id: 3 }],
+            operations: [
+                {
+                    gate: 'Foo',
+                    conditionalRender: 3,
+                    targets: [{ qId: 0 }, { qId: 1 }],
+                    children: [
+                        {
+                            gate: 'H',
+                            targets: [{ qId: 1 }],
+                        },
+                        {
+                            gate: 'RX',
+                            displayArgs: '(0.25)',
+                            isControlled: true,
+                            controls: [{ qId: 1 }],
+                            targets: [{ qId: 0 }],
+                        },
+                    ],
+                },
+                {
+                    gate: 'X',
+                    targets: [{ qId: 3 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ qId: 2 }, { qId: 3 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 2 }, { qId: 3 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 1 }, { qId: 3 }],
+                    targets: [{ qId: 2 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ type: 1, qId: 0, cId: 0 }],
+                },
+                {
+                    gate: 'ApplyIfElseR',
+                    isConditional: true,
+                    controls: [{ type: 1, qId: 0, cId: 0 }],
+                    targets: [],
+                    children: [
+                        {
+                            gate: 'H',
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 1,
+                        },
+                        {
+                            gate: 'X',
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 1,
+                        },
+                        {
+                            gate: 'X',
+                            isControlled: true,
+                            controls: [{ qId: 0 }],
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 2,
+                        },
+                        {
+                            gate: 'Foo',
+                            targets: [{ qId: 3 }],
+                            conditionalRender: 2,
+                        },
+                    ],
+                },
+                {
+                    gate: 'SWAP',
+                    targets: [{ qId: 0 }, { qId: 2 }],
+                    children: [
+                        { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                        { gate: 'X', isControlled: true, controls: [{ qId: 2 }], targets: [{ qId: 0 }] },
+                        { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                    ],
+                },
+                {
+                    gate: 'ZZ',
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'ZZ',
+                    targets: [{ qId: 0 }, { qId: 1 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 0 }, { qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+            ],
+        };
+        const expected = { '40': 'q0', '120': 'q1', '180': 'q2', '240': 'q3' };
+        draw(circuit, container, STYLES['default']);
+        expect(getWireElemsY(container)).toStrictEqual(expected);
+    });
+});
+
+describe('Testing addDropzoneEvents', () => {
+    interface Context {
+        container: HTMLElement;
+        operations: Operation[];
+        wires: Wires;
+        renderFn: () => void;
+    }
+
+    interface Wires {
+        [y: string]: string;
+    }
+
+    test('add 1 event', () => {
+        const container = document.createElement('div');
+        const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const dropzoneElem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        svgElem.append(dropzoneElem);
+        container.append(svgElem);
+        interface Context {
+            container: HTMLElement;
+            operations: Operation[];
+            wires: Wires;
+            renderFn: () => void;
+        }
+
+        const context: Context = {
+            container: container,
+            operations: [],
+            wires: {},
+            renderFn: () => {
+                return;
+            },
+        };
+        addDropzoneEvents(context);
+        expect(container).toMatchSnapshot();
+    });
+    test('add 2 events', () => {
+        const container = document.createElement('div');
+        const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const dropzoneElem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        const dropzoneElem1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        svgElem.append(dropzoneElem);
+        svgElem.append(dropzoneElem1);
+        container.append(svgElem);
+        interface Context {
+            container: HTMLElement;
+            operations: Operation[];
+            wires: Wires;
+            renderFn: () => void;
+        }
+
+        const context: Context = {
+            container: container,
+            operations: [],
+            wires: {},
+            renderFn: () => {
+                return;
+            },
+        };
+        addDropzoneEvents(context);
+        expect(container).toMatchSnapshot();
     });
 });

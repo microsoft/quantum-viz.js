@@ -322,7 +322,7 @@ const exportedForTesting = {
     addCustomStyles,
     // addDropzones
     addDocumentEvents,
-    // addDropzoneEvents
+    addDropzoneEvents,
     // addMouseEvents
     handleGateMouseDown,
     // handleDropzoneMouseUp
@@ -335,7 +335,7 @@ const exportedForTesting = {
     getGate,
     getDataId,
     splitDataId,
-    // getWireElemsY
+    getWireElemsY,
     getWireElemY,
     getWireElemText,
     getClosestWireY,
@@ -347,4 +347,4 @@ const exportedForTesting = {
     cursorCopy,
 };
 
-export { addEditable, exportedForTesting, getGateElems };
+export { addEditable, exportedForTesting };

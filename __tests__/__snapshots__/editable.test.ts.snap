@@ -39,6 +39,32 @@ exports[`Testing addDocumentEvents verify document events 1`] = `<div />`;
 
 exports[`Testing addDocumentEvents verify document events 2`] = `<div />`;
 
+exports[`Testing addDropzoneEvents add 1 event 1`] = `
+<div>
+  <svg>
+    <rect />
+  </svg>
+</div>
+`;
+
+exports[`Testing addDropzoneEvents add 1 event 2`] = `
+<div>
+  <svg>
+    <rect />
+    <rect />
+  </svg>
+</div>
+`;
+
+exports[`Testing addDropzoneEvents add 2 events 1`] = `
+<div>
+  <svg>
+    <rect />
+    <rect />
+  </svg>
+</div>
+`;
+
 exports[`Testing createDropzone create dropzone on the left 1`] = `
 <rect
   class="dropzone"
