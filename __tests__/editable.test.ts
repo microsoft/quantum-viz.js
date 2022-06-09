@@ -1243,6 +1243,8 @@ describe('Testing addMouseEvents', () => {
                 return;
             },
         };
+        const svgElem = container.querySelector('svg');
+        if (svgElem != null) svgElem.removeAttribute('id');
         addMouseEvents(context);
         expect(container).toMatchSnapshot();
     });

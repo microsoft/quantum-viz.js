@@ -61,7 +61,6 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
   <svg
     class="qviz"
     height="180"
-    id="6252074d-6246-4fd9-8dc4-f4e412dc688c"
     style="max-width: fit-content;"
     width="140"
   >
