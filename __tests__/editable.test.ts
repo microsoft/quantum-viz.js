@@ -4,29 +4,33 @@ import { RegisterType } from '../src/register';
 import { draw, STYLES } from '../src/index';
 
 const {
-    getDataId,
-    splitDataId,
-    cursorMove,
-    cursorCopy,
-    deleteAt,
-    insertBefore,
-    insertAfter,
-    getDropzonePosition,
-    getWireElemText,
-    getWireElemY,
-    getGate,
-    getParent,
+    // addEditable
     addCustomStyles,
+    // addDropzones
     addDocumentEvents,
+    addDropzoneEvents,
+    addMouseEvents,
     handleGateMouseDown,
+    // handleDropzoneMouseUp
     getGateElems,
     getWireElems,
     createDropzone,
     createLeftDropzone,
     createRightDropzone,
-    getClosestWireY,
+    getParent,
+    getGate,
+    getDataId,
+    splitDataId,
     getWireElemsY,
-    addDropzoneEvents,
+    getWireElemY,
+    getWireElemText,
+    getClosestWireY,
+    getDropzonePosition,
+    insertBefore,
+    insertAfter,
+    deleteAt,
+    cursorMove,
+    cursorCopy,
 } = exportedForTesting;
 
 // Utlities
@@ -1163,12 +1167,6 @@ describe('Testing addDropzoneEvents', () => {
         const dropzoneElem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         svgElem.append(dropzoneElem);
         container.append(svgElem);
-        interface Context {
-            container: HTMLElement;
-            operations: Operation[];
-            wires: Wires;
-            renderFn: () => void;
-        }
 
         const context: Context = {
             container: container,
@@ -1205,6 +1203,47 @@ describe('Testing addDropzoneEvents', () => {
             },
         };
         addDropzoneEvents(context);
+        expect(container).toMatchSnapshot();
+    });
+});
+
+describe('Testing addMouseEvents', () => {
+    interface Context {
+        container: HTMLElement;
+        operations: Operation[];
+        wires: Wires;
+        renderFn: () => void;
+    }
+    interface Wires {
+        [y: string]: string;
+    }
+    test('verify mouse events', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default']);
+        const context: Context = {
+            container: container,
+            operations: [],
+            wires: {},
+            renderFn: () => {
+                return;
+            },
+        };
+        addMouseEvents(context);
         expect(container).toMatchSnapshot();
     });
 });

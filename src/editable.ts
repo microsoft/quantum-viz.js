@@ -323,7 +323,7 @@ const exportedForTesting = {
     // addDropzones
     addDocumentEvents,
     addDropzoneEvents,
-    // addMouseEvents
+    addMouseEvents,
     handleGateMouseDown,
     // handleDropzoneMouseUp
     getGateElems,
