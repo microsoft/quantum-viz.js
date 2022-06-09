@@ -65,7 +65,7 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
     width="140"
   >
     <style>
-
+      
     line,
     circle,
     rect {
@@ -103,7 +103,7 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
     .register-classical {
         stroke-width: 0.5;
     }
-
+    
     .hidden {
         display: none;
     }
@@ -111,7 +111,7 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
         opacity: 0.25;
     }
 
-
+    
     .classically-controlled-one .classical-container,
     .classically-controlled-one .classical-line {
         stroke: #4059BD;
@@ -126,7 +126,7 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
         fill: #C40000;
         fill-opacity: 0.1;
     }
-
+    
     .classically-controlled-btn {
         cursor: pointer;
     }
@@ -139,7 +139,7 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
     .classically-controlled-zero .classically-controlled-btn {
         fill: #C40000;
     }
-
+    
     .classically-controlled-btn text {
         dominant-baseline: middle;
         text-anchor: middle;
@@ -155,7 +155,7 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
     .classically-controlled-zero .classically-controlled-btn text {
         fill: #FFFFFF;
     }
-
+    
     .qviz .gate-collapse,
     .qviz .gate-expand {
         opacity: 0;
