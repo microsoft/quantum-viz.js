@@ -1,6 +1,7 @@
 import { Operation } from '../src/circuit';
 import { exportedForTesting } from '../src/editable';
 import { RegisterType } from '../src/register';
+import { draw, STYLES } from '../src/index';
 
 const {
     getDataId,
@@ -17,6 +18,12 @@ const {
     getParent,
     addCustomStyles,
     addDocumentEvents,
+    handleGateMouseDown,
+    getGateElems,
+    getWireElems,
+    createDropzone,
+    createLeftDropzone,
+    createRightDropzone,
 } = exportedForTesting;
 
 // Utlities
@@ -770,5 +777,125 @@ describe('Testing addDocumentEvents', () => {
         expect(container).toMatchSnapshot();
         addDocumentEvents(container);
         expect(container).toMatchSnapshot();
+    });
+});
+
+describe('Testing handleGateMouseDown', () => {
+    test('copying, ctrlKey is true', () => {
+        const container = document.createElement('div');
+        const ev = new MouseEvent('mousedown', { ctrlKey: true });
+        handleGateMouseDown(ev, container);
+        expect(container).toMatchSnapshot();
+    });
+    test('moving, ctrlKey is false', () => {
+        const container = document.createElement('div');
+        const ev = new MouseEvent('mousedown', { ctrlKey: false });
+        handleGateMouseDown(ev, container);
+        expect(container).toMatchSnapshot();
+    });
+});
+
+describe('Testing getGateElems', () => {
+    test('get 2 gates', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default']);
+        const gateElems = getGateElems(container);
+        expect(gateElems).toHaveLength(2);
+        expect(gateElems).toMatchSnapshot();
+    });
+    test('get 3 gates', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default']);
+        const gateElems = getGateElems(container);
+        expect(gateElems).toHaveLength(3);
+        expect(gateElems).toMatchSnapshot();
+    });
+});
+
+describe('Testing getWireElems', () => {
+    test('get 2 wires', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default']);
+        const wireElems = getWireElems(container);
+        expect(wireElems).toHaveLength(2);
+        expect(wireElems).toMatchSnapshot();
+    });
+});
+
+describe('Testing createDropzone', () => {
+    test('create dropzone on the left', () => {
+        expect(createDropzone(0, 0, 20, 20, '0', 'left')).toMatchSnapshot();
+    });
+    test('create dropzone on the right', () => {
+        expect(createDropzone(0, 0, 20, 20, '0', 'right')).toMatchSnapshot();
+    });
+});
+
+describe('Testing createLeftDropzone', () => {
+    test('create left dropzone', () => {
+        expect(createLeftDropzone(0, 0, 20, '0')).toMatchSnapshot();
+    });
+});
+
+describe('Testing createRightDropzone', () => {
+    test('create dropzone right', () => {
+        expect(createRightDropzone(0, 0, 20, 20, '0')).toMatchSnapshot();
     });
 });

@@ -210,11 +210,17 @@ const createDropzone = (
     return dropzone;
 };
 
-const createLeftDropzone = (x: number, y: number, height: number, dataId: string): SVGElement => {
-    return createDropzone(x - leftPadding / 2, y, leftPadding / 2, height, dataId, 'left');
+const createLeftDropzone = (gateX: number, gateY: number, gateHeight: number, dataId: string): SVGElement => {
+    return createDropzone(gateX - leftPadding / 2, gateY, leftPadding / 2, gateHeight, dataId, 'left');
 };
-const createRightDropzone = (x: number, y: number, width: number, height: number, dataId: string): SVGElement => {
-    return createDropzone(x + width, y, leftPadding / 2, height, dataId, 'right');
+const createRightDropzone = (
+    gateX: number,
+    gateY: number,
+    gateWidth: number,
+    gateHeight: number,
+    dataId: string,
+): SVGElement => {
+    return createDropzone(gateX + gateWidth, gateY, leftPadding / 2, gateHeight, dataId, 'right');
 };
 
 // Operation getters
@@ -327,6 +333,12 @@ const exportedForTesting = {
     getParent,
     addCustomStyles,
     addDocumentEvents,
+    handleGateMouseDown,
+    getGateElems,
+    getWireElems,
+    createDropzone,
+    createLeftDropzone,
+    createRightDropzone,
 };
 
-export { addEditable, exportedForTesting };
+export { addEditable, exportedForTesting, getGateElems };

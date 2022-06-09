@@ -39,6 +39,54 @@ exports[`Testing addDocumentEvents verify document events 1`] = `<div />`;
 
 exports[`Testing addDocumentEvents verify document events 2`] = `<div />`;
 
+exports[`Testing createDropzone create dropzone on the left 1`] = `
+<rect
+  class="dropzone"
+  data-dropzone-position="left"
+  data-id="0"
+  height="20"
+  width="20"
+  x="0"
+  y="0"
+/>
+`;
+
+exports[`Testing createDropzone create dropzone on the right 1`] = `
+<rect
+  class="dropzone"
+  data-dropzone-position="right"
+  data-id="0"
+  height="20"
+  width="20"
+  x="0"
+  y="0"
+/>
+`;
+
+exports[`Testing createLeftDropzone create left dropzone 1`] = `
+<rect
+  class="dropzone"
+  data-dropzone-position="left"
+  data-id="0"
+  height="20"
+  width="10"
+  x="-10"
+  y="0"
+/>
+`;
+
+exports[`Testing createRightDropzone create dropzone right 1`] = `
+<rect
+  class="dropzone"
+  data-dropzone-position="right"
+  data-id="0"
+  height="20"
+  width="10"
+  x="20"
+  y="0"
+/>
+`;
+
 exports[`Testing cursorCopy turn off copy cursor 1`] = `
 <div
   class="copying"
@@ -98,6 +146,209 @@ exports[`Testing cursorMove turn on and off move cursor 2`] = `
 exports[`Testing cursorMove turn on move cursor 1`] = `<div />`;
 
 exports[`Testing cursorMove turn on move cursor 2`] = `
+<div
+  class="moving"
+/>
+`;
+
+exports[`Testing getGateElems get 2 gates 1`] = `
+Array [
+  <g
+    class="gate"
+    data-id="0"
+    data-zoom-in="false"
+    data-zoom-out="false"
+  >
+    <g>
+      <g>
+        <rect
+          class="gate-unitary"
+          height="40"
+          width="40"
+          x="80"
+          y="20"
+        />
+        <text
+          font-size="14"
+          x="100"
+          y="40"
+        >
+          H
+        </text>
+      </g>
+    </g>
+  </g>,
+  <g
+    class="gate"
+    data-id="1"
+    data-zoom-in="false"
+    data-zoom-out="false"
+  >
+    <g>
+      <rect
+        class="gate-measure"
+        height="40"
+        width="40"
+        x="80"
+        y="80"
+      />
+      <path
+        class="arc-measure"
+        d="M 115 102 A 15 12 0 0 0 85 102"
+      />
+      <line
+        x1="100"
+        x2="112"
+        y1="108"
+        y2="88"
+      />
+    </g>
+  </g>,
+]
+`;
+
+exports[`Testing getGateElems get 3 gates 1`] = `
+Array [
+  <g
+    class="gate"
+    data-id="0"
+    data-zoom-in="false"
+    data-zoom-out="false"
+  >
+    <g>
+      <g>
+        <rect
+          class="gate-unitary"
+          height="40"
+          width="40"
+          x="80"
+          y="20"
+        />
+        <text
+          font-size="14"
+          x="100"
+          y="40"
+        >
+          H
+        </text>
+      </g>
+    </g>
+  </g>,
+  <g
+    class="gate"
+    data-id="1"
+    data-zoom-in="false"
+    data-zoom-out="false"
+  >
+    <line
+      x1="160"
+      x2="160"
+      y1="40"
+      y2="100"
+    />
+    <circle
+      class="control-dot"
+      cx="160"
+      cy="40"
+      r="5"
+    />
+    <g
+      class="oplus"
+    >
+      <circle
+        cx="160"
+        cy="100"
+        r="15"
+      />
+      <line
+        x1="160"
+        x2="160"
+        y1="85"
+        y2="115"
+      />
+      <line
+        x1="145"
+        x2="175"
+        y1="100"
+        y2="100"
+      />
+    </g>
+  </g>,
+  <g
+    class="gate"
+    data-id="2"
+    data-zoom-in="false"
+    data-zoom-out="false"
+  >
+    <g>
+      <rect
+        class="gate-measure"
+        height="40"
+        width="40"
+        x="200"
+        y="80"
+      />
+      <path
+        class="arc-measure"
+        d="M 235 102 A 15 12 0 0 0 205 102"
+      />
+      <line
+        x1="220"
+        x2="232"
+        y1="108"
+        y2="88"
+      />
+    </g>
+  </g>,
+]
+`;
+
+exports[`Testing getWireElems get 2 wires 1`] = `
+Array [
+  <g>
+    <line
+      x1="40"
+      x2="260"
+      y1="40"
+      y2="40"
+    />
+    <text
+      dominant-baseline="hanging"
+      font-size="75%"
+      text-anchor="start"
+      x="40"
+      y="24"
+    >
+      q0
+    </text>
+  </g>,
+  <g>
+    <line
+      x1="40"
+      x2="260"
+      y1="100"
+      y2="100"
+    />
+    <text
+      dominant-baseline="hanging"
+      font-size="75%"
+      text-anchor="start"
+      x="40"
+      y="84"
+    >
+      q1
+    </text>
+  </g>,
+]
+`;
+
+exports[`Testing handleGateMouseDown copying, ctrlKey is true 1`] = `
+<div
+  class="copying"
+/>
+`;
+
+exports[`Testing handleGateMouseDown moving, ctrlKey is false 1`] = `
 <div
   class="moving"
 />
