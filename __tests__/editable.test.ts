@@ -7,7 +7,7 @@ import { Sqore } from '../src/sqore';
 const {
     // addEditable
     addCustomStyles,
-    // addDropzones
+    addDropzones,
     addDocumentEvents,
     addDropzoneEvents,
     addMouseEvents,
@@ -1292,5 +1292,46 @@ describe('Testing getRenderFn', () => {
         jest.spyOn(console, 'log');
         renderFn();
         expect(console.log).toHaveBeenCalledWith('callbackFn is triggered');
+    });
+});
+
+describe('Testing addDropzones', () => {
+    test('verify dropzones', () => {
+        Object.defineProperty(window.SVGElement.prototype, 'getBBox', {
+            writable: true,
+            value: () => ({
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0,
+            }),
+        });
+        const container = document.createElement('div');
+        const circuit: Circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default'], 0, true);
+        const svgElem = container.querySelector('svg');
+        if (svgElem != null) svgElem.removeAttribute('id');
+        addDropzones(container);
+        expect(container).toMatchSnapshot();
     });
 });
