@@ -280,16 +280,15 @@ const getWireElemText = (wireElem: SVGGElement): string => {
 };
 
 const getClosestWireY = (offsetY: number, wires: { [y: number]: string }): number | null => {
-    let wireY;
-    Object.entries(wires).forEach((wire) => {
+    for (const wire of Object.entries(wires)) {
         const y = wire[0];
         const distance = Math.abs(offsetY - Number(y));
-        // 15 is a magic number
-        if (distance < 15) {
-            wireY = y;
+        // 15 is an arbitrary number to determine the closeness of distance
+        if (distance <= 15) {
+            return Number(y);
         }
-    });
-    return wireY || null;
+    }
+    return null;
 };
 
 const getDropzonePosition = (element: SVGElement): string => {
@@ -319,26 +318,33 @@ const cursorCopy = (container: HTMLElement, value: boolean): void => {
 };
 
 const exportedForTesting = {
-    getDataId,
-    splitDataId,
-    cursorMove,
-    cursorCopy,
-    deleteAt,
-    insertBefore,
-    insertAfter,
-    getDropzonePosition,
-    getWireElemText,
-    getWireElemY,
-    getGate,
-    getParent,
+    // addEditable
     addCustomStyles,
+    // addDropzones
     addDocumentEvents,
+    // addDropzoneEvents
+    // addMouseEvents
     handleGateMouseDown,
+    // handleDropzoneMouseUp
     getGateElems,
     getWireElems,
     createDropzone,
     createLeftDropzone,
     createRightDropzone,
+    getParent,
+    getGate,
+    getDataId,
+    splitDataId,
+    // getWireElemsY
+    getWireElemY,
+    getWireElemText,
+    getClosestWireY,
+    getDropzonePosition,
+    insertBefore,
+    insertAfter,
+    deleteAt,
+    cursorMove,
+    cursorCopy,
 };
 
 export { addEditable, exportedForTesting, getGateElems };

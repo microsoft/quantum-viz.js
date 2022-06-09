@@ -24,6 +24,7 @@ const {
     createDropzone,
     createLeftDropzone,
     createRightDropzone,
+    getClosestWireY,
 } = exportedForTesting;
 
 // Utlities
@@ -897,5 +898,89 @@ describe('Testing createLeftDropzone', () => {
 describe('Testing createRightDropzone', () => {
     test('create dropzone right', () => {
         expect(createRightDropzone(0, 0, 20, 20, '0')).toMatchSnapshot();
+    });
+});
+
+describe('Testing getClosestWireY', () => {
+    test('should return 40', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        const wires = { '40': 'q0', '100': 'q1' };
+        draw(circuit, container, STYLES['default']);
+        expect(getClosestWireY(50, wires)).toEqual(40);
+    });
+    test('should return 100', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        const wires = { '40': 'q0', '100': 'q1' };
+        draw(circuit, container, STYLES['default']);
+        expect(getClosestWireY(85, wires)).toEqual(100);
+    });
+    test('should return null', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        const wires = { '40': 'q0', '100': 'q1' };
+        draw(circuit, container, STYLES['default']);
+        expect(getClosestWireY(120, wires)).toEqual(null);
     });
 });
