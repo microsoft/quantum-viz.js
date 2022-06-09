@@ -39,3 +39,4 @@ repos:
         language: system
         types: [text]
         stages: [commit, push, manual]
+        exclude: ^__tests__/
