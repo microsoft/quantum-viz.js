@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Circuit, Operation } from '../src/circuit';
 import { exportedForTesting } from '../src/editable';
 import { RegisterType } from '../src/register';
