@@ -201,6 +201,13 @@ exports[`Testing addDropzones verify dropzones 1`] = `
         align-content: center;
         gap: 12px;
     }
+    g.gate:not([data-expanded=true]) rect {
+        cursor: grab;
+    }
+    g.gate:not([data-expanded=true]) circle {
+        cursor: grab;
+    }
+    
     </style>
     <g>
       <text
@@ -673,6 +680,13 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
         align-content: center;
         gap: 12px;
     }
+    g.gate:not([data-expanded=true]) rect {
+        cursor: grab;
+    }
+    g.gate:not([data-expanded=true]) circle {
+        cursor: grab;
+    }
+    
     </style>
     <g>
       <text

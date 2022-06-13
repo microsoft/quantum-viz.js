@@ -279,4 +279,11 @@ const _editable = `
         display: flex;
         align-content: center;
         gap: 12px;
-    }`;
+    }
+    g.gate:not([data-expanded=true]) rect {
+        cursor: grab;
+    }
+    g.gate:not([data-expanded=true]) circle {
+        cursor: grab;
+    }
+    `;
