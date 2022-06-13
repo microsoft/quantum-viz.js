@@ -6,7 +6,6 @@ import { Sqore } from '../src/sqore';
 
 const {
     // addEditable
-    addCustomStyles,
     addDropzones,
     addDocumentEvents,
     addDropzoneEvents,
@@ -768,18 +767,6 @@ describe('Testing getGate', () => {
     });
 });
 
-describe('Testing addCustomStyles', () => {
-    test('verify css', () => {
-        const container = document.createElement('div');
-        const style = document.createElement('style');
-        container.append(style);
-        expect(container).toMatchSnapshot();
-        addCustomStyles(container);
-        expect(container).toMatchSnapshot();
-    });
-});
-
-// Untestable
 describe('Testing addDocumentEvents', () => {
     test('verify document events', () => {
         const container = document.createElement('div');

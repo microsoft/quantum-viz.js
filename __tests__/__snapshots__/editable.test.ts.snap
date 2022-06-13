@@ -1,40 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Testing addCustomStyles verify css 1`] = `
-<div>
-  <style />
-</div>
-`;
-
-exports[`Testing addCustomStyles verify css 2`] = `
-<div>
-  <style>
-    .dropzone {
-        fill: transparent;
-        stroke: transparent;
-    }
-    .dropzone:hover{
-        fill: red;
-        opacity: 25%;
-    }
-    text {
-        user-select: none;
-    }
-    .copying {
-        cursor: copy;
-    }
-    .moving {
-        cursor: move;
-    }
-    .detail-panel {
-        display: flex;
-        align-content: center;
-        gap: 12px;
-    }
-  </style>
-</div>
-`;
-
 exports[`Testing addDocumentEvents verify document events 1`] = `<div />`;
 
 exports[`Testing addDocumentEvents verify document events 2`] = `<div />`;
@@ -191,6 +156,29 @@ exports[`Testing addDropzones verify dropzones 1`] = `
         visibility: visible;
         opacity: 1;
         transition: opacity 1s;
+    }
+    
+    .dropzone {
+        fill: transparent;
+        stroke: transparent;
+    }
+    .dropzone:hover{
+        fill: red;
+        opacity: 25%;
+    }
+    text {
+        user-select: none;
+    }
+    .copying {
+        cursor: copy;
+    }
+    .moving {
+        cursor: move;
+    }
+    .detail-panel {
+        display: flex;
+        align-content: center;
+        gap: 12px;
     }.dropzone {
         fill: transparent;
         stroke: transparent;
@@ -640,6 +628,50 @@ exports[`Testing addMouseEvents verify mouse events 1`] = `
         visibility: visible;
         opacity: 1;
         transition: opacity 1s;
+    }
+    
+    .dropzone {
+        fill: transparent;
+        stroke: transparent;
+    }
+    .dropzone:hover{
+        fill: red;
+        opacity: 25%;
+    }
+    text {
+        user-select: none;
+    }
+    .copying {
+        cursor: copy;
+    }
+    .moving {
+        cursor: move;
+    }
+    .detail-panel {
+        display: flex;
+        align-content: center;
+        gap: 12px;
+    }.dropzone {
+        fill: transparent;
+        stroke: transparent;
+    }
+    .dropzone:hover{
+        fill: red;
+        opacity: 25%;
+    }
+    text {
+        user-select: none;
+    }
+    .copying {
+        cursor: copy;
+    }
+    .moving {
+        cursor: move;
+    }
+    .detail-panel {
+        display: flex;
+        align-content: center;
+        gap: 12px;
     }
     </style>
     <g>

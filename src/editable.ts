@@ -35,7 +35,6 @@ const addEditable = (container: HTMLElement, sqore: Sqore, callbackFn?: () => vo
         wires: getWireElemsY(container),
         renderFn: getRenderFn(container, sqore, callbackFn),
     };
-    addCustomStyles(container);
     addDropzones(container);
     addDocumentEvents(container);
     addDropzoneEvents(context);
@@ -43,34 +42,6 @@ const addEditable = (container: HTMLElement, sqore: Sqore, callbackFn?: () => vo
 };
 
 // Commands
-
-const addCustomStyles = (container: HTMLElement): void => {
-    const style = container.querySelector<HTMLStyleElement>('style');
-    if (style) {
-        style.innerHTML += `.dropzone {
-        fill: transparent;
-        stroke: transparent;
-    }
-    .dropzone:hover{
-        fill: red;
-        opacity: 25%;
-    }
-    text {
-        user-select: none;
-    }
-    .copying {
-        cursor: copy;
-    }
-    .moving {
-        cursor: move;
-    }
-    .detail-panel {
-        display: flex;
-        align-content: center;
-        gap: 12px;
-    }`;
-    }
-};
 
 const addDropzones = (container: HTMLElement): void => {
     const gateElems = getGateElems(container);
@@ -326,7 +297,6 @@ const cursorCopy = (container: HTMLElement, value: boolean): void => {
 
 const exportedForTesting = {
     // addEditable
-    addCustomStyles,
     addDropzones,
     addDocumentEvents,
     addDropzoneEvents,
