@@ -1240,7 +1240,7 @@ describe('Testing addMouseEvents', () => {
 });
 
 describe('Testing getRenderFn', () => {
-    test('check console.log displaying "callbackFn is triggered"', () => {
+    test('check console.log displaying "onCircuitChange is triggered"', () => {
         Object.defineProperty(window.SVGElement.prototype, 'getBBox', {
             writable: true,
             value: () => ({
@@ -1273,12 +1273,12 @@ describe('Testing getRenderFn', () => {
             ],
         };
         const sqore = new Sqore(circuit, STYLES['default']);
-        const callbackFn = () => console.log('callbackFn is triggered');
-        const renderFn = getRenderFn(container, sqore, callbackFn);
+        const onCircuitChange = () => console.log('onCircuitChange is triggered');
+        const renderFn = getRenderFn(container, sqore, onCircuitChange);
 
         jest.spyOn(console, 'log');
         renderFn();
-        expect(console.log).toHaveBeenCalledWith('callbackFn is triggered');
+        expect(console.log).toHaveBeenCalledWith('onCircuitChange is triggered');
     });
 });
 

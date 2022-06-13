@@ -22,18 +22,18 @@ let _sourceTarget: SVGElement | null;
 /**
  * Add editable elements and events.
  *
- * @param container     HTML element for rendering visualization into.
- * @param sqore         Sqore object
- * @param callbackFn    User-provided callback function triggered when circuit is changed
+ * @param container         HTML element for rendering visualization into.
+ * @param sqore             Sqore object
+ * @param onCircuitChange   User-provided callback function triggered when circuit is changed
  *
  */
 
-const addEditable = (container: HTMLElement, sqore: Sqore, callbackFn?: () => void): void => {
+const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): void => {
     const context: Context = {
         container: container,
         operations: sqore.circuit.operations,
         wires: getWireElemsY(container),
-        renderFn: getRenderFn(container, sqore, callbackFn),
+        renderFn: getRenderFn(container, sqore, onCircuitChange),
     };
     addDropzones(container);
     addDocumentEvents(container);
@@ -220,10 +220,10 @@ const getGate = (dataId: string, operations: Operation[]): Operation => {
 };
 
 // Utilities
-const getRenderFn = (container: HTMLElement, sqore: Sqore, callbackFn?: () => void): (() => void) => {
+const getRenderFn = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): (() => void) => {
     return () => {
-        sqore.draw(container, 0, true, callbackFn);
-        if (callbackFn) callbackFn();
+        sqore.draw(container, 0, true, onCircuitChange);
+        if (onCircuitChange) onCircuitChange();
     };
 };
 
