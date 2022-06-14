@@ -237,53 +237,7 @@ const _expandCollapse = `
     }`;
 
 const _editable = `
-    .dropzone {
-        fill: transparent;
-        stroke: transparent;
-    }
-    .dropzone:hover{
-        fill: red;
-        opacity: 25%;
-    }
-    text {
-        user-select: none;
-    }
-    .copying {
-        cursor: copy;
-    }
-    .moving {
-        cursor: move;
-    }
-    .detail-panel {
-        display: flex;
-        align-content: center;
-        gap: 12px;
-    }.dropzone {
-        fill: transparent;
-        stroke: transparent;
-    }
-    .dropzone:hover{
-        fill: red;
-        opacity: 25%;
-    }
-    text {
-        user-select: none;
-    }
-    .copying {
-        cursor: copy;
-    }
-    .moving {
-        cursor: move;
-    }
-    .detail-panel {
-        display: flex;
-        align-content: center;
-        gap: 12px;
-    }
-    g.gate:not([data-expanded=true]) rect {
-        cursor: grab;
-    }
-    g.gate:not([data-expanded=true]) circle {
-        cursor: grab;
+    .dropzone:hover {
+        opacity: 50%;
     }
     `;

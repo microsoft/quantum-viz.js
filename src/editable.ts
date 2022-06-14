@@ -35,13 +35,75 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () 
         wires: getWireElemsY(container),
         renderFn: getRenderFn(container, sqore, onCircuitChange),
     };
-    addDropzones(container);
-    addDocumentEvents(container);
-    addDropzoneEvents(context);
-    addMouseEvents(context);
+    // addDropzones(container);
+    // addDocumentEvents(container);
+    _addDropzones(context);
+    // addDropzoneEvents(context);
+    // addMouseEvents(context);
 };
 
 // Commands
+
+const _addDropzones = (context: Context): void => {
+    const { container } = context;
+    const elems = container.querySelectorAll<SVGGraphicsElement>(
+        '[class^="gate-"]:not(.gate-control), .control-dot, .oplus',
+    );
+    // console.log(elems);
+
+    const elemPositions = Array.from(elems).map((elem) => {
+        const { x, y, width, height } = elem.getBBox();
+        return { x: x + width / 2, y: y + height / 2 };
+    });
+    console.log(elemPositions);
+
+    const svgElem = container.querySelector('svg');
+    // console.log(svgElem);
+
+    const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    dropzoneLayer.classList.add('dropzone-layer');
+    svgElem && svgElem.append(dropzoneLayer);
+
+    // Playground
+
+    const paddingY = 20;
+    const getCenter = (elem: SVGGraphicsElement) => {
+        const { x, y, width, height } = elem.getBBox();
+        return { cX: x + width / 2, cY: y + height / 2 };
+    };
+
+    // H element
+    let dzX = 50;
+    const hElem = elems[0];
+    let { cX, cY } = getCenter(hElem);
+    const hDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
+    hDz.setAttribute('fill', 'red');
+    dropzoneLayer.appendChild(hDz);
+
+    // Control element
+    dzX = cX;
+    const cElem = elems[1];
+    ({ cX, cY } = getCenter(cElem));
+    const cDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
+    cDz.setAttribute('fill', 'yellow');
+    dropzoneLayer.appendChild(cDz);
+
+    // X element
+    dzX = 50;
+    const xElem = elems[2];
+    ({ cX, cY } = getCenter(xElem));
+    const xDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
+    xDz.setAttribute('fill', 'green');
+    dropzoneLayer.appendChild(xDz);
+
+    // Measure element
+    dzX = cX;
+    const mElem = elems[3];
+    ({ cX, cY } = getCenter(mElem));
+    const mDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
+    mDz.setAttribute('fill', 'pink');
+    dropzoneLayer.appendChild(mDz);
+};
 
 const addDropzones = (container: HTMLElement): void => {
     const gateElems = getGateElems(container);
