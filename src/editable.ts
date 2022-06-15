@@ -8,16 +8,12 @@ import { Sqore } from './sqore';
 
 interface Context {
     container: HTMLElement;
+    svg: SVGElement;
     operations: Operation[];
-    wires: Wires;
+    wireData: number[];
+    paddingY: number;
     renderFn: () => void;
 }
-
-interface Wires {
-    [y: string]: string;
-}
-
-let _sourceTarget: SVGElement | null;
 
 /**
  * Add editable elements and events.
@@ -31,9 +27,11 @@ let _sourceTarget: SVGElement | null;
 const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): void => {
     const context: Context = {
         container: container,
+        svg: container.querySelector('svg') as SVGElement,
         operations: sqore.circuit.operations,
-        wires: getWireElemsY(container),
+        wireData: _wireData(container),
         renderFn: getRenderFn(container, sqore, onCircuitChange),
+        paddingY: 20,
     };
     // addDropzones(container);
     // addDocumentEvents(container);
@@ -44,65 +42,125 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () 
 
 // Commands
 
-const _addDropzones = (context: Context): void => {
-    const { container } = context;
-    const elems = container.querySelectorAll<SVGGraphicsElement>(
-        '[class^="gate-"]:not(.gate-control), .control-dot, .oplus',
-    );
-    // console.log(elems);
-
-    const elemPositions = Array.from(elems).map((elem) => {
-        const { x, y, width, height } = elem.getBBox();
-        return { x: x + width / 2, y: y + height / 2 };
-    });
-    console.log(elemPositions);
-
-    const svgElem = container.querySelector('svg');
-    // console.log(svgElem);
-
+const _createDropzoneLayer = () => {
     const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     dropzoneLayer.classList.add('dropzone-layer');
-    svgElem && svgElem.append(dropzoneLayer);
+    return dropzoneLayer;
+};
 
-    // Playground
+const _getHostElems = (container: HTMLElement) => {
+    return container.querySelectorAll<SVGGraphicsElement>('[class^="gate-"]:not(.gate-control), .control-dot, .oplus');
+};
 
-    const paddingY = 20;
+const _addDropzones = (context: Context): void => {
     const getCenter = (elem: SVGGraphicsElement) => {
         const { x, y, width, height } = elem.getBBox();
         return { cX: x + width / 2, cY: y + height / 2 };
     };
 
-    // H element
-    let dzX = 50;
-    const hElem = elems[0];
-    let { cX, cY } = getCenter(hElem);
-    const hDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
-    hDz.setAttribute('fill', 'red');
-    dropzoneLayer.appendChild(hDz);
+    const { container, svg, wireData, paddingY } = context;
+    const elems = _getHostElems(container);
+    const dropzoneLayer = _createDropzoneLayer();
+    svg.append(dropzoneLayer);
 
-    // Control element
-    dzX = cX;
-    const cElem = elems[1];
-    ({ cX, cY } = getCenter(cElem));
-    const cDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
-    cDz.setAttribute('fill', 'yellow');
-    dropzoneLayer.appendChild(cDz);
+    const wirePrefixes = wireData.map((wireY) => ({ wireY, prefixX: 50 }));
+    console.log(wirePrefixes);
 
-    // X element
-    dzX = 50;
-    const xElem = elems[2];
-    ({ cX, cY } = getCenter(xElem));
-    const xDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
-    xDz.setAttribute('fill', 'green');
-    dropzoneLayer.appendChild(xDz);
+    const colors = [
+        '#F5B7B1',
+        '#28B463',
+        '#F8C471',
+        '#D4E6F1',
+        '#E74C3C',
+        '#73C6B6',
+        '#FCF3CF',
+        '#5D6D7E',
+        '#BA4A00',
+        '#A2D9CE',
+        '#8E44AD',
+        '#D7BDE2',
+    ];
 
-    // Measure element
-    dzX = cX;
-    const mElem = elems[3];
-    ({ cX, cY } = getCenter(mElem));
-    const mDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
-    mDz.setAttribute('fill', 'pink');
-    dropzoneLayer.appendChild(mDz);
+    // Sort all elements by cX
+    const sortedElems = Array.from(elems).sort((first, second) => {
+        const { cX: cX1 } = getCenter(first);
+        const { cX: cX2 } = getCenter(second);
+        return cX1 - cX2;
+    });
+
+    sortedElems.map((elem) => {
+        const { cX, cY } = getCenter(elem);
+
+        const wirePrefix = wirePrefixes.find((item) => item.wireY === cY);
+
+        // Check to prevent group gates creating dropzones between wires
+        if (wirePrefix) {
+            const prefixX = wirePrefix.prefixX;
+            const elemDropzone = box(prefixX, cY - paddingY, cX - prefixX, paddingY * 2, 'dropzone');
+
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            elemDropzone.setAttribute('fill', color);
+
+            if (wirePrefix) wirePrefix.prefixX = cX;
+
+            dropzoneLayer.appendChild(elemDropzone);
+        }
+    });
+
+    wirePrefixes.map(({ wireY, prefixX }) => {
+        const maxWidth = Number(svg.getAttribute('width'));
+        const elemDropzone = box(prefixX, wireY - paddingY, maxWidth - prefixX, paddingY * 2, 'dropzone');
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        elemDropzone.setAttribute('fill', color);
+        dropzoneLayer.appendChild(elemDropzone);
+    });
+
+    // // Playground
+    // // H element
+    // let dzX = 50;
+    // const hElem = elems[0];
+    // let { cX, cY } = getCenter(hElem);
+    // const hDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
+    // hDz.setAttribute('fill', 'red');
+    // dropzoneLayer.appendChild(hDz);
+
+    // // Control element
+    // dzX = cX;
+    // const cElem = elems[1];
+    // ({ cX, cY } = getCenter(cElem));
+    // const cDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
+    // cDz.setAttribute('fill', 'yellow');
+    // dropzoneLayer.appendChild(cDz);
+
+    // // X element
+    // dzX = 50;
+    // const xElem = elems[2];
+    // ({ cX, cY } = getCenter(xElem));
+    // const xDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
+    // xDz.setAttribute('fill', 'green');
+    // dropzoneLayer.appendChild(xDz);
+
+    // // Measure element
+    // dzX = cX;
+    // const mElem = elems[3];
+    // ({ cX, cY } = getCenter(mElem));
+    // const mDz = box(dzX, cY - paddingY, cX - dzX, paddingY * 2, 'dropzone');
+    // mDz.setAttribute('fill', 'pink');
+    // dropzoneLayer.appendChild(mDz);
+};
+
+const _wireData = (container: HTMLElement) => {
+    // elems include qubit wires and lines of measure gates
+    const elems = container.querySelectorAll<SVGGElement>('svg > g:nth-child(3) > g');
+    // filter out <g> elements having more than 2 elements because
+    // qubit wires contain only 2 elements: <line> and <text>
+    // lines of measure gates contain 4 <line> elements
+    const wireElems = Array.from(elems).filter((elem) => elem.childElementCount < 3);
+    const wireData = wireElems.map((wireElem) => {
+        const lineElem = wireElem.children[0] as SVGLineElement;
+        return lineElem.y1.baseVal.value;
+    });
+    return wireData;
 };
 
 const addDropzones = (container: HTMLElement): void => {
@@ -115,116 +173,10 @@ const addDropzones = (container: HTMLElement): void => {
     });
 };
 
-const addDocumentEvents = (container: HTMLElement): void => {
-    container.addEventListener('click', (ev: MouseEvent) => {
-        _sourceTarget = null;
-        if (ev.ctrlKey) return;
-    });
-    container.addEventListener('contextmenu', (ev: MouseEvent) => {
-        ev.preventDefault();
-    });
-    container.addEventListener('mouseup', () => {
-        cursorCopy(container, false);
-        cursorMove(container, false);
-    });
-};
-
-const addDropzoneEvents = (context: Context): void => {
-    const { container } = context;
-    const dropzoneElems = container.querySelectorAll<SVGRectElement>('.dropzone');
-    dropzoneElems.forEach((dropzoneElem) => {
-        dropzoneElem.addEventListener('mouseup', (ev: MouseEvent) => handleDropzoneMouseUp(ev, context));
-    });
-};
-
-const addMouseEvents = (context: Context): void => {
-    const { container } = context;
-    const gateElems = getGateElems(container);
-    gateElems.forEach((gateElem) => {
-        gateElem.addEventListener('mousedown', (ev: MouseEvent) => handleGateMouseDown(ev, container));
-    });
-};
-
-// Event handlers
-const handleGateMouseDown = (ev: MouseEvent, container: HTMLElement): void => {
-    ev.stopPropagation();
-    _sourceTarget = ev.currentTarget as SVGGElement;
-
-    // Ctrl + Mousedown to copy. Mousedown only to move.
-    ev.ctrlKey ? cursorCopy(container, true) : cursorMove(container, true);
-};
-
-const handleDropzoneMouseUp = (ev: MouseEvent, context: Context): void | false => {
-    ev.stopPropagation();
-
-    const { container, operations, wires, renderFn } = context;
-
-    const currentTarget = ev.currentTarget as SVGGElement;
-
-    if (!currentTarget) return false;
-
-    const dataId = getDataId(currentTarget);
-    const parent = getParent(dataId, operations);
-    const index = splitDataId(dataId).pop();
-    const position = getDropzonePosition(currentTarget);
-
-    if (_sourceTarget == null) return false;
-
-    const sourceDataId = getDataId(_sourceTarget);
-    const sourceParent = getParent(sourceDataId, operations);
-    const sourceIndex = splitDataId(sourceDataId).pop();
-
-    if (index == null || sourceIndex == null) return false;
-
-    const newGate = getGate(sourceDataId, operations);
-    const wireY = getClosestWireY(ev.offsetY, wires);
-
-    // Not allow Measure gate to move vertically
-    if (wireY != null && newGate.gate !== 'measure') {
-        // wires[wireY] returns qubit name (i.e: 'q0')
-        // this remove 'q' and assign an index (i.e: 0)
-        const index = Number(wires[wireY].slice(1));
-        const [firstTarget, ...targetsExceptFirst] = newGate.targets;
-        // Reserve all other properties, only change qId
-        Object.assign(firstTarget, { ...firstTarget, qId: index });
-        // Reserve all other targets, only change first target
-        Object.assign(newGate, { ...newGate, targets: [firstTarget, ...targetsExceptFirst] });
-    }
-
-    // Remove source element if moving using Ctrl + Mousedown
-    if (!ev.ctrlKey) {
-        deleteAt(sourceParent, sourceIndex);
-    }
-
-    // If dropzone is left of gate, insert before gate.
-    // Otherwise, insert after.
-    if (position === 'left') {
-        insertBefore(parent, index, newGate);
-    } else {
-        insertAfter(parent, index, newGate);
-    }
-
-    // Remove cursor styles
-    cursorCopy(container, false);
-    cursorMove(container, false);
-
-    // Redraw the circuit
-    renderFn();
-};
-
 // Element getters
 
 const getGateElems = (container: HTMLElement): SVGGElement[] => {
     return Array.from(container.querySelectorAll('g.gate'));
-};
-
-const getWireElems = (container: HTMLElement): SVGGElement[] => {
-    // elems include qubit wires and lines of measure gates
-    const elems = container.querySelectorAll<SVGGElement>('svg > g:nth-child(3) > g');
-    // filter out <g> elements having more than 2 elements because
-    // qubit wires contain only 2 elements: <line> and <text>
-    // lines of measure gates contain 4 <line> elements
-    return Array.from(elems).filter((elem) => elem.childElementCount < 3);
 };
 
 // Element creators
@@ -297,21 +249,6 @@ const splitDataId = (dataId: string): number[] => {
     return dataId === '' ? [] : dataId.split('-').map(Number);
 };
 
-const getWireElemsY = (container: HTMLElement): Wires => {
-    const wireElems = getWireElems(container);
-    return wireElems.reduce((previous, current) => {
-        const y = getWireElemY(current);
-        const text = getWireElemText(current);
-        return { ...previous, [`${y}`]: text };
-    }, {});
-};
-
-const getWireElemY = (wireElem: SVGGElement): number => {
-    const lineElem = wireElem.querySelector<SVGLineElement>('line');
-    if (lineElem == null || lineElem.getAttribute('y1') == null) throw Error('y not found');
-    return Number(lineElem.getAttribute('y1'));
-};
-
 const getWireElemText = (wireElem: SVGGElement): string => {
     const textElem = wireElem.querySelector<SVGTextElement>('text');
     if (textElem == null || textElem.textContent == null || textElem.textContent === '')
@@ -360,13 +297,8 @@ const cursorCopy = (container: HTMLElement, value: boolean): void => {
 const exportedForTesting = {
     // addEditable
     addDropzones,
-    addDocumentEvents,
-    addDropzoneEvents,
-    addMouseEvents,
-    handleGateMouseDown,
     // handleDropzoneMouseUp
     getGateElems,
-    getWireElems,
     createDropzone,
     createLeftDropzone,
     createRightDropzone,
@@ -375,8 +307,6 @@ const exportedForTesting = {
     getDataId,
     getRenderFn,
     splitDataId,
-    getWireElemsY,
-    getWireElemY,
     getWireElemText,
     getClosestWireY,
     getDropzonePosition,

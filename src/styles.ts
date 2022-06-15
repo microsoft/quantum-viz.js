@@ -238,6 +238,6 @@ const _expandCollapse = `
 
 const _editable = `
     .dropzone:hover {
-        opacity: 50%;
+        opacity: 25%;
     }
     `;

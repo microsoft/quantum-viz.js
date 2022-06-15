@@ -12,17 +12,17 @@ if (typeof qviz != 'undefined') {
 
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
-        // const isEditable = true;
-        // const onCircuitChange = () => console.log('onCircuitChange triggered');
+        const isEditable = true;
+        const onCircuitChange = () => console.log('onCircuitChange triggered');
         /* Pass in isEditable = true to allow circuit to be editable */
         /* Pass in onCircuitChange to trigger callback function
            whenever there is a change in circuit */
-        qviz.draw(sample, sampleDiv, qviz.STYLES['Default'] /*0, isEditable, onCircuitChange*/);
+        qviz.draw(sample, sampleDiv, qviz.STYLES['Default'], 0, isEditable, onCircuitChange);
     }
 
     const teleportDiv = document.getElementById('teleport');
     if (teleportDiv != null) {
-        qviz.draw(teleport, teleportDiv, qviz.STYLES['Default']);
+        qviz.draw(teleport, teleportDiv, qviz.STYLES['Default'], 0, true);
     }
 
     const groverDiv = document.getElementById('grover');
