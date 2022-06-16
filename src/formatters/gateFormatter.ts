@@ -302,7 +302,7 @@ const _cross = (x: number, y: number): SVGElement => {
     const radius = 8;
     const line1: SVGElement = line(x - radius, y - radius, x + radius, y + radius);
     const line2: SVGElement = line(x - radius, y + radius, x + radius, y - radius);
-    return group([line1, line2]);
+    return group([line1, line2], { class: 'cross' });
 };
 
 /**
