@@ -24,18 +24,21 @@ interface Context {
  */
 
 const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): void => {
+    const svg = container.querySelector('svg') as SVGElement;
+
     const context: Context = {
         container: container,
-        svg: container.querySelector('svg') as SVGElement,
+        svg,
         operations: sqore.circuit.operations,
         wireData: _wireData(container),
         renderFn: getRenderFn(container, sqore, onCircuitChange),
         paddingY: 20,
     };
+
     // addDropzones(container);
     // addDocumentEvents(container);
     _addDataWires(container);
-    _addDropzones(context);
+    svg.appendChild(_dropzones(context));
     // addDropzoneEvents(context);
     // addMouseEvents(context);
     _addEvents(context);
@@ -44,18 +47,12 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () 
 const _addDataWires = (container: HTMLElement) => {
     const elems = _getHostElems(container);
     elems.forEach((elem) => {
-        const { cY } = _getCenter(elem);
+        const { cY } = _center(elem);
         // i.e. cY = 40, wireData returns [40, 100, 140, 180]
         // dataWire will return 0, which is the index of 40 in wireData
         const dataWire = _wireData(container).findIndex((y) => y === cY);
         elem.setAttribute('data-wire', `${dataWire}`);
     });
-};
-
-const _createDropzoneLayer = () => {
-    const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    dropzoneLayer.classList.add('dropzone-layer');
-    return dropzoneLayer;
 };
 
 const _getHostElems = (container: HTMLElement) => {
@@ -66,16 +63,17 @@ const _getHostElems = (container: HTMLElement) => {
 
 const _wirePrefixes = (wireData: number[]) => wireData.map((wireY, index) => ({ index, wireY, prefixX: 50 }));
 
-const _getCenter = (elem: SVGGraphicsElement) => {
+const _center = (elem: SVGGraphicsElement) => {
     const { x, y, width, height } = elem.getBBox();
     return { cX: x + width / 2, cY: y + height / 2 };
 };
 
-const _addDropzones = (context: Context): void => {
+const _dropzones = (context: Context) => {
+    const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    dropzoneLayer.classList.add('dropzone-layer');
+
     const { container, svg, wireData, paddingY } = context;
     const elems = _getHostElems(container);
-    const dropzoneLayer = _createDropzoneLayer();
-    svg.appendChild(dropzoneLayer);
 
     const wirePrefixes = _wirePrefixes(wireData);
 
@@ -94,15 +92,16 @@ const _addDropzones = (context: Context): void => {
         '#D7BDE2',
     ];
 
-    // Sort elements by its x property
+    // Sort host elements by its x property
     const sortedElems = Array.from(elems).sort((first, second) => {
         const { x: x1 } = first.getBBox();
         const { x: x2 } = second.getBBox();
         return x1 - x2;
     });
 
+    // Add dropzones for each host elements
     sortedElems.map((elem) => {
-        const { cX, cY } = _getCenter(elem);
+        const { cX, cY } = _center(elem);
         // console.log({ dataId: _getDataId(elem), elem, isExpandedGroup: _isExpandedGroup(_getGateElem(elem)) });
         const wirePrefix = wirePrefixes.find((item) => item.wireY === cY);
 
@@ -110,7 +109,7 @@ const _addDropzones = (context: Context): void => {
         if (wirePrefix) {
             const prefixX = wirePrefix.prefixX;
             const elemDropzone = box(prefixX, cY - paddingY, cX - prefixX, paddingY * 2, 'dropzone');
-            elemDropzone.setAttribute('data-gate-id', _getDataId(elem) || '');
+            elemDropzone.setAttribute('data-gate-id', _equivDataId(elem) || '');
             elemDropzone.setAttribute('data-gate-wire', `${wirePrefix.index}`);
 
             const color = colors[Math.floor(Math.random() * colors.length)];
@@ -122,6 +121,7 @@ const _addDropzones = (context: Context): void => {
         }
     });
 
+    // Add remaining dropzones to fit max-width of the circuit
     wirePrefixes.map(({ wireY, prefixX }) => {
         const maxWidth = Number(svg.getAttribute('width'));
         const elemDropzone = box(prefixX, wireY - paddingY, maxWidth - prefixX, paddingY * 2, 'dropzone');
@@ -129,6 +129,8 @@ const _addDropzones = (context: Context): void => {
         elemDropzone.setAttribute('fill', color);
         dropzoneLayer.appendChild(elemDropzone);
     });
+
+    return dropzoneLayer;
 };
 
 const _wireData = (container: HTMLElement) => {
@@ -145,19 +147,18 @@ const _wireData = (container: HTMLElement) => {
     return wireData;
 };
 
-const _getYs = (gateElem: SVGGElement, container: HTMLElement): number[] => {
-    const wireData = _wireData(container);
-    const { y, height } = gateElem.getBBox();
-    const wireYs = wireData.filter((wireY) => wireY > y && wireY < y + height);
-    return wireYs;
-};
-
-const _getGateElem = (elem: SVGElement) => {
+/*
+    Find equivalent gate element of host element
+*/
+const _equivGateElem = (elem: SVGElement) => {
     return elem.closest<SVGElement>('[data-id]');
 };
 
-const _getDataId = (elem: SVGElement) => {
-    const gateElem = _getGateElem(elem);
+/*
+    Find data-id of host element
+*/
+const _equivDataId = (elem: SVGElement) => {
+    const gateElem = _equivGateElem(elem);
     return gateElem?.getAttribute('data-id');
 };
 
@@ -171,7 +172,7 @@ const _addEvents = (context: Context) => {
 
     const elems = _getHostElems(container);
     elems.forEach((elem) => {
-        const gateElem = _getGateElem(elem);
+        const gateElem = _equivGateElem(elem);
         gateElem?.addEventListener('mousedown', () => (dropzoneLayer.style.display = 'block'));
     });
 
