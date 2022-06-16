@@ -55,12 +55,12 @@ const _getHostElems = (container: HTMLElement) => {
 
 const _createWirePrefixes = (wireData: number[]) => wireData.map((wireY, index) => ({ index, wireY, prefixX: 50 }));
 
-const _addDropzones = (context: Context): void => {
-    const getCenter = (elem: SVGGraphicsElement) => {
-        const { x, y, width, height } = elem.getBBox();
-        return { cX: x + width / 2, cY: y + height / 2 };
-    };
+const _getCenter = (elem: SVGGraphicsElement) => {
+    const { x, y, width, height } = elem.getBBox();
+    return { cX: x + width / 2, cY: y + height / 2 };
+};
 
+const _addDropzones = (context: Context): void => {
     const { container, svg, wireData, paddingY } = context;
     const elems = _getHostElems(container);
     const dropzoneLayer = _createDropzoneLayer();
@@ -91,7 +91,7 @@ const _addDropzones = (context: Context): void => {
     });
 
     sortedElems.map((elem) => {
-        const { cX, cY } = getCenter(elem);
+        const { cX, cY } = _getCenter(elem);
         console.log({ dataId: _getDataId(elem), elem, isExpandedGroup: _isExpandedGroup(_getGateElem(elem)) });
         const wirePrefix = wirePrefixes.find((item) => item.wireY === cY);
 
