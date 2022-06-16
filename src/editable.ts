@@ -34,12 +34,23 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () 
     };
     // addDropzones(container);
     // addDocumentEvents(container);
+    _addDataWires(container);
     _addDropzones(context);
     // addDropzoneEvents(context);
     // addMouseEvents(context);
+    _addEvents(context);
 };
 
-// Commands
+const _addDataWires = (container: HTMLElement) => {
+    const elems = _getHostElems(container);
+    elems.forEach((elem) => {
+        const { cY } = _getCenter(elem);
+        // i.e. cY = 40, wireData returns [40, 100, 140, 180]
+        // dataWire will return 0, which is the index of 40 in wireData
+        const dataWire = _wireData(container).findIndex((y) => y === cY);
+        elem.setAttribute('data-wire', `${dataWire}`);
+    });
+};
 
 const _createDropzoneLayer = () => {
     const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -53,7 +64,7 @@ const _getHostElems = (container: HTMLElement) => {
     );
 };
 
-const _createWirePrefixes = (wireData: number[]) => wireData.map((wireY, index) => ({ index, wireY, prefixX: 50 }));
+const _wirePrefixes = (wireData: number[]) => wireData.map((wireY, index) => ({ index, wireY, prefixX: 50 }));
 
 const _getCenter = (elem: SVGGraphicsElement) => {
     const { x, y, width, height } = elem.getBBox();
@@ -64,9 +75,9 @@ const _addDropzones = (context: Context): void => {
     const { container, svg, wireData, paddingY } = context;
     const elems = _getHostElems(container);
     const dropzoneLayer = _createDropzoneLayer();
-    svg.append(dropzoneLayer);
+    svg.appendChild(dropzoneLayer);
 
-    const wirePrefixes = _createWirePrefixes(wireData);
+    const wirePrefixes = _wirePrefixes(wireData);
 
     const colors = [
         '#F5B7B1',
@@ -92,7 +103,7 @@ const _addDropzones = (context: Context): void => {
 
     sortedElems.map((elem) => {
         const { cX, cY } = _getCenter(elem);
-        console.log({ dataId: _getDataId(elem), elem, isExpandedGroup: _isExpandedGroup(_getGateElem(elem)) });
+        // console.log({ dataId: _getDataId(elem), elem, isExpandedGroup: _isExpandedGroup(_getGateElem(elem)) });
         const wirePrefix = wirePrefixes.find((item) => item.wireY === cY);
 
         // Check to prevent group gates creating dropzones between wires
@@ -134,9 +145,9 @@ const _wireData = (container: HTMLElement) => {
     return wireData;
 };
 
-const _getYs = (elem: SVGGraphicsElement, container: HTMLElement): number[] => {
+const _getYs = (gateElem: SVGGElement, container: HTMLElement): number[] => {
     const wireData = _wireData(container);
-    const { y, height } = elem.getBBox();
+    const { y, height } = gateElem.getBBox();
     const wireYs = wireData.filter((wireY) => wireY > y && wireY < y + height);
     return wireYs;
 };
@@ -152,6 +163,26 @@ const _getDataId = (elem: SVGElement) => {
 
 const _isExpandedGroup = (gateElem: SVGElement | null) => {
     return gateElem ? gateElem.hasAttribute('data-expanded') : false;
+};
+
+const _addEvents = (context: Context) => {
+    const { container } = context;
+    const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
+
+    const elems = _getHostElems(container);
+    elems.forEach((elem) => {
+        const gateElem = _getGateElem(elem);
+        gateElem?.addEventListener('mousedown', () => (dropzoneLayer.style.display = 'block'));
+    });
+
+    container.addEventListener('mouseup', () => (dropzoneLayer.style.display = 'none'));
+
+    const dropzoneElems = dropzoneLayer.querySelectorAll('.dropzone');
+    dropzoneElems.forEach((dropzoneElem) => {
+        const dataGateId = dropzoneElem.getAttribute('data-gate-id');
+        const dataGateWire = dropzoneElem.getAttribute('data-gate-wire');
+        dropzoneElem.addEventListener('mouseup', () => console.log({ dataGateId, dataGateWire }));
+    });
 };
 
 const getParent = (dataId: string, operations: Operation[]): Operation[] => {

@@ -237,6 +237,12 @@ const _expandCollapse = `
     }`;
 
 const _editable = `
+    text {
+        user-select: none;
+    }
+    .dropzone-layer {
+        display: none;
+    }
     .dropzone:hover {
         opacity: 25%;
     }
