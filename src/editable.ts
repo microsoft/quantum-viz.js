@@ -6,13 +6,14 @@ import { box } from './formatters/formatUtils';
 import { Sqore } from './sqore';
 
 interface Context {
-    selectedId: string | null;
     container: HTMLElement;
     svg: SVGElement;
     operations: Operation[];
     wireData: number[];
-    paddingY: number;
     renderFn: () => void;
+    paddingY: number;
+    selectedId: string | null;
+    selectedWire: string | null;
 }
 
 /**
@@ -28,13 +29,14 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () 
     const svg = container.querySelector('svg') as SVGElement;
 
     const context: Context = {
-        selectedId: null,
         container: container,
         svg,
         operations: sqore.circuit.operations,
         wireData: _wireData(container),
         renderFn: _renderFn(container, sqore, onCircuitChange),
         paddingY: 20,
+        selectedId: null,
+        selectedWire: null,
     };
 
     // addDropzones(container);
@@ -74,7 +76,7 @@ const _dropzones = (context: Context) => {
     const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     dropzoneLayer.classList.add('dropzone-layer');
 
-    const { container, svg, wireData, paddingY } = context;
+    const { container, svg, wireData, operations, paddingY } = context;
     const elems = _hostElems(container);
 
     const wirePrefixes = _wirePrefixes(wireData);
@@ -109,6 +111,9 @@ const _dropzones = (context: Context) => {
     wirePrefixes.map(({ wireY, prefixX }) => {
         const maxWidth = Number(svg.getAttribute('width'));
         const elemDropzone = box(prefixX, wireY - paddingY, maxWidth - prefixX, paddingY * 2, 'dropzone');
+        elemDropzone.setAttribute('data-gate-id', `${operations.length}`);
+        const index = wireData.findIndex((item) => item === wireY);
+        elemDropzone.setAttribute('data-gate-wire', `${index}`);
         dropzoneLayer.appendChild(elemDropzone);
     });
 
@@ -141,7 +146,7 @@ const _equivGateElem = (elem: SVGElement) => {
 */
 const _equivDataId = (elem: SVGElement) => {
     const gateElem = _equivGateElem(elem);
-    return gateElem ? gateElem.getAttribute('data-id') : null;
+    return gateElem != null ? gateElem.getAttribute('data-id') : null;
 };
 
 const _isExpandedGroup = (gateElem: SVGElement | null) => {
@@ -168,7 +173,10 @@ const _addEvents = (context: Context) => {
     dropzoneElems.forEach((dropzoneElem) => {
         dropzoneElem.addEventListener('mouseup', () => {
             const targetId = dropzoneElem.getAttribute('data-gate-id');
-            if (context.selectedId && targetId) {
+            if (
+                targetId && //
+                context.selectedId
+            ) {
                 _move(context.selectedId, targetId, operations);
                 renderFn();
             }
@@ -195,7 +203,13 @@ const _equivOperation = (dataId: string | null, operations: Operation[]): Operat
     const index = _lastIndex(dataId);
     const operationParent = _equivOperationParent(dataId, operations);
 
-    return operationParent && index ? operationParent[index] : null;
+    if (
+        operationParent == null || //
+        index == null
+    )
+        return null;
+
+    return operationParent[index];
 };
 
 const _move = (sourceId: string, targetId: string, operations: Operation[]) => {
@@ -205,17 +219,20 @@ const _move = (sourceId: string, targetId: string, operations: Operation[]) => {
     const targetLastIndex = _lastIndex(targetId);
     const sourceOperationParent = _equivOperationParent(sourceId, operations);
 
+    console.log({ targetOperationParent, targetLastIndex, targetId, sourceOperation, sourceOperationParent });
+
     if (
-        targetOperationParent && //
-        targetLastIndex &&
-        sourceOperation &&
-        sourceOperationParent
-    ) {
-        targetOperationParent.splice(targetLastIndex, 0, { ...sourceOperation });
-        sourceOperation.gate = 'removed';
-        const indexToRemove = sourceOperationParent.findIndex((operation) => operation.gate === 'removed');
-        sourceOperationParent.splice(indexToRemove, 1);
-    }
+        targetOperationParent == null || //
+        targetLastIndex == null ||
+        sourceOperation == null ||
+        sourceOperationParent == null
+    )
+        return;
+
+    targetOperationParent.splice(targetLastIndex, 0, { ...sourceOperation });
+    sourceOperation.gate = 'removed';
+    const indexToRemove = sourceOperationParent.findIndex((operation) => operation.gate === 'removed');
+    sourceOperationParent.splice(indexToRemove, 1);
 };
 
 const _copy = (sourceId: string, targetId: string, operations: Operation[]) => {
@@ -226,18 +243,25 @@ const _copy = (sourceId: string, targetId: string, operations: Operation[]) => {
     const sourceOperationParent = _equivOperationParent(sourceId, operations);
 
     if (
-        targetOperationParent && //
-        targetLastIndex &&
-        sourceOperation &&
-        sourceOperationParent
-    ) {
-        targetOperationParent.splice(targetLastIndex, 0, { ...sourceOperation });
-    }
+        targetOperationParent == null || //
+        targetLastIndex == null ||
+        sourceOperation == null ||
+        sourceOperationParent == null
+    )
+        return;
+
+    targetOperationParent.splice(targetLastIndex, 0, { ...sourceOperation });
+};
+
+const _moveY = (sourceWire: string, targetWire: string) => {
+    console.log({ sourceWire, targetWire });
 };
 
 const _indexes = (dataId: string) => dataId.split('-').map((segment) => parseInt(segment));
 
-const _lastIndex = (dataId: string) => _indexes(dataId).pop() || null;
+const _lastIndex = (dataId: string) => {
+    return _indexes(dataId).pop();
+};
 
 const _renderFn = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): (() => void) => {
     return () => {
