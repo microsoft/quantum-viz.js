@@ -6,6 +6,7 @@ import { box } from './formatters/formatUtils';
 import { Sqore } from './sqore';
 
 interface Context {
+    selectedId: string | null;
     container: HTMLElement;
     svg: SVGElement;
     operations: Operation[];
@@ -27,11 +28,12 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () 
     const svg = container.querySelector('svg') as SVGElement;
 
     const context: Context = {
+        selectedId: null,
         container: container,
         svg,
         operations: sqore.circuit.operations,
         wireData: _wireData(container),
-        renderFn: getRenderFn(container, sqore, onCircuitChange),
+        renderFn: _renderFn(container, sqore, onCircuitChange),
         paddingY: 20,
     };
 
@@ -45,7 +47,7 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () 
 };
 
 const _addDataWires = (container: HTMLElement) => {
-    const elems = _getHostElems(container);
+    const elems = _hostElems(container);
     elems.forEach((elem) => {
         const { cY } = _center(elem);
         // i.e. cY = 40, wireData returns [40, 100, 140, 180]
@@ -55,7 +57,7 @@ const _addDataWires = (container: HTMLElement) => {
     });
 };
 
-const _getHostElems = (container: HTMLElement) => {
+const _hostElems = (container: HTMLElement) => {
     return container.querySelectorAll<SVGGraphicsElement>(
         '[class^="gate-"]:not(.gate-control, .gate-swap), .control-dot, .oplus, .cross',
     );
@@ -73,24 +75,9 @@ const _dropzones = (context: Context) => {
     dropzoneLayer.classList.add('dropzone-layer');
 
     const { container, svg, wireData, paddingY } = context;
-    const elems = _getHostElems(container);
+    const elems = _hostElems(container);
 
     const wirePrefixes = _wirePrefixes(wireData);
-
-    const colors = [
-        '#F5B7B1',
-        '#28B463',
-        '#F8C471',
-        '#D4E6F1',
-        '#E74C3C',
-        '#73C6B6',
-        '#FCF3CF',
-        '#5D6D7E',
-        '#BA4A00',
-        '#A2D9CE',
-        '#8E44AD',
-        '#D7BDE2',
-    ];
 
     // Sort host elements by its x property
     const sortedElems = Array.from(elems).sort((first, second) => {
@@ -112,9 +99,6 @@ const _dropzones = (context: Context) => {
             elemDropzone.setAttribute('data-gate-id', _equivDataId(elem) || '');
             elemDropzone.setAttribute('data-gate-wire', `${wirePrefix.index}`);
 
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            elemDropzone.setAttribute('fill', color);
-
             if (wirePrefix) wirePrefix.prefixX = cX;
 
             dropzoneLayer.appendChild(elemDropzone);
@@ -125,8 +109,6 @@ const _dropzones = (context: Context) => {
     wirePrefixes.map(({ wireY, prefixX }) => {
         const maxWidth = Number(svg.getAttribute('width'));
         const elemDropzone = box(prefixX, wireY - paddingY, maxWidth - prefixX, paddingY * 2, 'dropzone');
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        elemDropzone.setAttribute('fill', color);
         dropzoneLayer.appendChild(elemDropzone);
     });
 
@@ -159,7 +141,7 @@ const _equivGateElem = (elem: SVGElement) => {
 */
 const _equivDataId = (elem: SVGElement) => {
     const gateElem = _equivGateElem(elem);
-    return gateElem?.getAttribute('data-id');
+    return gateElem ? gateElem.getAttribute('data-id') : null;
 };
 
 const _isExpandedGroup = (gateElem: SVGElement | null) => {
@@ -167,116 +149,103 @@ const _isExpandedGroup = (gateElem: SVGElement | null) => {
 };
 
 const _addEvents = (context: Context) => {
-    const { container } = context;
-    const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
+    const { container, operations, renderFn } = context;
 
-    const elems = _getHostElems(container);
+    const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
+    container.addEventListener('mouseup', () => (dropzoneLayer.style.display = 'none'));
+
+    const elems = _hostElems(container);
     elems.forEach((elem) => {
         const gateElem = _equivGateElem(elem);
-        gateElem?.addEventListener('mousedown', () => (dropzoneLayer.style.display = 'block'));
+        gateElem?.addEventListener('mousedown', (ev: MouseEvent) => {
+            ev.stopPropagation();
+            context.selectedId = _equivDataId(elem);
+            dropzoneLayer.style.display = 'block';
+        });
     });
-
-    container.addEventListener('mouseup', () => (dropzoneLayer.style.display = 'none'));
 
     const dropzoneElems = dropzoneLayer.querySelectorAll('.dropzone');
     dropzoneElems.forEach((dropzoneElem) => {
-        const dataGateId = dropzoneElem.getAttribute('data-gate-id');
-        const dataGateWire = dropzoneElem.getAttribute('data-gate-wire');
-        dropzoneElem.addEventListener('mouseup', () => console.log({ dataGateId, dataGateWire }));
+        dropzoneElem.addEventListener('mouseup', () => {
+            const targetId = dropzoneElem.getAttribute('data-gate-id');
+            if (context.selectedId && targetId) {
+                _move(context.selectedId, targetId, operations);
+                renderFn();
+            }
+        });
     });
 };
 
-const getParent = (dataId: string, operations: Operation[]): Operation[] => {
-    const segments = splitDataId(dataId);
-    // Remove last segment to navigate to parent instead of child
-    segments.pop();
+const _equivOperationParent = (dataId: string | null, operations: Operation[]): Operation[] | null => {
+    if (!dataId) return null;
 
-    let parent = operations;
-    for (const segment of segments) {
-        parent = parent[segment].children || parent;
+    const indexes = _indexes(dataId);
+    indexes.pop();
+
+    let operationParent = operations;
+    for (const index of indexes) {
+        operationParent = operationParent[index].children || operationParent;
     }
-    return parent;
+    return operationParent;
 };
 
-const getGate = (dataId: string, operations: Operation[]): Operation => {
-    const parent = getParent(dataId, operations);
-    const index = splitDataId(dataId).pop();
+const _equivOperation = (dataId: string | null, operations: Operation[]): Operation | null => {
+    if (!dataId) return null;
 
-    if (index == null) {
-        throw new Error('Gate not found');
-    }
+    const index = _lastIndex(dataId);
+    const operationParent = _equivOperationParent(dataId, operations);
 
-    return parent[index];
+    return operationParent && index ? operationParent[index] : null;
 };
 
-// Utilities
-const getRenderFn = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): (() => void) => {
+const _move = (sourceId: string, targetId: string, operations: Operation[]) => {
+    if (sourceId === targetId) return;
+    const sourceOperation = _equivOperation(sourceId, operations);
+    const targetOperationParent = _equivOperationParent(targetId, operations);
+    const targetLastIndex = _lastIndex(targetId);
+    const sourceOperationParent = _equivOperationParent(sourceId, operations);
+
+    if (
+        targetOperationParent && //
+        targetLastIndex &&
+        sourceOperation &&
+        sourceOperationParent
+    ) {
+        targetOperationParent.splice(targetLastIndex, 0, { ...sourceOperation });
+        sourceOperation.gate = 'removed';
+        const indexToRemove = sourceOperationParent.findIndex((operation) => operation.gate === 'removed');
+        sourceOperationParent.splice(indexToRemove, 1);
+    }
+};
+
+const _copy = (sourceId: string, targetId: string, operations: Operation[]) => {
+    if (sourceId === targetId) return;
+    const sourceOperation = _equivOperation(sourceId, operations);
+    const targetOperationParent = _equivOperationParent(targetId, operations);
+    const targetLastIndex = _lastIndex(targetId);
+    const sourceOperationParent = _equivOperationParent(sourceId, operations);
+
+    if (
+        targetOperationParent && //
+        targetLastIndex &&
+        sourceOperation &&
+        sourceOperationParent
+    ) {
+        targetOperationParent.splice(targetLastIndex, 0, { ...sourceOperation });
+    }
+};
+
+const _indexes = (dataId: string) => dataId.split('-').map((segment) => parseInt(segment));
+
+const _lastIndex = (dataId: string) => _indexes(dataId).pop() || null;
+
+const _renderFn = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): (() => void) => {
     return () => {
         sqore.draw(container, 0, true, onCircuitChange);
         if (onCircuitChange) onCircuitChange();
     };
 };
 
-const getDataId = (element: Element): string => {
-    return element.getAttribute('data-id') || '';
-};
-
-const splitDataId = (dataId: string): number[] => {
-    return dataId === '' ? [] : dataId.split('-').map(Number);
-};
-
-const getClosestWireY = (offsetY: number, wires: { [y: number]: string }): number | null => {
-    for (const wire of Object.entries(wires)) {
-        const y = wire[0];
-        const distance = Math.abs(offsetY - Number(y));
-        // 15 is an arbitrary number to determine the closeness of distance
-        if (distance <= 15) {
-            return Number(y);
-        }
-    }
-    return null;
-};
-
-const getDropzonePosition = (element: SVGElement): string => {
-    const position = element.getAttribute('data-dropzone-position');
-    if (position == null) throw new Error('Position not found');
-    return position;
-};
-
-const insertBefore = (parent: Operation[], index: number, newGate: Operation): void => {
-    parent.splice(index, 0, newGate);
-};
-
-const insertAfter = (parent: Operation[], index: number, newGate: Operation): void => {
-    parent.splice(index + 1, 0, newGate);
-};
-
-const deleteAt = (parent: Operation[], index: number): void => {
-    parent.splice(index, 1);
-};
-
-const cursorMove = (container: HTMLElement, value: boolean): void => {
-    value ? container.classList.add('moving') : container.classList.remove('moving');
-};
-
-const cursorCopy = (container: HTMLElement, value: boolean): void => {
-    value ? container.classList.add('copying') : container.classList.remove('copying');
-};
-
-const exportedForTesting = {
-    // addEditable
-    // handleDropzoneMouseUp
-    getGate,
-    getDataId,
-    getRenderFn,
-    splitDataId,
-    getClosestWireY,
-    getDropzonePosition,
-    insertBefore,
-    insertAfter,
-    deleteAt,
-    cursorMove,
-    cursorCopy,
-};
+const exportedForTesting = {};
 
 export { addEditable, exportedForTesting };

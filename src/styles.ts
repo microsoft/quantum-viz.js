@@ -243,7 +243,12 @@ const _editable = `
     .dropzone-layer {
         display: none;
     }
+    .dropzone {
+        fill-opacity: 0%;
+        stroke-opacity: 0%;
+    }
     .dropzone:hover {
-        opacity: 25%;
+        fill: #EC7063;
+        fill-opacity: 50%;
     }
     `;
