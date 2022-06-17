@@ -55,7 +55,14 @@ const _addDataWires = (container: HTMLElement) => {
         // i.e. cY = 40, wireData returns [40, 100, 140, 180]
         // dataWire will return 0, which is the index of 40 in wireData
         const dataWire = _wireData(container).findIndex((y) => y === cY);
-        elem.setAttribute('data-wire', `${dataWire}`);
+        if (dataWire !== -1) {
+            elem.setAttribute('data-wire', `${dataWire}`);
+        } else {
+            const { y, height } = elem.getBBox();
+            const wireData = _wireData(container);
+            const groupDataWire = wireData.findIndex((wireY) => wireY > y && wireY < y + height);
+            elem.setAttribute('data-wire', `${groupDataWire}`);
+        }
     });
 };
 
@@ -91,15 +98,14 @@ const _dropzones = (context: Context) => {
     // Add dropzones for each host elements
     sortedElems.map((elem) => {
         const { cX, cY } = _center(elem);
-        // console.log({ dataId: _getDataId(elem), elem, isExpandedGroup: _isExpandedGroup(_getGateElem(elem)) });
         const wirePrefix = wirePrefixes.find((item) => item.wireY === cY);
 
         // Check to prevent group gates creating dropzones between wires
         if (wirePrefix) {
             const prefixX = wirePrefix.prefixX;
             const elemDropzone = box(prefixX, cY - paddingY, cX - prefixX, paddingY * 2, 'dropzone');
-            elemDropzone.setAttribute('data-gate-id', _equivDataId(elem) || '');
-            elemDropzone.setAttribute('data-gate-wire', `${wirePrefix.index}`);
+            elemDropzone.setAttribute('data-dropzone-id', _equivDataId(elem) || '');
+            elemDropzone.setAttribute('data-dropzone-wire', `${wirePrefix.index}`);
 
             if (wirePrefix) wirePrefix.prefixX = cX;
 
@@ -111,9 +117,9 @@ const _dropzones = (context: Context) => {
     wirePrefixes.map(({ wireY, prefixX }) => {
         const maxWidth = Number(svg.getAttribute('width'));
         const elemDropzone = box(prefixX, wireY - paddingY, maxWidth - prefixX, paddingY * 2, 'dropzone');
-        elemDropzone.setAttribute('data-gate-id', `${operations.length}`);
+        elemDropzone.setAttribute('data-dropzone-id', `${operations.length}`);
         const index = wireData.findIndex((item) => item === wireY);
-        elemDropzone.setAttribute('data-gate-wire', `${index}`);
+        elemDropzone.setAttribute('data-dropzone-wire', `${index}`);
         dropzoneLayer.appendChild(elemDropzone);
     });
 
@@ -161,6 +167,10 @@ const _addEvents = (context: Context) => {
 
     const elems = _hostElems(container);
     elems.forEach((elem) => {
+        elem.addEventListener('mousedown', () => {
+            context.selectedWire = elem.getAttribute('data-wire');
+        });
+
         const gateElem = _equivGateElem(elem);
         gateElem?.addEventListener('mousedown', (ev: MouseEvent) => {
             ev.stopPropagation();
@@ -172,14 +182,23 @@ const _addEvents = (context: Context) => {
     const dropzoneElems = dropzoneLayer.querySelectorAll('.dropzone');
     dropzoneElems.forEach((dropzoneElem) => {
         dropzoneElem.addEventListener('mouseup', () => {
-            const targetId = dropzoneElem.getAttribute('data-gate-id');
+            const targetId = dropzoneElem.getAttribute('data-dropzone-id');
+            const targetWire = dropzoneElem.getAttribute('data-dropzone-wire');
             if (
-                targetId && //
-                context.selectedId
-            ) {
-                _move(context.selectedId, targetId, operations);
-                renderFn();
+                targetId == null || //
+                targetWire == null ||
+                context.selectedId == null ||
+                context.selectedWire == null
+            )
+                return;
+
+            const newSourceOperation = _moveX(context.selectedId, targetId, operations);
+
+            if (newSourceOperation != null) {
+                _moveY(context.selectedWire, targetWire, newSourceOperation);
             }
+
+            renderFn();
         });
     });
 };
@@ -212,14 +231,12 @@ const _equivOperation = (dataId: string | null, operations: Operation[]): Operat
     return operationParent[index];
 };
 
-const _move = (sourceId: string, targetId: string, operations: Operation[]) => {
+const _moveX = (sourceId: string, targetId: string, operations: Operation[]) => {
     if (sourceId === targetId) return;
     const sourceOperation = _equivOperation(sourceId, operations);
+    const sourceOperationParent = _equivOperationParent(sourceId, operations);
     const targetOperationParent = _equivOperationParent(targetId, operations);
     const targetLastIndex = _lastIndex(targetId);
-    const sourceOperationParent = _equivOperationParent(sourceId, operations);
-
-    console.log({ targetOperationParent, targetLastIndex, targetId, sourceOperation, sourceOperationParent });
 
     if (
         targetOperationParent == null || //
@@ -229,13 +246,19 @@ const _move = (sourceId: string, targetId: string, operations: Operation[]) => {
     )
         return;
 
-    targetOperationParent.splice(targetLastIndex, 0, { ...sourceOperation });
+    // Insert sourceOperation to target last index
+    const newSourceOperation: Operation = { ...sourceOperation };
+    targetOperationParent.splice(targetLastIndex, 0, newSourceOperation);
+
+    // Delete sourceOperation
     sourceOperation.gate = 'removed';
     const indexToRemove = sourceOperationParent.findIndex((operation) => operation.gate === 'removed');
     sourceOperationParent.splice(indexToRemove, 1);
+
+    return newSourceOperation;
 };
 
-const _copy = (sourceId: string, targetId: string, operations: Operation[]) => {
+const _copyX = (sourceId: string, targetId: string, operations: Operation[]) => {
     if (sourceId === targetId) return;
     const sourceOperation = _equivOperation(sourceId, operations);
     const targetOperationParent = _equivOperationParent(targetId, operations);
@@ -250,11 +273,34 @@ const _copy = (sourceId: string, targetId: string, operations: Operation[]) => {
     )
         return;
 
-    targetOperationParent.splice(targetLastIndex, 0, { ...sourceOperation });
+    // Insert sourceOperation to target last index
+    const newSourceOperation: Operation = { ...sourceOperation };
+    targetOperationParent.splice(targetLastIndex, 0, newSourceOperation);
+
+    return newSourceOperation;
 };
 
-const _moveY = (sourceWire: string, targetWire: string) => {
-    console.log({ sourceWire, targetWire });
+const _moveY = (sourceWire: string, targetWire: string, operation: Operation) => {
+    const offset = parseInt(targetWire) - parseInt(sourceWire);
+    _offsetRecursively(offset, operation);
+};
+
+const _offsetRecursively = (offset: number, operation: Operation) => {
+    if (operation.targets != null) {
+        operation.targets.forEach((target) => {
+            target.qId += offset;
+            if (target.cId) target.cId += offset;
+        });
+    }
+    if (operation.controls != null) {
+        operation.controls.forEach((control) => {
+            control.qId += offset;
+            if (control.cId) control.cId += offset;
+        });
+    }
+    if (operation.children != null) {
+        operation.children.forEach((child) => _offsetRecursively(offset, child));
+    }
 };
 
 const _indexes = (dataId: string) => dataId.split('-').map((segment) => parseInt(segment));

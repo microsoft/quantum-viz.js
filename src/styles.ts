@@ -239,6 +239,7 @@ const _expandCollapse = `
 const _editable = `
     text {
         user-select: none;
+        pointer-events: none;
     }
     .dropzone-layer {
         display: none;
