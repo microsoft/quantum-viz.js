@@ -162,6 +162,10 @@ const _isExpandedGroup = (gateElem: SVGElement | null) => {
 const _addEvents = (context: Context) => {
     const { container, operations, renderFn } = context;
 
+    container.addEventListener('contextmenu', (ev: MouseEvent) => {
+        ev.preventDefault();
+    });
+
     const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
     container.addEventListener('mouseup', () => (dropzoneLayer.style.display = 'none'));
 
@@ -192,7 +196,9 @@ const _addEvents = (context: Context) => {
             )
                 return;
 
-            const newSourceOperation = _moveX(context.selectedId, targetId, operations);
+            const newSourceOperation = ev.ctrlKey
+                ? _copyX(context.selectedId, targetId, operations)
+                : _moveX(context.selectedId, targetId, operations);
 
             if (newSourceOperation != null) {
                 _moveY(context.selectedWire, targetWire, newSourceOperation);
@@ -274,7 +280,7 @@ const _copyX = (sourceId: string, targetId: string, operations: Operation[]) => 
         return;
 
     // Insert sourceOperation to target last index
-    const newSourceOperation: Operation = { ...sourceOperation };
+    const newSourceOperation: Operation = JSON.parse(JSON.stringify(sourceOperation));
     targetOperationParent.splice(targetLastIndex, 0, newSourceOperation);
 
     return newSourceOperation;
