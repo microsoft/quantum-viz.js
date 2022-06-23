@@ -66,6 +66,17 @@ const _addDataWires = (container: HTMLElement) => {
     });
 };
 
+/*
+    Create a list of wires that element is spanning on.
+    i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140).
+         Function returns [40, 100, 140]
+*/
+const _elemWires = (elem: SVGGraphicsElement, container: HTMLElement) => {
+    const { y, height } = elem.getBBox();
+    const wireData = _wireData(container);
+    return wireData.filter((wireY) => wireY > y && wireY < y + height);
+};
+
 const _hostElems = (container: HTMLElement) => {
     return container.querySelectorAll<SVGGraphicsElement>(
         '[class^="gate-"]:not(.gate-control, .gate-swap), .control-dot, .oplus, .cross',
@@ -185,7 +196,7 @@ const _addEvents = (context: Context) => {
 
     const dropzoneElems = dropzoneLayer.querySelectorAll('.dropzone');
     dropzoneElems.forEach((dropzoneElem) => {
-        dropzoneElem.addEventListener('mouseup', () => {
+        dropzoneElem.addEventListener('mouseup', (ev: any) => {
             const targetId = dropzoneElem.getAttribute('data-dropzone-id');
             const targetWire = dropzoneElem.getAttribute('data-dropzone-wire');
             if (
@@ -201,7 +212,7 @@ const _addEvents = (context: Context) => {
                 : _moveX(context.selectedId, targetId, operations);
 
             if (newSourceOperation != null) {
-                _moveY(context.selectedWire, targetWire, newSourceOperation);
+                _moveY(context.selectedWire, targetWire, newSourceOperation, context.wireData);
             }
 
             renderFn();
@@ -238,7 +249,7 @@ const _equivOperation = (dataId: string | null, operations: Operation[]): Operat
 };
 
 const _moveX = (sourceId: string, targetId: string, operations: Operation[]) => {
-    if (sourceId === targetId) return;
+    if (sourceId === targetId) return _equivOperation(sourceId, operations);
     const sourceOperation = _equivOperation(sourceId, operations);
     const sourceOperationParent = _equivOperationParent(sourceId, operations);
     const targetOperationParent = _equivOperationParent(targetId, operations);
@@ -265,11 +276,11 @@ const _moveX = (sourceId: string, targetId: string, operations: Operation[]) => 
 };
 
 const _copyX = (sourceId: string, targetId: string, operations: Operation[]) => {
-    if (sourceId === targetId) return;
+    if (sourceId === targetId) return _equivOperation(sourceId, operations);
     const sourceOperation = _equivOperation(sourceId, operations);
+    const sourceOperationParent = _equivOperationParent(sourceId, operations);
     const targetOperationParent = _equivOperationParent(targetId, operations);
     const targetLastIndex = _lastIndex(targetId);
-    const sourceOperationParent = _equivOperationParent(sourceId, operations);
 
     if (
         targetOperationParent == null || //
@@ -286,27 +297,42 @@ const _copyX = (sourceId: string, targetId: string, operations: Operation[]) => 
     return newSourceOperation;
 };
 
-const _moveY = (sourceWire: string, targetWire: string, operation: Operation) => {
+const _moveY = (sourceWire: string, targetWire: string, operation: Operation, wireData: number[]) => {
     const offset = parseInt(targetWire) - parseInt(sourceWire);
-    _offsetRecursively(offset, operation);
+    _offsetRecursively(offset, operation, wireData);
 };
 
-const _offsetRecursively = (offset: number, operation: Operation) => {
+const _offsetRecursively = (offsetY: number, operation: Operation, wireData: number[]) => {
+    const wireDataSize = wireData.length;
+
+    // Offset all targets by offsetY value
     if (operation.targets != null) {
         operation.targets.forEach((target) => {
-            target.qId += offset;
-            if (target.cId) target.cId += offset;
+            target.qId = _circularMod(target.qId, offsetY, wireDataSize);
+            if (target.cId) target.cId = _circularMod(target.cId, offsetY, wireDataSize);
         });
     }
+
+    // Offset all controls by offsetY value
     if (operation.controls != null) {
         operation.controls.forEach((control) => {
-            control.qId += offset;
-            if (control.cId) control.cId += offset;
+            control.qId = _circularMod(control.qId, offsetY, wireDataSize);
+            if (control.cId) control.cId = _circularMod(control.qId, offsetY, wireDataSize);
         });
     }
+
+    // Offset recursively through all children
     if (operation.children != null) {
-        operation.children.forEach((child) => _offsetRecursively(offset, child));
+        operation.children.forEach((child) => _offsetRecursively(offsetY, child, wireData));
     }
+};
+
+/*
+    This modulo function always returns positive value based on total.
+    i.e: value=0, offset=-1, total=4 returns 3 instead of -1
+*/
+const _circularMod = (value: number, offset: number, total: number) => {
+    return (((value + offset) % total) + total) % total;
 };
 
 const _indexes = (dataId: string) => dataId.split('-').map((segment) => parseInt(segment));
