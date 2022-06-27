@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Operation } from './circuit';
+import { Circuit, Operation } from './circuit';
 import { box } from './formatters/formatUtils';
 import { Sqore } from './sqore';
 
@@ -25,7 +25,7 @@ interface Context {
  *
  */
 
-const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): void => {
+const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (circuit: Circuit) => void): void => {
     const svg = container.querySelector('svg') as SVGElement;
 
     const context: Context = {
@@ -194,9 +194,9 @@ const _addEvents = (context: Context) => {
         });
     });
 
-    const dropzoneElems = dropzoneLayer.querySelectorAll('.dropzone');
+    const dropzoneElems = dropzoneLayer.querySelectorAll<SVGRectElement>('.dropzone');
     dropzoneElems.forEach((dropzoneElem) => {
-        dropzoneElem.addEventListener('mouseup', (ev: any) => {
+        dropzoneElem.addEventListener('mouseup', (ev: MouseEvent) => {
             const targetId = dropzoneElem.getAttribute('data-dropzone-id');
             const targetWire = dropzoneElem.getAttribute('data-dropzone-wire');
             if (
@@ -341,10 +341,14 @@ const _lastIndex = (dataId: string) => {
     return _indexes(dataId).pop();
 };
 
-const _renderFn = (container: HTMLElement, sqore: Sqore, onCircuitChange?: () => void): (() => void) => {
+const _renderFn = (
+    container: HTMLElement,
+    sqore: Sqore,
+    onCircuitChange?: (circuit: Circuit) => void,
+): (() => void) => {
     return () => {
         sqore.draw(container, 0, true, onCircuitChange);
-        if (onCircuitChange) onCircuitChange();
+        if (onCircuitChange) onCircuitChange(sqore.circuit);
     };
 };
 

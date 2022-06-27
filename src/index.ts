@@ -21,7 +21,7 @@ export const draw = (
     style: StyleConfig | string = {},
     renderDepth = 0,
     isEditable?: boolean,
-    onCircuitChange?: () => void,
+    onCircuitChange?: (circuit: Circuit) => void,
 ): void => {
     const sqore = new Sqore(circuit, style);
 

@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { formatInputs } from './formatters/inputFormatter';
-import { formatGates } from './formatters/gateFormatter';
-import { formatRegisters } from './formatters/registerFormatter';
-import { processOperations } from './process';
-import { ConditionalRender, Circuit, Operation } from './circuit';
-import { Metadata, GateType } from './metadata';
-import { StyleConfig, style, STYLES } from './styles';
-import { createUUID } from './utils';
+import { Circuit, ConditionalRender, Operation } from './circuit';
 import { svgNS } from './constants';
 import { addEditable } from './editable';
+import { formatGates } from './formatters/gateFormatter';
+import { formatInputs } from './formatters/inputFormatter';
+import { formatRegisters } from './formatters/registerFormatter';
+import { GateType, Metadata } from './metadata';
+import { processOperations } from './process';
+import { style, StyleConfig, STYLES } from './styles';
+import { createUUID } from './utils';
 
 /**
  * Contains metadata for visualization.
@@ -59,7 +59,12 @@ export class Sqore {
      * @param isEditable Optional value enabling/disabling editable feature
      * @param onCircuitChange Optional function to trigger when changing elements in circuit
      */
-    draw(container: HTMLElement, renderDepth = 0, isEditable?: boolean, onCircuitChange?: () => void): void {
+    draw(
+        container: HTMLElement,
+        renderDepth = 0,
+        isEditable?: boolean,
+        onCircuitChange?: (circuit: Circuit) => void,
+    ): void {
         // Inject into container
         if (container == null) throw new Error(`Container not provided.`);
 
@@ -115,7 +120,7 @@ export class Sqore {
         container: HTMLElement,
         circuit: Circuit,
         isEditable?: boolean,
-        onCircuitChange?: () => void,
+        onCircuitChange?: (circuit: Circuit) => void,
     ): void {
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(circuit);
@@ -250,7 +255,7 @@ export class Sqore {
         container: HTMLElement,
         circuit: Circuit,
         isEditable?: boolean,
-        onCircuitChange?: () => void,
+        onCircuitChange?: (circuit: Circuit) => void,
     ): void {
         this.addClassicalControlHandlers(container);
         this.addZoomHandlers(container, circuit, isEditable, onCircuitChange);
@@ -317,7 +322,7 @@ export class Sqore {
         container: HTMLElement,
         circuit: Circuit,
         isEditable?: boolean,
-        onCircuitChange?: () => void,
+        onCircuitChange?: (circuit: Circuit) => void,
     ): void {
         container.querySelectorAll('.gate .gate-control').forEach((ctrl) => {
             // Zoom in on clicked gate

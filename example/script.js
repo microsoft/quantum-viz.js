@@ -13,7 +13,10 @@ if (typeof qviz != 'undefined') {
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
         const isEditable = true;
-        const onCircuitChange = () => console.log('onCircuitChange triggered');
+        const onCircuitChange = (circuit) => {
+            console.log('New circuit ↓');
+            console.log(circuit);
+        };
         /* Pass in isEditable = true to allow circuit to be editable */
         /* Pass in onCircuitChange to trigger callback function
            whenever there is a change in circuit */
