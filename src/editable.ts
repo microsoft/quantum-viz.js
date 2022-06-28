@@ -42,7 +42,7 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
     // addDropzones(container);
     // addDocumentEvents(container);
     _addDataWires(container);
-    svg.appendChild(_dropzones(context));
+    svg.appendChild(_dropzoneLayer(context));
     // addDropzoneEvents(context);
     // addMouseEvents(context);
     _addEvents(context);
@@ -66,14 +66,13 @@ const _addDataWires = (container: HTMLElement) => {
     });
 };
 
-/*
-    Create a list of wires that element is spanning on.
-    i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140).
-         Function returns [40, 100, 140]
-*/
-const _elemWires = (elem: SVGGraphicsElement, container: HTMLElement) => {
+/**
+ *  Create a list of wires that element is spanning on.
+ *  i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140).
+ *       Function returns [40, 100, 140]
+ */
+const _elemWires = (elem: SVGGraphicsElement, wireData: number[]) => {
     const { y, height } = elem.getBBox();
-    const wireData = _wireData(container);
     return wireData.filter((wireY) => wireY > y && wireY < y + height);
 };
 
@@ -83,14 +82,20 @@ const _hostElems = (container: HTMLElement) => {
     );
 };
 
-const _wirePrefixes = (wireData: number[]) => wireData.map((wireY, index) => ({ index, wireY, prefixX: 50 }));
+const _wirePrefixes = (wireData: number[]) => wireData.map((wireY, index) => ({ index, wireY, prefixX: 40 }));
 
+/**
+ *  Find center point of element
+ */
 const _center = (elem: SVGGraphicsElement) => {
     const { x, y, width, height } = elem.getBBox();
     return { cX: x + width / 2, cY: y + height / 2 };
 };
 
-const _dropzones = (context: Context) => {
+/**
+ *  Create dropzone layer with all dropzones popullated
+ */
+const _dropzoneLayer = (context: Context) => {
     const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     dropzoneLayer.classList.add('dropzone-layer');
 
@@ -118,9 +123,28 @@ const _dropzones = (context: Context) => {
             elemDropzone.setAttribute('data-dropzone-id', _equivDataId(elem) || '');
             elemDropzone.setAttribute('data-dropzone-wire', `${wirePrefix.index}`);
 
-            if (wirePrefix) wirePrefix.prefixX = cX;
+            wirePrefix.prefixX = cX;
 
             dropzoneLayer.appendChild(elemDropzone);
+        } else {
+            // Let group gates creating dropzones for each wire
+            const { x } = elem.getBBox();
+            const elemWires = _elemWires(elem, wireData);
+
+            elemWires.map((wireY) => {
+                const wirePrefix = wirePrefixes.find((item) => item.wireY === wireY);
+                if (wirePrefix) {
+                    const prefixX = wirePrefix.prefixX;
+                    const elemDropzone = box(prefixX, wireY - paddingY, x - prefixX, paddingY * 2, 'dropzone');
+                    elemDropzone.setAttribute('data-dropzone-id', _equivDataId(elem) || '');
+                    elemDropzone.setAttribute('data-dropzone-wire', `${wirePrefix.index}`);
+
+                    wirePrefix.prefixX = x;
+
+                    dropzoneLayer.appendChild(elemDropzone);
+                }
+            });
+            console.log({ elem, x, elemWires });
         }
     });
 
@@ -151,16 +175,16 @@ const _wireData = (container: HTMLElement) => {
     return wireData;
 };
 
-/*
-    Find equivalent gate element of host element
-*/
+/**
+ *  Find equivalent gate element of host element
+ */
 const _equivGateElem = (elem: SVGElement) => {
     return elem.closest<SVGElement>('[data-id]');
 };
 
-/*
-    Find data-id of host element
-*/
+/**
+ *  Find data-id of host element
+ */
 const _equivDataId = (elem: SVGElement) => {
     const gateElem = _equivGateElem(elem);
     return gateElem != null ? gateElem.getAttribute('data-id') : null;
@@ -170,16 +194,30 @@ const _isExpandedGroup = (gateElem: SVGElement | null) => {
     return gateElem ? gateElem.hasAttribute('data-expanded') : false;
 };
 
-const _addEvents = (context: Context) => {
-    const { container, operations, renderFn } = context;
-
+/**
+ *  Disable contextmenu default behaviors
+ */
+const _addContextMenuEvents = (container: HTMLElement) => {
     container.addEventListener('contextmenu', (ev: MouseEvent) => {
         ev.preventDefault();
     });
+};
 
-    const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
+/**
+ *  Add events specifically for dropzoneLayer
+ */
+const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElement) => {
     container.addEventListener('mouseup', () => (dropzoneLayer.style.display = 'none'));
+};
 
+const _addEvents = (context: Context) => {
+    const { container, operations, renderFn } = context;
+    const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
+
+    _addContextMenuEvents(container);
+    _addDropzoneLayerEvents(container, dropzoneLayer);
+
+    // Host element events
     const elems = _hostElems(container);
     elems.forEach((elem) => {
         elem.addEventListener('mousedown', () => {
@@ -194,6 +232,7 @@ const _addEvents = (context: Context) => {
         });
     });
 
+    // Dropzone element events
     const dropzoneElems = dropzoneLayer.querySelectorAll<SVGRectElement>('.dropzone');
     dropzoneElems.forEach((dropzoneElem) => {
         dropzoneElem.addEventListener('mouseup', (ev: MouseEvent) => {
@@ -327,10 +366,10 @@ const _offsetRecursively = (offsetY: number, operation: Operation, wireData: num
     }
 };
 
-/*
-    This modulo function always returns positive value based on total.
-    i.e: value=0, offset=-1, total=4 returns 3 instead of -1
-*/
+/**
+ *  This modulo function always returns positive value based on total.
+ *  i.e: value=0, offset=-1, total=4 returns 3 instead of -1
+ */
 const _circularMod = (value: number, offset: number, total: number) => {
     return (((value + offset) % total) + total) % total;
 };
