@@ -336,28 +336,28 @@ const _moveY = (sourceWire: string, targetWire: string, operation: Operation, wi
     _offsetRecursively(offset, operation, wireData);
 };
 
-const _offsetRecursively = (offsetY: number, operation: Operation, wireData: number[]) => {
+const _offsetRecursively = (offset: number, operation: Operation, wireData: number[]) => {
     const wireDataSize = wireData.length;
 
     // Offset all targets by offsetY value
     if (operation.targets != null) {
         operation.targets.forEach((target) => {
-            target.qId = _circularMod(target.qId, offsetY, wireDataSize);
-            if (target.cId) target.cId = _circularMod(target.cId, offsetY, wireDataSize);
+            target.qId = _circularMod(target.qId, offset, wireDataSize);
+            if (target.cId) target.cId = _circularMod(target.cId, offset, wireDataSize);
         });
     }
 
     // Offset all controls by offsetY value
     if (operation.controls != null) {
         operation.controls.forEach((control) => {
-            control.qId = _circularMod(control.qId, offsetY, wireDataSize);
-            if (control.cId) control.cId = _circularMod(control.qId, offsetY, wireDataSize);
+            control.qId = _circularMod(control.qId, offset, wireDataSize);
+            if (control.cId) control.cId = _circularMod(control.qId, offset, wireDataSize);
         });
     }
 
     // Offset recursively through all children
     if (operation.children != null) {
-        operation.children.forEach((child) => _offsetRecursively(offsetY, child, wireData));
+        operation.children.forEach((child) => _offsetRecursively(offset, child, wireData));
     }
 };
 
@@ -365,7 +365,7 @@ const _offsetRecursively = (offsetY: number, operation: Operation, wireData: num
  *  This modulo function always returns positive value based on total.
  *  i.e: value=0, offset=-1, total=4 returns 3 instead of -1
  */
-const _circularMod = (value: number, offset: number, total: number) => {
+const _circularMod = (value: number, offset: number, total: number): number => {
     return (((value + offset) % total) + total) % total;
 };
 
@@ -396,6 +396,7 @@ const exportedForTesting = {
     _equivOperationParent,
     _moveX,
     _copyX,
+    _circularMod,
     _indexes,
     _lastIndex,
 };

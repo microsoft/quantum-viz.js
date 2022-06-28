@@ -4,8 +4,17 @@
 import { exportedForTesting } from '../src/editable';
 import { Circuit, draw, STYLES } from '../src/index';
 
-const { _center, _wireData, _equivOperation, _equivOperationParent, _moveX, _copyX, _indexes, _lastIndex } =
-    exportedForTesting;
+const {
+    _center,
+    _wireData,
+    _equivOperation,
+    _equivOperationParent,
+    _moveX,
+    _copyX,
+    _circularMod,
+    _indexes,
+    _lastIndex,
+} = exportedForTesting;
 
 describe('Test _center', () => {
     test('should return {25,50}', () => {
@@ -340,6 +349,18 @@ describe('Test _copyX', () => {
     test('copy elem from index 0 to last', () => {
         _copyX('0', '3', circuit.operations);
         expect(circuit.operations).toMatchSnapshot();
+    });
+});
+
+describe('Test _circularMod', () => {
+    test('should return 2', () => {
+        expect(_circularMod(5, 1, 4)).toEqual(2);
+    });
+    test('should return 1', () => {
+        expect(_circularMod(100, 1, 2)).toEqual(1);
+    });
+    test('should return 3', () => {
+        expect(_circularMod(3, 0, 4)).toEqual(3);
     });
 });
 
