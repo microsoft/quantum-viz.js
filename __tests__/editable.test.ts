@@ -6,6 +6,7 @@ import { Circuit, draw, Operation, STYLES } from '../src/index';
 
 const {
     _wireYs,
+    _hostElems,
     _wirePrefixes,
     _center,
     _wireData,
@@ -20,6 +21,39 @@ const {
     _indexes,
     _lastIndex,
 } = exportedForTesting;
+
+describe('Test _hostElems', () => {
+    let container: HTMLElement;
+    beforeAll(() => {
+        container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default']);
+    });
+    test('should return 4 elements', () => {
+        expect(_hostElems(container)).toMatchSnapshot();
+        expect(_hostElems(container)).toHaveLength(4);
+    });
+});
 
 describe('Test _wireYs', () => {
     test('should return [40,100]', () => {

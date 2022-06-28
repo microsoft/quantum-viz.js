@@ -76,9 +76,11 @@ const _wireYs = (elem: SVGGraphicsElement, wireData: number[]): number[] => {
     return wireData.filter((wireY) => wireY > y && wireY < y + height);
 };
 
-const _hostElems = (container: HTMLElement) => {
-    return container.querySelectorAll<SVGGraphicsElement>(
-        '[class^="gate-"]:not(.gate-control, .gate-swap), .control-dot, .oplus, .cross',
+const _hostElems = (container: HTMLElement): SVGGraphicsElement[] => {
+    return Array.from(
+        container.querySelectorAll<SVGGraphicsElement>(
+            '[class^="gate-"]:not(.gate-control, .gate-swap), .control-dot, .oplus, .cross',
+        ),
     );
 };
 
@@ -393,6 +395,7 @@ const _renderFn = (
 
 const exportedForTesting = {
     _wireYs,
+    _hostElems,
     _wirePrefixes,
     _center,
     _wireData,
