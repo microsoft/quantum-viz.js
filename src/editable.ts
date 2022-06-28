@@ -190,10 +190,6 @@ const _equivDataId = (elem: SVGElement) => {
     return gateElem != null ? gateElem.getAttribute('data-id') : null;
 };
 
-const _isExpandedGroup = (gateElem: SVGElement | null) => {
-    return gateElem ? gateElem.hasAttribute('data-expanded') : false;
-};
-
 /**
  *  Disable contextmenu default behaviors
  */
