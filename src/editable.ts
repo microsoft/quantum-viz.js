@@ -333,31 +333,29 @@ const _copyX = (sourceId: string, targetId: string, operations: Operation[]): Op
 
 const _moveY = (sourceWire: string, targetWire: string, operation: Operation, wireData: number[]) => {
     const offset = parseInt(targetWire) - parseInt(sourceWire);
-    _offsetRecursively(offset, operation, wireData);
+    _offsetRecursively(operation, offset, wireData.length);
 };
 
-const _offsetRecursively = (offset: number, operation: Operation, wireData: number[]) => {
-    const wireDataSize = wireData.length;
-
+const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires: number): void => {
     // Offset all targets by offsetY value
     if (operation.targets != null) {
         operation.targets.forEach((target) => {
-            target.qId = _circularMod(target.qId, offset, wireDataSize);
-            if (target.cId) target.cId = _circularMod(target.cId, offset, wireDataSize);
+            target.qId = _circularMod(target.qId, wireOffset, totalWires);
+            if (target.cId) target.cId = _circularMod(target.cId, wireOffset, totalWires);
         });
     }
 
     // Offset all controls by offsetY value
     if (operation.controls != null) {
         operation.controls.forEach((control) => {
-            control.qId = _circularMod(control.qId, offset, wireDataSize);
-            if (control.cId) control.cId = _circularMod(control.qId, offset, wireDataSize);
+            control.qId = _circularMod(control.qId, wireOffset, totalWires);
+            if (control.cId) control.cId = _circularMod(control.qId, wireOffset, totalWires);
         });
     }
 
     // Offset recursively through all children
     if (operation.children != null) {
-        operation.children.forEach((child) => _offsetRecursively(offset, child, wireData));
+        operation.children.forEach((child) => _offsetRecursively(child, wireOffset, totalWires));
     }
 };
 
@@ -396,6 +394,7 @@ const exportedForTesting = {
     _equivOperationParent,
     _moveX,
     _copyX,
+    _offsetRecursively,
     _circularMod,
     _indexes,
     _lastIndex,

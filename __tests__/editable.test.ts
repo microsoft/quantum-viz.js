@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { exportedForTesting } from '../src/editable';
-import { Circuit, draw, STYLES } from '../src/index';
+import { Circuit, draw, Operation, STYLES } from '../src/index';
 
 const {
     _center,
@@ -11,6 +11,7 @@ const {
     _equivOperationParent,
     _moveX,
     _copyX,
+    _offsetRecursively,
     _circularMod,
     _indexes,
     _lastIndex,
@@ -349,6 +350,30 @@ describe('Test _copyX', () => {
     test('copy elem from index 0 to last', () => {
         _copyX('0', '3', circuit.operations);
         expect(circuit.operations).toMatchSnapshot();
+    });
+});
+
+describe('Test _offsetRecursively', () => {
+    let operation: Operation;
+    beforeEach(() => {
+        operation = {
+            gate: 'ZZ',
+            targets: [{ qId: 1 }, { qId: 3 }],
+        };
+    });
+    test('offset by 1', () => {
+        _offsetRecursively(operation, 1, 4);
+        expect(operation).toStrictEqual({
+            gate: 'ZZ',
+            targets: [{ qId: 2 }, { qId: 0 }],
+        });
+    });
+    test('offset by 2', () => {
+        _offsetRecursively(operation, 2, 4);
+        expect(operation).toStrictEqual({
+            gate: 'ZZ',
+            targets: [{ qId: 3 }, { qId: 1 }],
+        });
     });
 });
 
