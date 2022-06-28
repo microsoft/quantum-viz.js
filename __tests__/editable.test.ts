@@ -11,6 +11,7 @@ const {
     _equivOperationParent,
     _moveX,
     _copyX,
+    _moveY,
     _offsetRecursively,
     _circularMod,
     _indexes,
@@ -350,6 +351,30 @@ describe('Test _copyX', () => {
     test('copy elem from index 0 to last', () => {
         _copyX('0', '3', circuit.operations);
         expect(circuit.operations).toMatchSnapshot();
+    });
+});
+
+describe('Test _moveY', () => {
+    let operation: Operation;
+    beforeEach(() => {
+        operation = {
+            gate: 'ZZ',
+            targets: [{ qId: 1 }, { qId: 3 }],
+        };
+    });
+    test('offset by 1', () => {
+        _moveY('1', '2', operation, 4);
+        expect(operation).toStrictEqual({
+            gate: 'ZZ',
+            targets: [{ qId: 2 }, { qId: 0 }],
+        });
+    });
+    test('offset by -3', () => {
+        _moveY('3', '0', operation, 4);
+        expect(operation).toStrictEqual({
+            gate: 'ZZ',
+            targets: [{ qId: 2 }, { qId: 0 }],
+        });
     });
 });
 

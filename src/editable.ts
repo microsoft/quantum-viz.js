@@ -246,7 +246,7 @@ const _addEvents = (context: Context) => {
                 : _moveX(context.selectedId, targetId, operations);
 
             if (newSourceOperation != null) {
-                _moveY(context.selectedWire, targetWire, newSourceOperation, context.wireData);
+                _moveY(context.selectedWire, targetWire, newSourceOperation, context.wireData.length);
             }
 
             renderFn();
@@ -331,12 +331,13 @@ const _copyX = (sourceId: string, targetId: string, operations: Operation[]): Op
     return newSourceOperation;
 };
 
-const _moveY = (sourceWire: string, targetWire: string, operation: Operation, wireData: number[]) => {
+const _moveY = (sourceWire: string, targetWire: string, operation: Operation, totalWires: number): Operation => {
     const offset = parseInt(targetWire) - parseInt(sourceWire);
-    _offsetRecursively(operation, offset, wireData.length);
+    _offsetRecursively(operation, offset, totalWires);
+    return operation;
 };
 
-const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires: number): void => {
+const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires: number): Operation => {
     // Offset all targets by offsetY value
     if (operation.targets != null) {
         operation.targets.forEach((target) => {
@@ -357,6 +358,8 @@ const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires
     if (operation.children != null) {
         operation.children.forEach((child) => _offsetRecursively(child, wireOffset, totalWires));
     }
+
+    return operation;
 };
 
 /**
@@ -394,6 +397,7 @@ const exportedForTesting = {
     _equivOperationParent,
     _moveX,
     _copyX,
+    _moveY,
     _offsetRecursively,
     _circularMod,
     _indexes,
