@@ -393,6 +393,7 @@ const _renderFn = (
 const exportedForTesting = {
     _center,
     _wireData,
+    _equivGateElem,
     _equivOperation,
     _equivOperationParent,
     _moveX,

@@ -7,6 +7,7 @@ import { Circuit, draw, Operation, STYLES } from '../src/index';
 const {
     _center,
     _wireData,
+    _equivGateElem,
     _equivOperation,
     _equivOperationParent,
     _moveX,
@@ -99,6 +100,39 @@ describe('Test _wireData', () => {
         };
         draw(circuit, container, STYLES['default']);
         expect(_wireData(container)).toStrictEqual([40, 100, 180]);
+    });
+});
+
+describe('Test _equivGateElem', () => {
+    let container: HTMLElement;
+    beforeAll(() => {
+        container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default']);
+    });
+    test('should return gate H', () => {
+        const elem = container.querySelector('[class^="gate-"]') as SVGElement;
+        expect(_equivGateElem(elem)).toMatchSnapshot();
     });
 });
 

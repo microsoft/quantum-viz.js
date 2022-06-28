@@ -102,6 +102,34 @@ Array [
 ]
 `;
 
+exports[`Test _equivGateElem should return gate H 1`] = `
+<g
+  class="gate"
+  data-id="0"
+  data-zoom-in="false"
+  data-zoom-out="false"
+>
+  <g>
+    <g>
+      <rect
+        class="gate-unitary"
+        height="40"
+        width="40"
+        x="80"
+        y="20"
+      />
+      <text
+        font-size="14"
+        x="100"
+        y="40"
+      >
+        H
+      </text>
+    </g>
+  </g>
+</g>
+`;
+
 exports[`Test _equivOperation should return H gate 1`] = `
 Object {
   "gate": "H",
