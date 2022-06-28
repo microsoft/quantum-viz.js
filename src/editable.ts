@@ -370,9 +370,12 @@ const _circularMod = (value: number, offset: number, total: number) => {
     return (((value + offset) % total) + total) % total;
 };
 
-const _indexes = (dataId: string) => dataId.split('-').map((segment) => parseInt(segment));
+const _indexes = (dataId: string): number[] =>
+    dataId !== '' //
+        ? dataId.split('-').map((segment) => parseInt(segment))
+        : [];
 
-const _lastIndex = (dataId: string) => {
+const _lastIndex = (dataId: string): number | undefined => {
     return _indexes(dataId).pop();
 };
 
@@ -387,6 +390,6 @@ const _renderFn = (
     };
 };
 
-const exportedForTesting = {};
+const exportedForTesting = { _center, _indexes, _lastIndex };
 
 export { addEditable, exportedForTesting };
