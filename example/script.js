@@ -7,13 +7,16 @@ if (typeof qviz != 'undefined') {
     /* These examples shows how to draw circuits into containers. */
     const entangleDiv = document.getElementById('entangle');
     if (entangleDiv != null) {
-        qviz.draw(entangle, entangleDiv, qviz.STYLES['Default']);
+        qviz.draw(entangle, entangleDiv, qviz.STYLES['Default'], 0, true);
     }
 
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
         const isEditable = true;
-        const onCircuitChange = () => console.log('onCircuitChange triggered');
+        const onCircuitChange = (circuit) => {
+            console.log('New circuit ↓');
+            console.log(circuit);
+        };
         /* Pass in isEditable = true to allow circuit to be editable */
         /* Pass in onCircuitChange to trigger callback function
            whenever there is a change in circuit */
@@ -22,7 +25,7 @@ if (typeof qviz != 'undefined') {
 
     const teleportDiv = document.getElementById('teleport');
     if (teleportDiv != null) {
-        qviz.draw(teleport, teleportDiv, qviz.STYLES['Default']);
+        qviz.draw(teleport, teleportDiv, qviz.STYLES['Default'], 0, true);
     }
 
     const groverDiv = document.getElementById('grover');
