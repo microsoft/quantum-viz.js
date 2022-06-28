@@ -2,9 +2,10 @@
 // Licensed under the MIT license.
 
 import { exportedForTesting } from '../src/editable';
-import { draw, STYLES } from '../src/index';
+import { Circuit, draw, STYLES } from '../src/index';
 
-const { _center, _wireData, _equivOperation, _equivOperationParent, _indexes, _lastIndex } = exportedForTesting;
+const { _center, _wireData, _equivOperation, _equivOperationParent, _moveX, _copyX, _indexes, _lastIndex } =
+    exportedForTesting;
 
 describe('Test _center', () => {
     test('should return {25,50}', () => {
@@ -269,6 +270,76 @@ describe('Test _equivOperationParent', () => {
             ],
         };
         expect(_equivOperationParent('0', circuit.operations)).toMatchSnapshot();
+    });
+});
+
+describe('Test _moveX', () => {
+    let circuit: Circuit;
+    beforeEach(() => {
+        circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+    });
+    test('move elem from index 0 to index 1', () => {
+        _moveX('0', '2', circuit.operations);
+        expect(circuit.operations).toMatchSnapshot();
+    });
+    test('move elem from index 0 to last', () => {
+        _moveX('0', '3', circuit.operations);
+        expect(circuit.operations).toMatchSnapshot();
+    });
+});
+
+describe('Test _copyX', () => {
+    let circuit: Circuit;
+    beforeEach(() => {
+        circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+    });
+    test('copy elem from index 0 to index 1', () => {
+        _copyX('0', '2', circuit.operations);
+        expect(circuit.operations).toMatchSnapshot();
+    });
+    test('copy elem from index 0 to last', () => {
+        _copyX('0', '3', circuit.operations);
+        expect(circuit.operations).toMatchSnapshot();
     });
 });
 

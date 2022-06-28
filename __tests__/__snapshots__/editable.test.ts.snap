@@ -1,5 +1,107 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Test _copyX copy elem from index 0 to index 1 1`] = `
+Array [
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _copyX copy elem from index 0 to last 1`] = `
+Array [
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+]
+`;
+
 exports[`Test _equivOperation should return H gate 1`] = `
 Object {
   "gate": "H",
@@ -93,6 +195,92 @@ Array [
         "cId": 0,
         "qId": 1,
         "type": 1,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _moveX move elem from index 0 to index 1 1`] = `
+Array [
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _moveX move elem from index 0 to last 1`] = `
+Array [
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
       },
     ],
   },

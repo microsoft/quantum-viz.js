@@ -282,7 +282,7 @@ const _equivOperation = (dataId: string | null, operations: Operation[]): Operat
     return operationParent[index];
 };
 
-const _moveX = (sourceId: string, targetId: string, operations: Operation[]) => {
+const _moveX = (sourceId: string, targetId: string, operations: Operation[]): Operation | null => {
     if (sourceId === targetId) return _equivOperation(sourceId, operations);
     const sourceOperation = _equivOperation(sourceId, operations);
     const sourceOperationParent = _equivOperationParent(sourceId, operations);
@@ -295,7 +295,7 @@ const _moveX = (sourceId: string, targetId: string, operations: Operation[]) => 
         sourceOperation == null ||
         sourceOperationParent == null
     )
-        return;
+        return null;
 
     // Insert sourceOperation to target last index
     const newSourceOperation: Operation = { ...sourceOperation };
@@ -309,7 +309,7 @@ const _moveX = (sourceId: string, targetId: string, operations: Operation[]) => 
     return newSourceOperation;
 };
 
-const _copyX = (sourceId: string, targetId: string, operations: Operation[]) => {
+const _copyX = (sourceId: string, targetId: string, operations: Operation[]): Operation | null => {
     if (sourceId === targetId) return _equivOperation(sourceId, operations);
     const sourceOperation = _equivOperation(sourceId, operations);
     const sourceOperationParent = _equivOperationParent(sourceId, operations);
@@ -322,7 +322,7 @@ const _copyX = (sourceId: string, targetId: string, operations: Operation[]) => 
         sourceOperation == null ||
         sourceOperationParent == null
     )
-        return;
+        return null;
 
     // Insert sourceOperation to target last index
     const newSourceOperation: Operation = JSON.parse(JSON.stringify(sourceOperation));
@@ -389,6 +389,15 @@ const _renderFn = (
     };
 };
 
-const exportedForTesting = { _center, _wireData, _equivOperation, _equivOperationParent, _indexes, _lastIndex };
+const exportedForTesting = {
+    _center,
+    _wireData,
+    _equivOperation,
+    _equivOperationParent,
+    _moveX,
+    _copyX,
+    _indexes,
+    _lastIndex,
+};
 
 export { addEditable, exportedForTesting };
