@@ -391,6 +391,7 @@ const _renderFn = (
 };
 
 const exportedForTesting = {
+    _wirePrefixes,
     _center,
     _wireData,
     _equivGateElem,

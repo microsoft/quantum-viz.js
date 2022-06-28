@@ -5,6 +5,7 @@ import { exportedForTesting } from '../src/editable';
 import { Circuit, draw, Operation, STYLES } from '../src/index';
 
 const {
+    _wirePrefixes,
     _center,
     _wireData,
     _equivGateElem,
@@ -18,6 +19,22 @@ const {
     _indexes,
     _lastIndex,
 } = exportedForTesting;
+
+describe('Test _wirePrefixes', () => {
+    test('2 wires', () => {
+        expect(_wirePrefixes([40, 100])).toStrictEqual([
+            { index: 0, prefixX: 40, wireY: 40 },
+            { index: 1, prefixX: 40, wireY: 100 },
+        ]);
+    });
+    test('3 wires', () => {
+        expect(_wirePrefixes([40, 100, 140])).toStrictEqual([
+            { index: 0, prefixX: 40, wireY: 40 },
+            { index: 1, prefixX: 40, wireY: 100 },
+            { index: 2, prefixX: 40, wireY: 140 },
+        ]);
+    });
+});
 
 describe('Test _center', () => {
     test('should return {25,50}', () => {
