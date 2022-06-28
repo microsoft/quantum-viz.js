@@ -87,7 +87,7 @@ const _wirePrefixes = (wireData: number[]) => wireData.map((wireY, index) => ({ 
 /**
  *  Find center point of element
  */
-const _center = (elem: SVGGraphicsElement) => {
+const _center = (elem: SVGGraphicsElement): { cX: number; cY: number } => {
     const { x, y, width, height } = elem.getBBox();
     return { cX: x + width / 2, cY: y + height / 2 };
 };
@@ -161,7 +161,7 @@ const _dropzoneLayer = (context: Context) => {
     return dropzoneLayer;
 };
 
-const _wireData = (container: HTMLElement) => {
+const _wireData = (container: HTMLElement): number[] => {
     // elems include qubit wires and lines of measure gates
     const elems = container.querySelectorAll<SVGGElement>('svg > g:nth-child(3) > g');
     // filter out <g> elements having more than 2 elements because
@@ -170,7 +170,7 @@ const _wireData = (container: HTMLElement) => {
     const wireElems = Array.from(elems).filter((elem) => elem.childElementCount < 3);
     const wireData = wireElems.map((wireElem) => {
         const lineElem = wireElem.children[0] as SVGLineElement;
-        return lineElem.y1.baseVal.value;
+        return Number(lineElem.getAttribute('y1'));
     });
     return wireData;
 };
@@ -390,6 +390,6 @@ const _renderFn = (
     };
 };
 
-const exportedForTesting = { _center, _indexes, _lastIndex };
+const exportedForTesting = { _center, _wireData, _indexes, _lastIndex };
 
 export { addEditable, exportedForTesting };

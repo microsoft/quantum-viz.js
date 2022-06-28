@@ -2,8 +2,9 @@
 // Licensed under the MIT license.
 
 import { exportedForTesting } from '../src/editable';
+import { draw, STYLES } from '../src/index';
 
-const { _indexes, _lastIndex, _center } = exportedForTesting;
+const { _center, _wireData, _indexes, _lastIndex } = exportedForTesting;
 
 describe('Test _center', () => {
     test('should return {25,50}', () => {
@@ -31,6 +32,61 @@ describe('Test _center', () => {
         });
         const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         expect(_center(elem)).toStrictEqual({ cX: 105, cY: 210 });
+    });
+});
+
+describe('Test _wireData', () => {
+    test('2 wires should return [40,100]', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 0 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default']);
+        expect(_wireData(container)).toStrictEqual([40, 100]);
+    });
+    test('3 wires should return [40,100, 180]', () => {
+        const container = document.createElement('div');
+        const circuit = {
+            qubits: [{ id: 0 }, { id: 1, numChildren: 1 }, { id: 2 }],
+            operations: [
+                {
+                    gate: 'H',
+                    targets: [{ qId: 2 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'Measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ type: 1, qId: 1, cId: 0 }],
+                },
+            ],
+        };
+        draw(circuit, container, STYLES['default']);
+        expect(_wireData(container)).toStrictEqual([40, 100, 180]);
     });
 });
 
