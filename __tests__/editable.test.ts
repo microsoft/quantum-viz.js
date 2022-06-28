@@ -5,6 +5,7 @@ import { exportedForTesting } from '../src/editable';
 import { Circuit, draw, Operation, STYLES } from '../src/index';
 
 const {
+    _wireYs,
     _wirePrefixes,
     _center,
     _wireData,
@@ -19,6 +20,22 @@ const {
     _indexes,
     _lastIndex,
 } = exportedForTesting;
+
+describe('Test _wireYs', () => {
+    test('should return [40,100]', () => {
+        Object.defineProperty(window.SVGElement.prototype, 'getBBox', {
+            writable: true,
+            value: () => ({
+                x: 0,
+                y: 20,
+                width: 0,
+                height: 120,
+            }),
+        });
+        const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        expect(_wireYs(elem, [40, 100, 140])).toStrictEqual([40, 100]);
+    });
+});
 
 describe('Test _wirePrefixes', () => {
     test('2 wires', () => {

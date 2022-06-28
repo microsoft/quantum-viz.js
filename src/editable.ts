@@ -71,7 +71,7 @@ const _addDataWires = (container: HTMLElement) => {
  *  i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140).
  *       Function returns [40, 100, 140]
  */
-const _elemWireYs = (elem: SVGGraphicsElement, wireData: number[]) => {
+const _wireYs = (elem: SVGGraphicsElement, wireData: number[]): number[] => {
     const { y, height } = elem.getBBox();
     return wireData.filter((wireY) => wireY > y && wireY < y + height);
 };
@@ -82,7 +82,8 @@ const _hostElems = (container: HTMLElement) => {
     );
 };
 
-const _wirePrefixes = (wireData: number[]) => wireData.map((wireY, index) => ({ index, wireY, prefixX: 40 }));
+const _wirePrefixes = (wireData: number[]): { index: number; wireY: number; prefixX: number }[] =>
+    wireData.map((wireY, index) => ({ index, wireY, prefixX: 40 }));
 
 /**
  *  Find center point of element
@@ -129,9 +130,9 @@ const _dropzoneLayer = (context: Context) => {
         } else {
             // Let group gates creating dropzones for each wire
             const { x } = elem.getBBox();
-            const elemWireYs = _elemWireYs(elem, wireData);
+            const wireYs = _wireYs(elem, wireData);
 
-            elemWireYs.map((wireY) => {
+            wireYs.map((wireY) => {
                 const wirePrefix = wirePrefixes.find((item) => item.wireY === wireY);
                 if (wirePrefix) {
                     const prefixX = wirePrefix.prefixX;
@@ -177,7 +178,7 @@ const _wireData = (container: HTMLElement): number[] => {
 /**
  *  Find equivalent gate element of host element
  */
-const _equivGateElem = (elem: SVGElement) => {
+const _equivGateElem = (elem: SVGElement): SVGElement | null => {
     return elem.closest<SVGElement>('[data-id]');
 };
 
@@ -391,6 +392,7 @@ const _renderFn = (
 };
 
 const exportedForTesting = {
+    _wireYs,
     _wirePrefixes,
     _center,
     _wireData,
