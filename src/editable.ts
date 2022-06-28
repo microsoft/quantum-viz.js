@@ -71,7 +71,7 @@ const _addDataWires = (container: HTMLElement) => {
  *  i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140).
  *       Function returns [40, 100, 140]
  */
-const _elemWires = (elem: SVGGraphicsElement, wireData: number[]) => {
+const _elemWireYs = (elem: SVGGraphicsElement, wireData: number[]) => {
     const { y, height } = elem.getBBox();
     return wireData.filter((wireY) => wireY > y && wireY < y + height);
 };
@@ -129,9 +129,9 @@ const _dropzoneLayer = (context: Context) => {
         } else {
             // Let group gates creating dropzones for each wire
             const { x } = elem.getBBox();
-            const elemWires = _elemWires(elem, wireData);
+            const elemWireYs = _elemWireYs(elem, wireData);
 
-            elemWires.map((wireY) => {
+            elemWireYs.map((wireY) => {
                 const wirePrefix = wirePrefixes.find((item) => item.wireY === wireY);
                 if (wirePrefix) {
                     const prefixX = wirePrefix.prefixX;
@@ -144,7 +144,6 @@ const _dropzoneLayer = (context: Context) => {
                     dropzoneLayer.appendChild(elemDropzone);
                 }
             });
-            console.log({ elem, x, elemWires });
         }
     });
 
@@ -390,6 +389,6 @@ const _renderFn = (
     };
 };
 
-const exportedForTesting = { _center, _wireData, _indexes, _lastIndex };
+const exportedForTesting = { _center, _wireData, _equivOperation, _equivOperationParent, _indexes, _lastIndex };
 
 export { addEditable, exportedForTesting };

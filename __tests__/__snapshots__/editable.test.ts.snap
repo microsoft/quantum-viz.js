@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test _equivOperation should return H gate 1`] = `
+Object {
+  "gate": "H",
+  "targets": Array [
+    Object {
+      "qId": 0,
+    },
+  ],
+}
+`;
+
+exports[`Test _equivOperation should return X gate 1`] = `
+Object {
+  "controls": Array [
+    Object {
+      "qId": 0,
+    },
+  ],
+  "gate": "X",
+  "isControlled": true,
+  "targets": Array [
+    Object {
+      "qId": 1,
+    },
+  ],
+}
+`;
+
+exports[`Test _equivOperationParent should return Foo 1`] = `
+Array [
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "displayArgs": "(0.25)",
+    "gate": "RX",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _equivOperationParent should return all operations 1`] = `
+Array [
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+]
+`;
