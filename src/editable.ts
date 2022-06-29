@@ -49,6 +49,7 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
  * Add data-wire to all host elements
  *
  * @param container         HTML element for rendering visualization into
+ *
  */
 const _addDataWires = (container: HTMLElement) => {
     const elems = _hostElems(container);
@@ -72,6 +73,7 @@ const _addDataWires = (container: HTMLElement) => {
  *  Create a list of wires that element is spanning on
  *  i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140)
  *       Function returns [40, 100, 140]
+ *
  */
 const _wireYs = (elem: SVGGraphicsElement, wireData: number[]): number[] => {
     const { y, height } = elem.getBBox();
@@ -100,6 +102,7 @@ const _wirePrefixes = (wireData: number[]): { index: number; wireY: number; pref
  * Find center point of element
  *
  * @param elem              Host element
+ *
  */
 const _center = (elem: SVGGraphicsElement): { cX: number; cY: number } => {
     const { x, y, width, height } = elem.getBBox();
@@ -110,6 +113,7 @@ const _center = (elem: SVGGraphicsElement): { cX: number; cY: number } => {
  * Create dropzone layer with all dropzones popullated
  *
  * @param context           Context object
+ *
  */
 const _dropzoneLayer = (context: Context) => {
     const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -194,6 +198,7 @@ const _wireData = (container: HTMLElement): number[] => {
  * Find equivalent gate element of host element
  *
  * @param elem              Host element
+ *
  */
 const _equivGateElem = (elem: SVGElement): SVGElement | null => {
     return elem.closest<SVGElement>('[data-id]');
@@ -213,6 +218,7 @@ const _equivDataId = (elem: SVGElement) => {
  * Disable contextmenu default behaviors
  *
  * @param container         HTML element for rendering visualization into
+ *
  */
 const _addContextMenuEvents = (container: HTMLElement) => {
     container.addEventListener('contextmenu', (ev: MouseEvent) => {
@@ -225,6 +231,7 @@ const _addContextMenuEvents = (container: HTMLElement) => {
  *
  * @param container         HTML element for rendering visualization into
  * @param dropzoneLayer     SVG group element representing dropzone layer
+ *
  */
 const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElement) => {
     container.addEventListener('mouseup', () => (dropzoneLayer.style.display = 'none'));
@@ -234,6 +241,7 @@ const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElem
  * Add events for document
  *
  * @param context           Context object
+ *
  */
 const _addDocumentEvents = (context: Context) => {
     const { container } = context;
@@ -260,6 +268,7 @@ const _addDocumentEvents = (context: Context) => {
  * Add all events
  *
  * @param context           Context object
+ *
  */
 const _addEvents = (context: Context) => {
     const { container, operations, renderFn } = context;
@@ -425,6 +434,7 @@ const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires
  * This modulo function always returns positive value based on total
  *
  * i.e: value=0, offset=-1, total=4 returns 3 instead of -1
+ *
  */
 const _circularMod = (value: number, offset: number, total: number): number => {
     return (((value + offset) % total) + total) % total;
