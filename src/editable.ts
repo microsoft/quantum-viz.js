@@ -208,6 +208,7 @@ const _equivGateElem = (elem: SVGElement): SVGElement | null => {
  * Find data-id of host element
  *
  * @param elem              Host element
+ *
  */
 const _equivDataId = (elem: SVGElement) => {
     const gateElem = _equivGateElem(elem);
@@ -255,12 +256,15 @@ const _addDocumentEvents = (context: Context) => {
 
     document.addEventListener('keyup', () => {
         if (context.selectedId) {
+            container.classList.remove('copying');
             container.classList.remove('moving');
         }
     });
 
     document.addEventListener('mouseup', () => {
         container.classList.remove('moving', 'copying');
+        context.selectedId = null;
+        context.selectedWire = null;
     });
 };
 
