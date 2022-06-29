@@ -301,7 +301,7 @@ const _moveX = (sourceId: string, targetId: string, operations: Operation[]): Op
         return null;
 
     // Insert sourceOperation to target last index
-    const newSourceOperation: Operation = { ...sourceOperation };
+    const newSourceOperation: Operation = JSON.parse(JSON.stringify(sourceOperation));
     targetOperationParent.splice(targetLastIndex, 0, newSourceOperation);
 
     // Delete sourceOperation
