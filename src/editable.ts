@@ -39,15 +39,17 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
         selectedWire: null,
     };
 
-    // addDropzones(container);
-    // addDocumentEvents(container);
+    _addStyles(container, _wireData(container));
     _addDataWires(container);
     svg.appendChild(_dropzoneLayer(context));
-    // addDropzoneEvents(context);
-    // addMouseEvents(context);
     _addEvents(context);
 };
 
+/**
+ * Add data-wire to all host elements
+ *
+ * @param container         HTML element for rendering visualization into
+ */
 const _addDataWires = (container: HTMLElement) => {
     const elems = _hostElems(container);
     elems.forEach((elem) => {
@@ -67,8 +69,8 @@ const _addDataWires = (container: HTMLElement) => {
 };
 
 /**
- *  Create a list of wires that element is spanning on.
- *  i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140).
+ *  Create a list of wires that element is spanning on
+ *  i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140)
  *       Function returns [40, 100, 140]
  */
 const _wireYs = (elem: SVGGraphicsElement, wireData: number[]): number[] => {
@@ -84,11 +86,20 @@ const _hostElems = (container: HTMLElement): SVGGraphicsElement[] => {
     );
 };
 
+const _addStyles = (container: HTMLElement, wireData: number[]): void => {
+    const elems = _hostElems(container);
+    elems.forEach((elem) => {
+        if (_wireYs(elem, wireData).length < 2) elem.style.cursor = 'grab';
+    });
+};
+
 const _wirePrefixes = (wireData: number[]): { index: number; wireY: number; prefixX: number }[] =>
     wireData.map((wireY, index) => ({ index, wireY, prefixX: 40 }));
 
 /**
- *  Find center point of element
+ * Find center point of element
+ *
+ * @param elem              Host element
  */
 const _center = (elem: SVGGraphicsElement): { cX: number; cY: number } => {
     const { x, y, width, height } = elem.getBBox();
@@ -96,7 +107,9 @@ const _center = (elem: SVGGraphicsElement): { cX: number; cY: number } => {
 };
 
 /**
- *  Create dropzone layer with all dropzones popullated
+ * Create dropzone layer with all dropzones popullated
+ *
+ * @param context           Context object
  */
 const _dropzoneLayer = (context: Context) => {
     const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -178,14 +191,18 @@ const _wireData = (container: HTMLElement): number[] => {
 };
 
 /**
- *  Find equivalent gate element of host element
+ * Find equivalent gate element of host element
+ *
+ * @param elem              Host element
  */
 const _equivGateElem = (elem: SVGElement): SVGElement | null => {
     return elem.closest<SVGElement>('[data-id]');
 };
 
 /**
- *  Find data-id of host element
+ * Find data-id of host element
+ *
+ * @param elem              Host element
  */
 const _equivDataId = (elem: SVGElement) => {
     const gateElem = _equivGateElem(elem);
@@ -193,7 +210,9 @@ const _equivDataId = (elem: SVGElement) => {
 };
 
 /**
- *  Disable contextmenu default behaviors
+ * Disable contextmenu default behaviors
+ *
+ * @param container         HTML element for rendering visualization into
  */
 const _addContextMenuEvents = (container: HTMLElement) => {
     container.addEventListener('contextmenu', (ev: MouseEvent) => {
@@ -202,24 +221,60 @@ const _addContextMenuEvents = (container: HTMLElement) => {
 };
 
 /**
- *  Add events specifically for dropzoneLayer
+ * Add events specifically for dropzoneLayer
+ *
+ * @param container         HTML element for rendering visualization into
+ * @param dropzoneLayer     SVG group element representing dropzone layer
  */
 const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElement) => {
     container.addEventListener('mouseup', () => (dropzoneLayer.style.display = 'none'));
 };
 
+/**
+ * Add events for document
+ *
+ * @param context           Context object
+ */
+const _addDocumentEvents = (context: Context) => {
+    const { container } = context;
+
+    document.addEventListener('keydown', (ev: KeyboardEvent) => {
+        if (ev.ctrlKey && context.selectedId) {
+            container.classList.remove('moving');
+            container.classList.add('copying');
+        }
+    });
+
+    document.addEventListener('keyup', () => {
+        if (context.selectedId) {
+            container.classList.remove('moving');
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        container.classList.remove('moving', 'copying');
+    });
+};
+
+/**
+ * Add all events
+ *
+ * @param context           Context object
+ */
 const _addEvents = (context: Context) => {
     const { container, operations, renderFn } = context;
     const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
 
     _addContextMenuEvents(container);
     _addDropzoneLayerEvents(container, dropzoneLayer);
+    _addDocumentEvents(context);
 
     // Host element events
     const elems = _hostElems(container);
     elems.forEach((elem) => {
         elem.addEventListener('mousedown', () => {
             context.selectedWire = elem.getAttribute('data-wire');
+            container.classList.add('moving');
         });
 
         const gateElem = _equivGateElem(elem);
@@ -334,8 +389,10 @@ const _copyX = (sourceId: string, targetId: string, operations: Operation[]): Op
 };
 
 const _moveY = (sourceWire: string, targetWire: string, operation: Operation, totalWires: number): Operation => {
-    const offset = parseInt(targetWire) - parseInt(sourceWire);
-    _offsetRecursively(operation, offset, totalWires);
+    if (operation.gate !== 'measure') {
+        const offset = parseInt(targetWire) - parseInt(sourceWire);
+        _offsetRecursively(operation, offset, totalWires);
+    }
     return operation;
 };
 
@@ -365,8 +422,9 @@ const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires
 };
 
 /**
- *  This modulo function always returns positive value based on total.
- *  i.e: value=0, offset=-1, total=4 returns 3 instead of -1
+ * This modulo function always returns positive value based on total
+ *
+ * i.e: value=0, offset=-1, total=4 returns 3 instead of -1
  */
 const _circularMod = (value: number, offset: number, total: number): number => {
     return (((value + offset) % total) + total) % total;

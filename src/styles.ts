@@ -252,4 +252,13 @@ const _editable = `
         fill: #EC7063;
         fill-opacity: 50%;
     }
+    .grab {
+        cursor: grab;
+    }
+    .moving {
+        cursor: move;
+    }
+    .copying {
+        cursor: copy;
+    }
     `;
