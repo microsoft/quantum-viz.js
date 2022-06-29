@@ -313,7 +313,6 @@ const _moveX = (sourceId: string, targetId: string, operations: Operation[]): Op
 };
 
 const _copyX = (sourceId: string, targetId: string, operations: Operation[]): Operation | null => {
-    if (sourceId === targetId) return _equivOperation(sourceId, operations);
     const sourceOperation = _equivOperation(sourceId, operations);
     const sourceOperationParent = _equivOperationParent(sourceId, operations);
     const targetOperationParent = _equivOperationParent(targetId, operations);
