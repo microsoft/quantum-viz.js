@@ -22,9 +22,7 @@ interface Context {
  * @param container         HTML element for rendering visualization into.
  * @param sqore             Sqore object
  * @param onCircuitChange   User-provided callback function triggered when circuit is changed
- *
  */
-
 const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (circuit: Circuit) => void): void => {
     const svg = container.querySelector('svg') as SVGElement;
 
@@ -47,9 +45,6 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
 
 /**
  * Add data-wire to all host elements
- *
- * @param container         HTML element for rendering visualization into
- *
  */
 const _addDataWires = (container: HTMLElement) => {
     const elems = _hostElems(container);
@@ -70,16 +65,18 @@ const _addDataWires = (container: HTMLElement) => {
 };
 
 /**
- *  Create a list of wires that element is spanning on
- *  i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140)
- *       Function returns [40, 100, 140]
- *
+ * Create a list of wires that element is spanning on
+ * i.e. Gate 'Foo' spans on wire 0 (y=40), 1 (y=100), and 2 (y=140)
+ *      Function returns [40, 100, 140]
  */
 const _wireYs = (elem: SVGGraphicsElement, wireData: number[]): number[] => {
     const { y, height } = elem.getBBox();
     return wireData.filter((wireY) => wireY > y && wireY < y + height);
 };
 
+/**
+ * Get list of host elements that dropzones can be attached to
+ */
 const _hostElems = (container: HTMLElement): SVGGraphicsElement[] => {
     return Array.from(
         container.querySelectorAll<SVGGraphicsElement>(
@@ -88,6 +85,9 @@ const _hostElems = (container: HTMLElement): SVGGraphicsElement[] => {
     );
 };
 
+/**
+ * Add custom styles specific to this module
+ */
 const _addStyles = (container: HTMLElement, wireData: number[]): void => {
     const elems = _hostElems(container);
     elems.forEach((elem) => {
@@ -95,14 +95,14 @@ const _addStyles = (container: HTMLElement, wireData: number[]): void => {
     });
 };
 
+/**
+ * Generate an array of wire prefixes from wire data
+ */
 const _wirePrefixes = (wireData: number[]): { index: number; wireY: number; prefixX: number }[] =>
     wireData.map((wireY, index) => ({ index, wireY, prefixX: 40 }));
 
 /**
  * Find center point of element
- *
- * @param elem              Host element
- *
  */
 const _center = (elem: SVGGraphicsElement): { cX: number; cY: number } => {
     const { x, y, width, height } = elem.getBBox();
@@ -111,9 +111,6 @@ const _center = (elem: SVGGraphicsElement): { cX: number; cY: number } => {
 
 /**
  * Create dropzone layer with all dropzones popullated
- *
- * @param context           Context object
- *
  */
 const _dropzoneLayer = (context: Context) => {
     const dropzoneLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -180,6 +177,9 @@ const _dropzoneLayer = (context: Context) => {
     return dropzoneLayer;
 };
 
+/**
+ * Generate an array of y values based on circuit wires
+ */
 const _wireData = (container: HTMLElement): number[] => {
     // elems include qubit wires and lines of measure gates
     const elems = container.querySelectorAll<SVGGElement>('svg > g:nth-child(3) > g');
@@ -196,9 +196,6 @@ const _wireData = (container: HTMLElement): number[] => {
 
 /**
  * Find equivalent gate element of host element
- *
- * @param elem              Host element
- *
  */
 const _equivGateElem = (elem: SVGElement): SVGElement | null => {
     return elem.closest<SVGElement>('[data-id]');
@@ -206,9 +203,6 @@ const _equivGateElem = (elem: SVGElement): SVGElement | null => {
 
 /**
  * Find data-id of host element
- *
- * @param elem              Host element
- *
  */
 const _equivDataId = (elem: SVGElement) => {
     const gateElem = _equivGateElem(elem);
@@ -217,9 +211,6 @@ const _equivDataId = (elem: SVGElement) => {
 
 /**
  * Disable contextmenu default behaviors
- *
- * @param container         HTML element for rendering visualization into
- *
  */
 const _addContextMenuEvents = (container: HTMLElement) => {
     container.addEventListener('contextmenu', (ev: MouseEvent) => {
@@ -229,10 +220,6 @@ const _addContextMenuEvents = (container: HTMLElement) => {
 
 /**
  * Add events specifically for dropzoneLayer
- *
- * @param container         HTML element for rendering visualization into
- * @param dropzoneLayer     SVG group element representing dropzone layer
- *
  */
 const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElement) => {
     container.addEventListener('mouseup', () => (dropzoneLayer.style.display = 'none'));
@@ -240,9 +227,6 @@ const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElem
 
 /**
  * Add events for document
- *
- * @param context           Context object
- *
  */
 const _addDocumentEvents = (context: Context) => {
     const { container } = context;
@@ -270,9 +254,6 @@ const _addDocumentEvents = (context: Context) => {
 
 /**
  * Add all events
- *
- * @param context           Context object
- *
  */
 const _addEvents = (context: Context) => {
     const { container, operations, renderFn } = context;
@@ -325,6 +306,9 @@ const _addEvents = (context: Context) => {
     });
 };
 
+/**
+ * Find equivalent parent array of an operation
+ */
 const _equivOperationParent = (dataId: string | null, operations: Operation[]): Operation[] | null => {
     if (!dataId) return null;
 
@@ -338,6 +322,9 @@ const _equivOperationParent = (dataId: string | null, operations: Operation[]): 
     return operationParent;
 };
 
+/**
+ * Find an equivalent operation of an element based on its data-id
+ */
 const _equivOperation = (dataId: string | null, operations: Operation[]): Operation | null => {
     if (!dataId) return null;
 
@@ -353,6 +340,9 @@ const _equivOperation = (dataId: string | null, operations: Operation[]): Operat
     return operationParent[index];
 };
 
+/**
+ * Move an operation horizontally
+ */
 const _moveX = (sourceId: string, targetId: string, operations: Operation[]): Operation | null => {
     if (sourceId === targetId) return _equivOperation(sourceId, operations);
     const sourceOperation = _equivOperation(sourceId, operations);
@@ -380,6 +370,9 @@ const _moveX = (sourceId: string, targetId: string, operations: Operation[]): Op
     return newSourceOperation;
 };
 
+/**
+ * Copy an operation horizontally
+ */
 const _copyX = (sourceId: string, targetId: string, operations: Operation[]): Operation | null => {
     const sourceOperation = _equivOperation(sourceId, operations);
     const sourceOperationParent = _equivOperationParent(sourceId, operations);
@@ -401,6 +394,9 @@ const _copyX = (sourceId: string, targetId: string, operations: Operation[]): Op
     return newSourceOperation;
 };
 
+/**
+ * Move an operation vertically by changing its controls and targets
+ */
 const _moveY = (sourceWire: string, targetWire: string, operation: Operation, totalWires: number): Operation => {
     if (operation.gate !== 'measure') {
         const offset = parseInt(targetWire) - parseInt(sourceWire);
@@ -409,6 +405,9 @@ const _moveY = (sourceWire: string, targetWire: string, operation: Operation, to
     return operation;
 };
 
+/**
+ * Recursively change object controls and targets
+ */
 const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires: number): Operation => {
     // Offset all targets by offsetY value
     if (operation.targets != null) {
@@ -436,23 +435,31 @@ const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires
 
 /**
  * This modulo function always returns positive value based on total
- *
  * i.e: value=0, offset=-1, total=4 returns 3 instead of -1
- *
  */
 const _circularMod = (value: number, offset: number, total: number): number => {
     return (((value + offset) % total) + total) % total;
 };
 
+/**
+ * Split data-id into an array of indexes
+ */
 const _indexes = (dataId: string): number[] =>
     dataId !== '' //
         ? dataId.split('-').map((segment) => parseInt(segment))
         : [];
 
+/**
+ * Get the last index of data-id
+ * i.e: data-id = "0-1-2", _lastIndex will return 2
+ */
 const _lastIndex = (dataId: string): number | undefined => {
     return _indexes(dataId).pop();
 };
 
+/**
+ * Return a render function with the onCircuitChange callback attached to it
+ */
 const _renderFn = (
     container: HTMLElement,
     sqore: Sqore,
@@ -464,6 +471,9 @@ const _renderFn = (
     };
 };
 
+/**
+ * Object exported for unit testing
+ */
 const exportedForTesting = {
     _wireYs,
     _hostElems,
