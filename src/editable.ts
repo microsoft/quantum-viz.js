@@ -241,7 +241,7 @@ const _addDocumentEvents = (context: Context) => {
     document.addEventListener('keyup', () => {
         if (context.selectedId) {
             container.classList.remove('copying');
-            container.classList.remove('moving');
+            container.classList.add('moving');
         }
     });
 
