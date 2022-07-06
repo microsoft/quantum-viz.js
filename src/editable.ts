@@ -309,17 +309,17 @@ const _addEvents = (context: Context) => {
 /**
  * Find equivalent parent array of an operation
  */
-const _equivOperationParent = (dataId: string | null, operations: Operation[]): Operation[] | null => {
+const _equivParentArray = (dataId: string | null, operations: Operation[]): Operation[] | null => {
     if (!dataId) return null;
 
     const indexes = _indexes(dataId);
     indexes.pop();
 
-    let operationParent = operations;
+    let parentArray = operations;
     for (const index of indexes) {
-        operationParent = operationParent[index].children || operationParent;
+        parentArray = parentArray[index].children || parentArray;
     }
-    return operationParent;
+    return parentArray;
 };
 
 /**
@@ -329,7 +329,7 @@ const _equivOperation = (dataId: string | null, operations: Operation[]): Operat
     if (!dataId) return null;
 
     const index = _lastIndex(dataId);
-    const operationParent = _equivOperationParent(dataId, operations);
+    const operationParent = _equivParentArray(dataId, operations);
 
     if (
         operationParent == null || //
@@ -346,8 +346,8 @@ const _equivOperation = (dataId: string | null, operations: Operation[]): Operat
 const _moveX = (sourceId: string, targetId: string, operations: Operation[]): Operation | null => {
     if (sourceId === targetId) return _equivOperation(sourceId, operations);
     const sourceOperation = _equivOperation(sourceId, operations);
-    const sourceOperationParent = _equivOperationParent(sourceId, operations);
-    const targetOperationParent = _equivOperationParent(targetId, operations);
+    const sourceOperationParent = _equivParentArray(sourceId, operations);
+    const targetOperationParent = _equivParentArray(targetId, operations);
     const targetLastIndex = _lastIndex(targetId);
 
     if (
@@ -375,8 +375,8 @@ const _moveX = (sourceId: string, targetId: string, operations: Operation[]): Op
  */
 const _copyX = (sourceId: string, targetId: string, operations: Operation[]): Operation | null => {
     const sourceOperation = _equivOperation(sourceId, operations);
-    const sourceOperationParent = _equivOperationParent(sourceId, operations);
-    const targetOperationParent = _equivOperationParent(targetId, operations);
+    const sourceOperationParent = _equivParentArray(sourceId, operations);
+    const targetOperationParent = _equivParentArray(targetId, operations);
     const targetLastIndex = _lastIndex(targetId);
 
     if (
@@ -482,7 +482,7 @@ const exportedForTesting = {
     _wireData,
     _equivGateElem,
     _equivOperation,
-    _equivOperationParent,
+    _equivParentArray,
     _moveX,
     _copyX,
     _moveY,

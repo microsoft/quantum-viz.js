@@ -12,7 +12,7 @@ const {
     _wireData,
     _equivGateElem,
     _equivOperation,
-    _equivOperationParent,
+    _equivParentArray,
     _moveX,
     _copyX,
     _moveY,
@@ -234,7 +234,7 @@ describe('Test _equivOperation', () => {
     });
 });
 
-describe('Test _equivOperationParent', () => {
+describe('Test _equivParentArray', () => {
     test('should return Foo', () => {
         const circuit = {
             qubits: [{ id: 0, numChildren: 1 }, { id: 1 }, { id: 2 }, { id: 3 }],
@@ -358,7 +358,7 @@ describe('Test _equivOperationParent', () => {
                 },
             ],
         };
-        expect(_equivOperationParent('0-1', circuit.operations)).toMatchSnapshot();
+        expect(_equivParentArray('0-1', circuit.operations)).toMatchSnapshot();
     });
     test('should return all operations', () => {
         const circuit = {
@@ -382,7 +382,7 @@ describe('Test _equivOperationParent', () => {
                 },
             ],
         };
-        expect(_equivOperationParent('0', circuit.operations)).toMatchSnapshot();
+        expect(_equivParentArray('0', circuit.operations)).toMatchSnapshot();
     });
 });
 
