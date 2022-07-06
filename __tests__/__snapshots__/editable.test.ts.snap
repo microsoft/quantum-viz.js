@@ -229,6 +229,46 @@ Array [
 ]
 `;
 
+exports[`Test _equivParentOperation should return Foo 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "gate": "H",
+      "targets": Array [
+        Object {
+          "qId": 1,
+        },
+      ],
+    },
+    Object {
+      "controls": Array [
+        Object {
+          "qId": 1,
+        },
+      ],
+      "displayArgs": "(0.25)",
+      "gate": "RX",
+      "isControlled": true,
+      "targets": Array [
+        Object {
+          "qId": 0,
+        },
+      ],
+    },
+  ],
+  "conditionalRender": 3,
+  "gate": "Foo",
+  "targets": Array [
+    Object {
+      "qId": 0,
+    },
+    Object {
+      "qId": 1,
+    },
+  ],
+}
+`;
+
 exports[`Test _hostElems should return 4 elements 1`] = `
 Array [
   <rect

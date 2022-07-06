@@ -3,6 +3,7 @@
 
 import { Circuit, Operation } from './circuit';
 import { box } from './formatters/formatUtils';
+import { Register } from './register';
 import { Sqore } from './sqore';
 
 interface Context {
@@ -299,11 +300,31 @@ const _addEvents = (context: Context) => {
 
             if (newSourceOperation != null) {
                 _moveY(context.selectedWire, targetWire, newSourceOperation, context.wireData.length);
+                const parentOperation = _equivParentOperation(context.selectedId, operations);
+                if (parentOperation) {
+                    parentOperation.targets = _targets(parentOperation);
+                }
             }
 
             renderFn();
         });
     });
+};
+
+const _equivParentOperation = (dataId: string | null, operations: Operation[]): Operation | null => {
+    if (!dataId) return null;
+
+    const indexes = _indexes(dataId);
+    indexes.pop();
+    const lastIndex = indexes.pop();
+
+    if (lastIndex == null) return null;
+
+    let parentOperation = operations;
+    for (const index of indexes) {
+        parentOperation = parentOperation[index].children || parentOperation;
+    }
+    return parentOperation[lastIndex];
 };
 
 /**
@@ -434,6 +455,47 @@ const _offsetRecursively = (operation: Operation, wireOffset: number, totalWires
 };
 
 /**
+ * Find targets of an operation by recursively walkthrough all of its children controls and targets
+ * i.e. Gate Foo contains gate H and gate RX.
+ *      qIds of Gate H is 1
+ *      qIds of Gate RX is 1, 2
+ *      This should return [{qId: 1}, {qId: 2}]
+ */
+const _targets = (operation: Operation): Register[] | [] => {
+    const _recurse = (operation: Operation) => {
+        registers.push(...operation.targets);
+        if (operation.controls) {
+            registers.push(...operation.controls);
+            // If there is more children, keep adding more to registers
+            if (operation.children) {
+                for (const child of operation.children) {
+                    _recurse(child);
+                }
+            }
+        }
+    };
+
+    const registers: Register[] = [];
+    if (operation.children == null) return [];
+
+    // Recursively walkthrough all children to populate registers
+    for (const child of operation.children) {
+        _recurse(child);
+    }
+
+    // Extract qIds from array of object
+    // i.e. [{qId: 0}, {qId: 1}, {qId: 1}] -> [0, 1, 1]
+    const qIds = registers.map((register) => register.qId);
+    const uniqueQIds = Array.from(new Set(qIds));
+
+    // Transform array of numbers into array of qId object
+    // i.e.  -> [0, 1] -> [{qId: 0}, {qId: 1}, {qId: 1}]
+    return uniqueQIds.map((qId) => ({
+        qId,
+    }));
+};
+
+/**
  * This modulo function always returns positive value based on total
  * i.e: value=0, offset=-1, total=4 returns 3 instead of -1
  */
@@ -482,11 +544,13 @@ const exportedForTesting = {
     _wireData,
     _equivGateElem,
     _equivOperation,
+    _equivParentOperation,
     _equivParentArray,
     _moveX,
     _copyX,
     _moveY,
     _offsetRecursively,
+    _targets,
     _circularMod,
     _indexes,
     _lastIndex,

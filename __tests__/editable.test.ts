@@ -12,11 +12,13 @@ const {
     _wireData,
     _equivGateElem,
     _equivOperation,
+    _equivParentOperation,
     _equivParentArray,
     _moveX,
     _copyX,
     _moveY,
     _offsetRecursively,
+    _targets,
     _circularMod,
     _indexes,
     _lastIndex,
@@ -231,6 +233,134 @@ describe('Test _equivOperation', () => {
     });
     test('should return X gate', () => {
         expect(_equivOperation('1', circuit.operations)).toMatchSnapshot();
+    });
+});
+
+describe('Test _equivParentOperation', () => {
+    test('should return Foo', () => {
+        const circuit = {
+            qubits: [{ id: 0, numChildren: 1 }, { id: 1 }, { id: 2 }, { id: 3 }],
+            operations: [
+                {
+                    gate: 'Foo',
+                    conditionalRender: 3,
+                    targets: [{ qId: 0 }, { qId: 1 }],
+                    children: [
+                        {
+                            gate: 'H',
+                            targets: [{ qId: 1 }],
+                        },
+                        {
+                            gate: 'RX',
+                            displayArgs: '(0.25)',
+                            isControlled: true,
+                            controls: [{ qId: 1 }],
+                            targets: [{ qId: 0 }],
+                        },
+                    ],
+                },
+                {
+                    gate: 'X',
+                    targets: [{ qId: 3 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ qId: 2 }, { qId: 3 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 2 }, { qId: 3 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 1 }, { qId: 3 }],
+                    targets: [{ qId: 2 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ type: 1, qId: 0, cId: 0 }],
+                },
+                {
+                    gate: 'ApplyIfElseR',
+                    isConditional: true,
+                    controls: [{ type: 1, qId: 0, cId: 0 }],
+                    targets: [],
+                    children: [
+                        {
+                            gate: 'H',
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 1,
+                        },
+                        {
+                            gate: 'X',
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 1,
+                        },
+                        {
+                            gate: 'X',
+                            isControlled: true,
+                            controls: [{ qId: 0 }],
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 2,
+                        },
+                        {
+                            gate: 'Foo',
+                            targets: [{ qId: 3 }],
+                            conditionalRender: 2,
+                        },
+                    ],
+                },
+                {
+                    gate: 'SWAP',
+                    targets: [{ qId: 0 }, { qId: 2 }],
+                    children: [
+                        { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                        { gate: 'X', isControlled: true, controls: [{ qId: 2 }], targets: [{ qId: 0 }] },
+                        { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                    ],
+                },
+                {
+                    gate: 'ZZ',
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'ZZ',
+                    targets: [{ qId: 0 }, { qId: 1 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 0 }, { qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+            ],
+        };
+        expect(_equivParentOperation('0-1', circuit.operations)).toMatchSnapshot();
     });
 });
 
@@ -501,6 +631,152 @@ describe('Test _offsetRecursively', () => {
             gate: 'ZZ',
             targets: [{ qId: 3 }, { qId: 1 }],
         });
+    });
+});
+
+describe('Test _targets', () => {
+    let circuit: Circuit;
+    beforeEach(() => {
+        circuit = {
+            qubits: [{ id: 0, numChildren: 1 }, { id: 1 }, { id: 2 }, { id: 3 }],
+            operations: [
+                {
+                    gate: 'Foo',
+                    conditionalRender: 3,
+                    targets: [{ qId: 0 }, { qId: 1 }],
+                    children: [
+                        {
+                            gate: 'H',
+                            targets: [{ qId: 1 }],
+                        },
+                        {
+                            gate: 'RX',
+                            displayArgs: '(0.25)',
+                            isControlled: true,
+                            controls: [{ qId: 1 }],
+                            targets: [{ qId: 0 }],
+                        },
+                    ],
+                },
+                {
+                    gate: 'X',
+                    targets: [{ qId: 3 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 1 }],
+                    targets: [{ qId: 2 }, { qId: 3 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 2 }, { qId: 3 }],
+                    targets: [{ qId: 1 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 1 }, { qId: 3 }],
+                    targets: [{ qId: 2 }],
+                },
+                {
+                    gate: 'X',
+                    isControlled: true,
+                    controls: [{ qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'measure',
+                    isMeasurement: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ type: 1, qId: 0, cId: 0 }],
+                },
+                {
+                    gate: 'ApplyIfElseR',
+                    isConditional: true,
+                    controls: [{ type: 1, qId: 0, cId: 0 }],
+                    targets: [],
+                    children: [
+                        {
+                            gate: 'H',
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 1,
+                        },
+                        {
+                            gate: 'X',
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 1,
+                        },
+                        {
+                            gate: 'X',
+                            isControlled: true,
+                            controls: [{ qId: 0 }],
+                            targets: [{ qId: 1 }],
+                            conditionalRender: 2,
+                        },
+                        {
+                            gate: 'Foo',
+                            targets: [{ qId: 3 }],
+                            conditionalRender: 2,
+                        },
+                    ],
+                },
+                {
+                    gate: 'SWAP',
+                    targets: [{ qId: 0 }, { qId: 2 }],
+                    children: [
+                        { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                        { gate: 'X', isControlled: true, controls: [{ qId: 2 }], targets: [{ qId: 0 }] },
+                        { gate: 'X', isControlled: true, controls: [{ qId: 0 }], targets: [{ qId: 2 }] },
+                    ],
+                },
+                {
+                    gate: 'ZZ',
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'ZZ',
+                    targets: [{ qId: 0 }, { qId: 1 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 0 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+                {
+                    gate: 'XX',
+                    isControlled: true,
+                    controls: [{ qId: 0 }, { qId: 2 }],
+                    targets: [{ qId: 1 }, { qId: 3 }],
+                },
+            ],
+        };
+    });
+    test('move RX down 1, should return [{qId:1}, {qId:2}]', () => {
+        const parentOperation = circuit.operations[0];
+        const parentArray = parentOperation.children;
+        if (parentArray) {
+            const operation = parentArray[1];
+            _moveY('0', '1', operation, 4);
+        }
+        expect(_targets(parentOperation)).toStrictEqual([{ qId: 1 }, { qId: 2 }]);
+    });
+    test('move RX down 2, should return [{qId:1}, {qId:2}, {qId:3}]', () => {
+        const parentOperation = circuit.operations[0];
+        const parentArray = parentOperation.children;
+        if (parentArray) {
+            const operation = parentArray[1];
+            _moveY('0', '2', operation, 4);
+        }
+        expect(_targets(parentOperation)).toStrictEqual([{ qId: 1 }, { qId: 2 }, { qId: 3 }]);
     });
 });
 
