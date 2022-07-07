@@ -489,7 +489,7 @@ const _targets = (operation: Operation): Register[] | [] => {
     const uniqueQIds = Array.from(new Set(qIds));
 
     // Transform array of numbers into array of qId object
-    // i.e.  -> [0, 1] -> [{qId: 0}, {qId: 1}, {qId: 1}]
+    // i.e. [0, 1] -> [{qId: 0}, {qId: 1}]
     return uniqueQIds.map((qId) => ({
         qId,
     }));
