@@ -39,7 +39,7 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
         selectedWire: null,
     };
 
-    addPanel(container);
+    addPanel(container, context.operations);
     _addStyles(container, _wireData(container));
     _addDataWires(container);
     svg.appendChild(_dropzoneLayer(context));
@@ -301,7 +301,7 @@ const _addEvents = (context: Context) => {
             if (newSourceOperation != null) {
                 _moveY(context.selectedWire, targetWire, newSourceOperation, context.wireData.length);
                 const parentOperation = _equivParentOperation(context.selectedId, operations);
-                if (parentOperation) {
+                if (parentOperation != null) {
                     parentOperation.targets = _targets(parentOperation);
                 }
             }

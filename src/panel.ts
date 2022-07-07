@@ -1,5 +1,14 @@
-const addPanel = (container: HTMLElement): void => {
+import { Operation } from './circuit';
+import { _equivOperation } from './editable';
+
+const addPanel = (container: HTMLElement, operations: Operation[]): void => {
     container.prepend(_panel());
+    container.querySelectorAll<SVGElement>('[data-id]').forEach((elem) =>
+        elem.addEventListener('mousedown', () => {
+            const dataId = elem.getAttribute('data-id');
+            console.log({ dataId, operation: _equivOperation(dataId, operations) });
+        }),
+    );
 };
 
 const _panel = () => {
