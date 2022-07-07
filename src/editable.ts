@@ -3,6 +3,7 @@
 
 import { Circuit, Operation } from './circuit';
 import { box } from './formatters/formatUtils';
+import { addPanel } from './panel';
 import { Register } from './register';
 import { Sqore } from './sqore';
 
@@ -38,6 +39,7 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
         selectedWire: null,
     };
 
+    addPanel(context);
     _addStyles(container, _wireData(container));
     _addDataWires(container);
     svg.appendChild(_dropzoneLayer(context));
@@ -248,8 +250,6 @@ const _addDocumentEvents = (context: Context) => {
 
     document.addEventListener('mouseup', () => {
         container.classList.remove('moving', 'copying');
-        context.selectedId = null;
-        context.selectedWire = null;
     });
 };
 
@@ -556,4 +556,4 @@ const exportedForTesting = {
     _lastIndex,
 };
 
-export { addEditable, exportedForTesting };
+export { addEditable, Context, _equivOperation, exportedForTesting };
