@@ -1,0 +1,402 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test _copyX copy elem from index 0 to index 1 1`] = `
+Array [
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _copyX copy elem from index 0 to last 1`] = `
+Array [
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _equivGateElem should return gate H 1`] = `
+<g
+  class="gate"
+  data-id="0"
+  data-zoom-in="false"
+  data-zoom-out="false"
+>
+  <g>
+    <g>
+      <rect
+        class="gate-unitary"
+        height="40"
+        width="40"
+        x="80"
+        y="20"
+      />
+      <text
+        font-size="14"
+        x="100"
+        y="40"
+      >
+        H
+      </text>
+    </g>
+  </g>
+</g>
+`;
+
+exports[`Test _equivOperation should return H gate 1`] = `
+Object {
+  "gate": "H",
+  "targets": Array [
+    Object {
+      "qId": 0,
+    },
+  ],
+}
+`;
+
+exports[`Test _equivOperation should return X gate 1`] = `
+Object {
+  "controls": Array [
+    Object {
+      "qId": 0,
+    },
+  ],
+  "gate": "X",
+  "isControlled": true,
+  "targets": Array [
+    Object {
+      "qId": 1,
+    },
+  ],
+}
+`;
+
+exports[`Test _equivParentArray should return Foo 1`] = `
+Array [
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "displayArgs": "(0.25)",
+    "gate": "RX",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _equivParentArray should return all operations 1`] = `
+Array [
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _equivParentOperation should return Foo 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "gate": "H",
+      "targets": Array [
+        Object {
+          "qId": 1,
+        },
+      ],
+    },
+    Object {
+      "controls": Array [
+        Object {
+          "qId": 1,
+        },
+      ],
+      "displayArgs": "(0.25)",
+      "gate": "RX",
+      "isControlled": true,
+      "targets": Array [
+        Object {
+          "qId": 0,
+        },
+      ],
+    },
+  ],
+  "conditionalRender": 3,
+  "gate": "Foo",
+  "targets": Array [
+    Object {
+      "qId": 0,
+    },
+    Object {
+      "qId": 1,
+    },
+  ],
+}
+`;
+
+exports[`Test _hostElems should return 4 elements 1`] = `
+Array [
+  <rect
+    class="gate-unitary"
+    height="40"
+    width="40"
+    x="80"
+    y="20"
+  />,
+  <circle
+    class="control-dot"
+    cx="160"
+    cy="40"
+    r="5"
+  />,
+  <g
+    class="oplus"
+  >
+    <circle
+      cx="160"
+      cy="100"
+      r="15"
+    />
+    <line
+      x1="160"
+      x2="160"
+      y1="85"
+      y2="115"
+    />
+    <line
+      x1="145"
+      x2="175"
+      y1="100"
+      y2="100"
+    />
+  </g>,
+  <rect
+    class="gate-measure"
+    height="40"
+    width="40"
+    x="200"
+    y="80"
+  />,
+]
+`;
+
+exports[`Test _moveX move elem from index 0 to index 1 1`] = `
+Array [
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+]
+`;
+
+exports[`Test _moveX move elem from index 0 to last 1`] = `
+Array [
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+    "gate": "X",
+    "isControlled": true,
+    "targets": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+  },
+  Object {
+    "controls": Array [
+      Object {
+        "qId": 1,
+      },
+    ],
+    "gate": "Measure",
+    "isMeasurement": true,
+    "targets": Array [
+      Object {
+        "cId": 0,
+        "qId": 1,
+        "type": 1,
+      },
+    ],
+  },
+  Object {
+    "gate": "H",
+    "targets": Array [
+      Object {
+        "qId": 0,
+      },
+    ],
+  },
+]
+`;

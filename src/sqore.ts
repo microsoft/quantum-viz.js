@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { formatInputs } from './formatters/inputFormatter';
-import { formatGates } from './formatters/gateFormatter';
-import { formatRegisters } from './formatters/registerFormatter';
-import { processOperations } from './process';
-import { ConditionalRender, Circuit, Operation } from './circuit';
-import { Metadata, GateType } from './metadata';
-import { StyleConfig, style, STYLES } from './styles';
-import { createUUID } from './utils';
+import { Circuit, ConditionalRender, Operation } from './circuit';
 import { svgNS } from './constants';
+import { addEditable } from './editable';
+import { formatGates } from './formatters/gateFormatter';
+import { formatInputs } from './formatters/inputFormatter';
+import { formatRegisters } from './formatters/registerFormatter';
+import { GateType, Metadata } from './metadata';
+import { processOperations } from './process';
+import { style, StyleConfig, STYLES } from './styles';
+import { createUUID } from './utils';
 
 /**
  * Contains metadata for visualization.
@@ -55,8 +56,15 @@ export class Sqore {
      *
      * @param container HTML element for rendering visualization into.
      * @param renderDepth Initial layer depth at which to render gates.
+     * @param isEditable Optional value enabling/disabling editable feature
+     * @param onCircuitChange Optional function to trigger when changing elements in circuit
      */
-    draw(container: HTMLElement, renderDepth = 0): void {
+    draw(
+        container: HTMLElement,
+        renderDepth = 0,
+        isEditable?: boolean,
+        onCircuitChange?: (circuit: Circuit) => void,
+    ): void {
         // Inject into container
         if (container == null) throw new Error(`Container not provided.`);
 
@@ -78,8 +86,7 @@ export class Sqore {
             const id: string = circuit.operations[0].dataAttributes['id'];
             this.expandOperation(circuit.operations, id);
         }
-
-        this.renderCircuit(container, circuit);
+        this.renderCircuit(container, circuit, isEditable, onCircuitChange);
     }
 
     /**
@@ -106,14 +113,25 @@ export class Sqore {
      *
      * @param container HTML element for rendering visualization into.
      * @param circuit Circuit object to be rendered.
+     * @param isEditable Optional value enabling/disabling editable feature
+     * @param onCircuitChange Optional function to trigger when changing elements in circuit
      */
-    private renderCircuit(container: HTMLElement, circuit: Circuit): void {
+    private renderCircuit(
+        container: HTMLElement,
+        circuit: Circuit,
+        isEditable?: boolean,
+        onCircuitChange?: (circuit: Circuit) => void,
+    ): void {
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(circuit);
         const svg: SVGElement = this.generateSvg(composedSqore);
         container.innerHTML = '';
         container.appendChild(svg);
-        this.addGateClickHandlers(container, circuit);
+        this.addGateClickHandlers(container, circuit, isEditable, onCircuitChange);
+
+        if (isEditable) {
+            addEditable(container, this, onCircuitChange);
+        }
     }
 
     /**
@@ -229,11 +247,18 @@ export class Sqore {
      *
      * @param container HTML element containing visualized circuit.
      * @param circuit Circuit to be visualized.
+     * @param isEditable Optional value enabling/disabling editable feature
+     * @param onCircuitChange Optional function to trigger when changing elements in circuit
      *
      */
-    private addGateClickHandlers(container: HTMLElement, circuit: Circuit): void {
+    private addGateClickHandlers(
+        container: HTMLElement,
+        circuit: Circuit,
+        isEditable?: boolean,
+        onCircuitChange?: (circuit: Circuit) => void,
+    ): void {
         this.addClassicalControlHandlers(container);
-        this.addZoomHandlers(container, circuit);
+        this.addZoomHandlers(container, circuit, isEditable, onCircuitChange);
     }
 
     /**
@@ -289,9 +314,16 @@ export class Sqore {
      *
      * @param container HTML element containing visualized circuit.
      * @param circuit Circuit to be visualized.
+     * @param isEditable Optional value enabling/disabling editable feature
+     * @param onCircuitChange Optional function to trigger when changing elements in circuit
      *
      */
-    private addZoomHandlers(container: HTMLElement, circuit: Circuit): void {
+    private addZoomHandlers(
+        container: HTMLElement,
+        circuit: Circuit,
+        isEditable?: boolean,
+        onCircuitChange?: (circuit: Circuit) => void,
+    ): void {
         container.querySelectorAll('.gate .gate-control').forEach((ctrl) => {
             // Zoom in on clicked gate
             ctrl.addEventListener('click', (ev: Event) => {
@@ -302,8 +334,7 @@ export class Sqore {
                     } else if (ctrl.classList.contains('gate-expand')) {
                         this.expandOperation(circuit.operations, gateId);
                     }
-                    this.renderCircuit(container, circuit);
-
+                    this.renderCircuit(container, circuit, isEditable, onCircuitChange);
                     ev.stopPropagation();
                 }
             });

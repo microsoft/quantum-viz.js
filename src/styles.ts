@@ -95,7 +95,8 @@ export const style = (customStyle: StyleConfig = {}): string => {
 
     return `${_defaultGates(styleConfig)}
     ${_classicallyControlledGates(styleConfig)}
-    ${_expandCollapse}`;
+    ${_expandCollapse}
+    ${_editable}`;
 };
 
 const _defaultGates = (styleConfig: StyleConfig): string => `
@@ -234,3 +235,30 @@ const _expandCollapse = `
         opacity: 1;
         transition: opacity 1s;
     }`;
+
+const _editable = `
+    text {
+        user-select: none;
+        pointer-events: none;
+    }
+    .dropzone-layer {
+        display: none;
+    }
+    .dropzone {
+        fill-opacity: 0%;
+        stroke-opacity: 0%;
+    }
+    .dropzone:hover {
+        fill: #EC7063;
+        fill-opacity: 50%;
+    }
+    .grab {
+        cursor: grab;
+    }
+    .moving {
+        cursor: move;
+    }
+    .copying {
+        cursor: copy;
+    }
+    `;

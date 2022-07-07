@@ -1326,7 +1326,9 @@ exports[`Testing _controlledGate SWAP gate 1`] = `
     cy="40"
     r="5"
   />
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -1340,7 +1342,9 @@ exports[`Testing _controlledGate SWAP gate 1`] = `
       y2="92"
     />
   </g>
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -1373,7 +1377,9 @@ exports[`Testing _controlledGate SWAP gate 2`] = `
     cy="160"
     r="5"
   />
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -1387,7 +1393,9 @@ exports[`Testing _controlledGate SWAP gate 2`] = `
       y2="32"
     />
   </g>
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -1420,7 +1428,9 @@ exports[`Testing _controlledGate SWAP gate 3`] = `
     cy="100"
     r="5"
   />
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -1434,7 +1444,9 @@ exports[`Testing _controlledGate SWAP gate 3`] = `
       y2="32"
     />
   </g>
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -1578,7 +1590,9 @@ exports[`Testing _formatGate controlled swap gate 1`] = `
     cy="40"
     r="5"
   />
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -1592,7 +1606,9 @@ exports[`Testing _formatGate controlled swap gate 1`] = `
       y2="92"
     />
   </g>
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -1875,7 +1891,9 @@ exports[`Testing _formatGate swap gate 1`] = `
       x="60"
       y="20"
     />
-    <g>
+    <g
+      class="cross"
+    >
       <line
         x1="72"
         x2="88"
@@ -1889,7 +1907,9 @@ exports[`Testing _formatGate swap gate 1`] = `
         y2="32"
       />
     </g>
-    <g>
+    <g
+      class="cross"
+    >
       <line
         x1="72"
         x2="88"
@@ -2419,7 +2439,9 @@ exports[`Testing _swap Adjacent swap 1`] = `
     x="60"
     y="20"
   />
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -2433,7 +2455,9 @@ exports[`Testing _swap Adjacent swap 1`] = `
       y2="32"
     />
   </g>
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -2465,7 +2489,9 @@ exports[`Testing _swap Adjacent swap 2`] = `
     x="60"
     y="20"
   />
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -2479,7 +2505,9 @@ exports[`Testing _swap Adjacent swap 2`] = `
       y2="92"
     />
   </g>
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -2511,7 +2539,9 @@ exports[`Testing _swap Non-adjacent swap 1`] = `
     x="60"
     y="20"
   />
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -2525,7 +2555,9 @@ exports[`Testing _swap Non-adjacent swap 1`] = `
       y2="32"
     />
   </g>
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -2557,7 +2589,9 @@ exports[`Testing _swap Non-adjacent swap 2`] = `
     x="60"
     y="20"
   />
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
@@ -2571,7 +2605,9 @@ exports[`Testing _swap Non-adjacent swap 2`] = `
       y2="152"
     />
   </g>
-  <g>
+  <g
+    class="cross"
+  >
     <line
       x1="72"
       x2="88"
