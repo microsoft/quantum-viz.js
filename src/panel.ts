@@ -1,14 +1,8 @@
-import { Operation } from './circuit';
-import { Context, _equivOperation } from './editable';
-
-const addPanel = (context: Context): void => {
-    const { container } = context;
-
-    container.prepend(_panel(operation));
+const addPanel = (container: HTMLElement): void => {
+    container.prepend(_panel());
 };
 
-const _panel = (operation: Operation | null) => {
-    console.log(operation);
+const _panel = () => {
     const options: Option[] = [
         {
             value: '0',

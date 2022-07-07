@@ -39,7 +39,7 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
         selectedWire: null,
     };
 
-    addPanel(context);
+    addPanel(container);
     _addStyles(container, _wireData(container));
     _addDataWires(container);
     svg.appendChild(_dropzoneLayer(context));
