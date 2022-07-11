@@ -19,6 +19,26 @@ const addPanel = (container: HTMLElement, sqore: Sqore): void => {
     container.prepend(panelElem);
 };
 
+interface Action {
+    type: string;
+    payload: unknown;
+}
+
+const reducer = (initial: Operation | undefined, action: Action) => {
+    if (initial == null) return;
+
+    switch (action.type) {
+        case 'TARGET': {
+            Object.assign(initial, { ...initial, targets: action.payload });
+        }
+        case 'CONTROLS': {
+            Object.assign(initial, { ...initial, controls: action.payload });
+        }
+    }
+    console.log(initial);
+    console.log('Re-rendering...');
+};
+
 const _panel = (qubitSize: number, operation?: Operation) => {
     const options = range(qubitSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
     const target = operation?.targets[0].qId;
@@ -28,7 +48,7 @@ const _panel = (qubitSize: number, operation?: Operation) => {
     panelElem.className = 'panel';
     _children(panelElem, [
         _select('Target', 'target-input', options, target || 0, operation),
-        _checkboxes('Controls', 'controls-input', options, controls || []),
+        _checkboxes('Controls', 'controls-input', options, controls || [], operation),
         _text('Display', 'display-input', 'display-arg'),
     ]);
 
@@ -60,6 +80,7 @@ const _select = (
     const optionElems = options.map(({ value, text }) => _option(value, text));
     const selectElem = _elem('select') as HTMLSelectElement;
     _children(selectElem, optionElems);
+    operation == null && selectElem.setAttribute('disabled', 'true');
     selectElem.selectedIndex = selectedIndex;
 
     const labelElem = _elem('label') as HTMLLabelElement;
@@ -70,10 +91,7 @@ const _select = (
     _children(divElem, [labelElem, selectElem]);
 
     selectElem.onchange = () => {
-        if (operation != null) {
-            Object.assign(operation.targets, [{ qId: selectElem.value }]);
-            console.log(operation);
-        }
+        reducer(operation, { type: 'TARGET', payload: [{ qId: selectElem.value }] });
     };
 
     return divElem;
@@ -86,12 +104,27 @@ const _option = (value: string, text: string) => {
     return elem;
 };
 
-const _checkboxes = (label: string, className: string, options: Option[], selectedIndexes: number[]) => {
+const _checkboxes = (
+    label: string,
+    className: string,
+    options: Option[],
+    selectedIndexes: number[],
+    operation?: Operation,
+) => {
     const checkboxElems = options.map((option, index) => {
         const elem = _checkbox(option.value, option.text);
-        if (selectedIndexes.includes(index)) {
-            elem.querySelector('input')?.setAttribute('checked', 'true');
-        }
+        const inputElem = elem.querySelector('input') as HTMLInputElement;
+        selectedIndexes.includes(index) && inputElem.setAttribute('checked', 'true');
+        operation == null && inputElem.setAttribute('disabled', 'true');
+
+        inputElem.onchange = () => {
+            const checkedElems = Array.from(divElem.querySelectorAll<HTMLInputElement>('input:checked'));
+            const newControls = checkedElems.map((elem) => ({
+                qId: elem.value,
+            }));
+            reducer(operation, { type: 'CONTROLS', payload: newControls });
+        };
+
         return elem;
     });
 
