@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import cloneDeep from 'lodash/cloneDeep';
+import isEqual from 'lodash/isEqual';
 import { Circuit, Operation } from './circuit';
 import { box } from './formatters/formatUtils';
-import { addPanel } from './panel';
 import { Register } from './register';
 import { Sqore } from './sqore';
 
@@ -38,8 +39,6 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
         selectedId: null,
         selectedWire: null,
     };
-
-    addPanel(container, context.operations);
     _addStyles(container, _wireData(container));
     _addDataWires(container);
     svg.appendChild(_dropzoneLayer(context));
@@ -284,6 +283,7 @@ const _addEvents = (context: Context) => {
     const dropzoneElems = dropzoneLayer.querySelectorAll<SVGRectElement>('.dropzone');
     dropzoneElems.forEach((dropzoneElem) => {
         dropzoneElem.addEventListener('mouseup', (ev: MouseEvent) => {
+            const originalOperations = cloneDeep(operations);
             const targetId = dropzoneElem.getAttribute('data-dropzone-id');
             const targetWire = dropzoneElem.getAttribute('data-dropzone-wire');
             if (
@@ -305,8 +305,7 @@ const _addEvents = (context: Context) => {
                     parentOperation.targets = _targets(parentOperation);
                 }
             }
-
-            renderFn();
+            if (isEqual(originalOperations, operations) === false) renderFn();
         });
     });
 };

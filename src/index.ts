@@ -4,6 +4,7 @@
 import { Sqore } from './sqore';
 import { Circuit } from './circuit';
 import { StyleConfig } from './styles';
+import { addPanel } from './panel';
 
 /**
  * Render `circuit` into `container` at the specified layer depth.
@@ -26,6 +27,7 @@ export const draw = (
     const sqore = new Sqore(circuit, style);
 
     sqore.draw(container, renderDepth, isEditable, onCircuitChange);
+    addPanel(container, sqore);
 };
 
 export { STYLES } from './styles';

@@ -1,40 +1,34 @@
+import range from 'lodash/range';
 import { Operation } from './circuit';
 import { _equivOperation } from './editable';
+import { Sqore } from './sqore';
 
-const addPanel = (container: HTMLElement, operations: Operation[]): void => {
-    container.prepend(_panel());
-    container.querySelectorAll<SVGElement>('[data-id]').forEach((elem) =>
+const addPanel = (container: HTMLElement, sqore: Sqore): void => {
+    const elems = container.querySelectorAll<SVGElement>('[data-id]');
+    elems.forEach((elem) =>
         elem.addEventListener('mousedown', () => {
             const dataId = elem.getAttribute('data-id');
-            console.log({ dataId, operation: _equivOperation(dataId, operations) });
+            const operation = _equivOperation(dataId, sqore.circuit.operations);
+            const newPanelElem = _panel(qubitSize, operation || undefined);
+            container.replaceChild(newPanelElem, panelElem);
+            panelElem = newPanelElem;
         }),
     );
+    const qubitSize = sqore.circuit.qubits.length;
+    let panelElem = _panel(qubitSize);
+    container.prepend(panelElem);
 };
 
-const _panel = () => {
-    const options: Option[] = [
-        {
-            value: '0',
-            text: 'q0',
-        },
-        {
-            value: '1',
-            text: 'q1',
-        },
-        {
-            value: '2',
-            text: 'q2',
-        },
-        {
-            value: '3',
-            text: 'q3',
-        },
-    ];
+const _panel = (qubitSize: number, operation?: Operation) => {
+    const options = range(qubitSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
+    const target = operation?.targets[0].qId;
+    const controls = operation?.controls?.map((control) => control.qId);
 
     const panelElem = _elem('div');
+    panelElem.className = 'panel';
     _children(panelElem, [
-        _select('Target', 'target-input', options, 0),
-        _checkboxes('Controls', 'controls-input', options, [2, 3]),
+        _select('Target', 'target-input', options, target || 0, operation),
+        _checkboxes('Controls', 'controls-input', options, controls || []),
         _text('Display', 'display-input', 'display-arg'),
     ]);
 
@@ -56,7 +50,13 @@ interface Option {
     text: string;
 }
 
-const _select = (label: string, className: string, options: Option[], selectedIndex: number) => {
+const _select = (
+    label: string,
+    className: string,
+    options: Option[],
+    selectedIndex: number,
+    operation?: Operation,
+): HTMLElement => {
     const optionElems = options.map(({ value, text }) => _option(value, text));
     const selectElem = _elem('select') as HTMLSelectElement;
     _children(selectElem, optionElems);
@@ -68,6 +68,13 @@ const _select = (label: string, className: string, options: Option[], selectedIn
     const divElem = _elem('div') as HTMLDivElement;
     divElem.className = className;
     _children(divElem, [labelElem, selectElem]);
+
+    selectElem.onchange = () => {
+        if (operation != null) {
+            Object.assign(operation.targets, [{ qId: selectElem.value }]);
+            console.log(operation);
+        }
+    };
 
     return divElem;
 };

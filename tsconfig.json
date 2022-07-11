@@ -9,6 +9,7 @@
         "declaration": true,
         "strict": true,
         "outDir": "lib",
+        "esModuleInterop": true
     },
     "include": [
         "src/**/*"
