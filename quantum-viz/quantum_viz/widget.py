@@ -134,7 +134,7 @@ class Viewer:
     def _ipython_display_(self) -> None:
         """Display the widget with IPython."""
         viewer = HTML(self.html_str())
-        display((viewer,))
+        display(viewer)
 
     def browser_display(self) -> None:
         """Display the widget in the browser."""
