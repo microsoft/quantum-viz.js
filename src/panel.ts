@@ -9,13 +9,14 @@ const addPanel = (container: HTMLElement, sqore: Sqore): void => {
         elem.addEventListener('mousedown', () => {
             const dataId = elem.getAttribute('data-id');
             const operation = _equivOperation(dataId, sqore.circuit.operations);
-            const newPanelElem = _panel(qubitSize, operation || undefined);
+            const newPanelElem = _panel(qubitSize, dispatch, operation || undefined);
             container.replaceChild(newPanelElem, panelElem);
             panelElem = newPanelElem;
         }),
     );
+    const dispatch = reducer(container, sqore);
     const qubitSize = sqore.circuit.qubits.length;
-    let panelElem = _panel(qubitSize);
+    let panelElem = _panel(qubitSize, dispatch);
     container.prepend(panelElem);
 };
 
@@ -24,7 +25,7 @@ interface Action {
     payload: unknown;
 }
 
-const reducer = (initial: Operation | undefined, action: Action) => {
+const reducer = (container: HTMLElement, sqore: Sqore) => (initial: Operation | undefined, action: Action) => {
     if (initial == null) return;
 
     switch (action.type) {
@@ -35,11 +36,10 @@ const reducer = (initial: Operation | undefined, action: Action) => {
             Object.assign(initial, { ...initial, controls: action.payload });
         }
     }
-    console.log(initial);
-    console.log('Re-rendering...');
+    sqore.draw(container);
 };
 
-const _panel = (qubitSize: number, operation?: Operation) => {
+const _panel = (qubitSize: number, dispatch: Dispatch, operation?: Operation) => {
     const options = range(qubitSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
     const target = operation?.targets[0].qId;
     const controls = operation?.controls?.map((control) => control.qId);
@@ -47,8 +47,8 @@ const _panel = (qubitSize: number, operation?: Operation) => {
     const panelElem = _elem('div');
     panelElem.className = 'panel';
     _children(panelElem, [
-        _select('Target', 'target-input', options, target || 0, operation),
-        _checkboxes('Controls', 'controls-input', options, controls || [], operation),
+        _select('Target', 'target-input', options, target || 0, dispatch, operation),
+        _checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
         _text('Display', 'display-input', 'display-arg'),
     ]);
 
@@ -70,11 +70,16 @@ interface Option {
     text: string;
 }
 
+interface Dispatch {
+    (initial: Operation | undefined, action: Action): void;
+}
+
 const _select = (
     label: string,
     className: string,
     options: Option[],
     selectedIndex: number,
+    dispatch: Dispatch,
     operation?: Operation,
 ): HTMLElement => {
     const optionElems = options.map(({ value, text }) => _option(value, text));
@@ -91,7 +96,7 @@ const _select = (
     _children(divElem, [labelElem, selectElem]);
 
     selectElem.onchange = () => {
-        reducer(operation, { type: 'TARGET', payload: [{ qId: selectElem.value }] });
+        dispatch(operation, { type: 'TARGET', payload: [{ qId: selectElem.value }] });
     };
 
     return divElem;
@@ -109,6 +114,7 @@ const _checkboxes = (
     className: string,
     options: Option[],
     selectedIndexes: number[],
+    dispatch: Dispatch,
     operation?: Operation,
 ) => {
     const checkboxElems = options.map((option, index) => {
@@ -122,7 +128,7 @@ const _checkboxes = (
             const newControls = checkedElems.map((elem) => ({
                 qId: elem.value,
             }));
-            reducer(operation, { type: 'CONTROLS', payload: newControls });
+            dispatch(operation, { type: 'CONTROLS', payload: newControls });
         };
 
         return elem;
