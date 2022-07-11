@@ -125,13 +125,13 @@ export class Sqore {
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(circuit);
         const svg: SVGElement = this.generateSvg(composedSqore);
-        container.innerHTML = '';
-        container.appendChild(svg);
+        const previousSvg = container.querySelector('svg');
+        previousSvg == null //
+            ? container.appendChild(svg)
+            : container.replaceChild(svg, previousSvg);
         this.addGateClickHandlers(container, circuit, isEditable, onCircuitChange);
 
-        if (isEditable) {
-            addEditable(container, this, onCircuitChange);
-        }
+        isEditable && addEditable(container, this, onCircuitChange);
     }
 
     /**
