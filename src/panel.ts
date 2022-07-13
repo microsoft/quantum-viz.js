@@ -4,21 +4,30 @@ import { _equivOperation } from './draggable';
 import { Register } from './register';
 import { Sqore } from './sqore';
 
+interface Context {
+    operation: Operation | undefined;
+}
+
+const context: Context = {
+    operation: undefined,
+};
+
 const extensionPanel = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
     const elems = container.querySelectorAll<SVGElement>('[data-id]');
     elems.forEach((elem) =>
         elem.addEventListener('mousedown', () => {
             const dataId = elem.getAttribute('data-id');
             const operation = _equivOperation(dataId, sqore.circuit.operations);
-            const newPanelElem = _panel(qubitSize, dispatch, operation || undefined);
+            context.operation = operation || undefined;
+            const newPanelElem = _panel(qubitSize, dispatch, context.operation);
             container.replaceChild(newPanelElem, panelElem);
             panelElem = newPanelElem;
         }),
     );
     const dispatch = reducer(container, sqore, useRender);
     const qubitSize = sqore.circuit.qubits.length;
-    let panelElem = _panel(qubitSize, dispatch);
-    const prevPanelElem = document.querySelector('.panel');
+    let panelElem = _panel(qubitSize, dispatch, context.operation);
+    const prevPanelElem = container.querySelector('.panel');
     prevPanelElem ? container.replaceChild(panelElem, prevPanelElem) : container.prepend(panelElem);
 };
 
@@ -28,17 +37,17 @@ interface Action {
 }
 
 const reducer =
-    (container: HTMLElement, sqore: Sqore, useRender: () => void) =>
-    (initial: Operation | undefined, action: Action) => {
-        if (initial == null) return;
+    (_container: HTMLElement, _sqore: Sqore, useRender: () => void) =>
+    (operation: Operation | undefined, action: Action) => {
+        if (operation == undefined) return;
 
         switch (action.type) {
             case 'TARGET': {
-                initial.targets = action.payload;
+                operation.targets = action.payload;
                 break;
             }
             case 'CONTROLS': {
-                initial.controls = action.payload;
+                operation.controls = action.payload;
                 break;
             }
         }
@@ -91,7 +100,7 @@ const _select = (
     const optionElems = options.map(({ value, text }) => _option(value, text));
     const selectElem = _elem('select') as HTMLSelectElement;
     _children(selectElem, optionElems);
-    operation == null && selectElem.setAttribute('disabled', 'true');
+    operation == undefined && selectElem.setAttribute('disabled', 'true');
     selectElem.selectedIndex = selectedIndex;
 
     const labelElem = _elem('label') as HTMLLabelElement;
@@ -127,7 +136,7 @@ const _checkboxes = (
         const elem = _checkbox(option.value, option.text);
         const inputElem = elem.querySelector('input') as HTMLInputElement;
         selectedIndexes.includes(index) && inputElem.setAttribute('checked', 'true');
-        operation == null && inputElem.setAttribute('disabled', 'true');
+        operation == undefined && inputElem.setAttribute('disabled', 'true');
 
         inputElem.onchange = () => {
             const checkedElems = Array.from(divElem.querySelectorAll<HTMLInputElement>('input:checked'));
