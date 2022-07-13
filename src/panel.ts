@@ -1,23 +1,34 @@
 import range from 'lodash/range';
 import { Operation } from './circuit';
-import { _equivOperation } from './editable';
+import { _equivOperation } from './draggable';
+import { Register } from './register';
 import { Sqore } from './sqore';
 
-const addPanel = (container: HTMLElement, sqore: Sqore): void => {
+interface Context {
+    operation: Operation | undefined;
+}
+
+const context: Context = {
+    operation: undefined,
+};
+
+const extensionPanel = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
     const elems = container.querySelectorAll<SVGElement>('[data-id]');
     elems.forEach((elem) =>
         elem.addEventListener('mousedown', () => {
             const dataId = elem.getAttribute('data-id');
             const operation = _equivOperation(dataId, sqore.circuit.operations);
-            const newPanelElem = _panel(qubitSize, dispatch, operation || undefined);
+            context.operation = operation || undefined;
+            const newPanelElem = _panel(qubitSize, dispatch, context.operation);
             container.replaceChild(newPanelElem, panelElem);
             panelElem = newPanelElem;
         }),
     );
-    const dispatch = reducer(container, sqore);
+    const dispatch = reducer(container, sqore, useRender);
     const qubitSize = sqore.circuit.qubits.length;
-    let panelElem = _panel(qubitSize, dispatch);
-    container.prepend(panelElem);
+    let panelElem = _panel(qubitSize, dispatch, context.operation);
+    const prevPanelElem = container.querySelector('.panel');
+    prevPanelElem ? container.replaceChild(panelElem, prevPanelElem) : container.prepend(panelElem);
 };
 
 interface Action {
@@ -25,19 +36,27 @@ interface Action {
     payload: unknown;
 }
 
-const reducer = (container: HTMLElement, sqore: Sqore) => (initial: Operation | undefined, action: Action) => {
-    if (initial == null) return;
+const reducer =
+    (_container: HTMLElement, _sqore: Sqore, useRender: () => void) =>
+    (operation: Operation | undefined, action: Action) => {
+        if (operation == undefined) return;
 
-    switch (action.type) {
-        case 'TARGET': {
-            Object.assign(initial, { ...initial, targets: action.payload });
+        switch (action.type) {
+            case 'TARGET': {
+                operation.targets = action.payload as Register[];
+                break;
+            }
+            case 'CONTROLS': {
+                operation.controls = action.payload as Register[];
+                break;
+            }
+            case 'DISPLAY_ARGS': {
+                operation.displayArgs = action.payload as string;
+                break;
+            }
         }
-        case 'CONTROLS': {
-            Object.assign(initial, { ...initial, controls: action.payload });
-        }
-    }
-    sqore.draw(container);
-};
+        useRender();
+    };
 
 const _panel = (qubitSize: number, dispatch: Dispatch, operation?: Operation) => {
     const options = range(qubitSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
@@ -49,7 +68,7 @@ const _panel = (qubitSize: number, dispatch: Dispatch, operation?: Operation) =>
     _children(panelElem, [
         _select('Target', 'target-input', options, target || 0, dispatch, operation),
         _checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
-        _text('Display', 'display-input', 'display-arg'),
+        _text('Display', 'display-input', dispatch, operation),
     ]);
 
     return panelElem;
@@ -71,7 +90,7 @@ interface Option {
 }
 
 interface Dispatch {
-    (initial: Operation | undefined, action: Action): void;
+    (operation: Operation | undefined, action: Action): void;
 }
 
 const _select = (
@@ -85,7 +104,7 @@ const _select = (
     const optionElems = options.map(({ value, text }) => _option(value, text));
     const selectElem = _elem('select') as HTMLSelectElement;
     _children(selectElem, optionElems);
-    operation == null && selectElem.setAttribute('disabled', 'true');
+    operation == undefined && selectElem.setAttribute('disabled', 'true');
     selectElem.selectedIndex = selectedIndex;
 
     const labelElem = _elem('label') as HTMLLabelElement;
@@ -96,7 +115,7 @@ const _select = (
     _children(divElem, [labelElem, selectElem]);
 
     selectElem.onchange = () => {
-        dispatch(operation, { type: 'TARGET', payload: [{ qId: selectElem.value }] });
+        dispatch(operation, { type: 'TARGET', payload: [{ qId: parseInt(selectElem.value) }] });
     };
 
     return divElem;
@@ -121,12 +140,12 @@ const _checkboxes = (
         const elem = _checkbox(option.value, option.text);
         const inputElem = elem.querySelector('input') as HTMLInputElement;
         selectedIndexes.includes(index) && inputElem.setAttribute('checked', 'true');
-        operation == null && inputElem.setAttribute('disabled', 'true');
+        operation == undefined && inputElem.setAttribute('disabled', 'true');
 
         inputElem.onchange = () => {
             const checkedElems = Array.from(divElem.querySelectorAll<HTMLInputElement>('input:checked'));
             const newControls = checkedElems.map((elem) => ({
-                qId: elem.value,
+                qId: parseInt(elem.value),
             }));
             dispatch(operation, { type: 'CONTROLS', payload: newControls });
         };
@@ -155,13 +174,19 @@ const _checkbox = (value: string, text: string) => {
     return labelElem;
 };
 
-const _text = (label: string, className: string, value: string) => {
+const _text = (label: string, className: string, dispatch: Dispatch, operation?: Operation) => {
     const labelElem = _elem('label') as HTMLLabelElement;
     labelElem.textContent = label;
 
     const textElem = _elem('input') as HTMLInputElement;
+    operation == undefined && textElem.setAttribute('disabled', 'true');
     textElem.type = 'text';
-    textElem.value = value;
+    textElem.value = operation?.displayArgs || '';
+    textElem.setAttribute('autofocus', 'true');
+
+    textElem.onchange = () => {
+        dispatch(operation, { type: 'DISPLAY_ARGS', payload: textElem.value });
+    };
 
     const divElem = _elem('div');
     divElem.className = className;
@@ -170,4 +195,4 @@ const _text = (label: string, className: string, value: string) => {
     return divElem;
 };
 
-export { addPanel };
+export { extensionPanel };

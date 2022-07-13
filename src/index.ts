@@ -4,7 +4,6 @@
 import { Sqore } from './sqore';
 import { Circuit } from './circuit';
 import { StyleConfig } from './styles';
-import { addPanel } from './panel';
 
 /**
  * Render `circuit` into `container` at the specified layer depth.
@@ -16,18 +15,8 @@ import { addPanel } from './panel';
  * @param isEditable Optional value enabling/disabling editable feature
  * @param onCircuitChange Optional function to trigger when changing elements in circuit
  */
-export const draw = (
-    circuit: Circuit,
-    container: HTMLElement,
-    style: StyleConfig | string = {},
-    renderDepth = 0,
-    isEditable?: boolean,
-    onCircuitChange?: (circuit: Circuit) => void,
-): void => {
-    const sqore = new Sqore(circuit, style);
-
-    sqore.draw(container, renderDepth, isEditable, onCircuitChange);
-    addPanel(container, sqore);
+export const create = (circuit: Circuit, style: StyleConfig | string = {}): Sqore => {
+    return new Sqore(circuit, style);
 };
 
 export { STYLES } from './styles';
