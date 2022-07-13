@@ -96,7 +96,8 @@ export const style = (customStyle: StyleConfig = {}): string => {
     return `${_defaultGates(styleConfig)}
     ${_classicallyControlledGates(styleConfig)}
     ${_expandCollapse}
-    ${_editable}`;
+    ${_draggable}
+    ${_panel}`;
 };
 
 const _defaultGates = (styleConfig: StyleConfig): string => `
@@ -236,7 +237,7 @@ const _expandCollapse = `
         transition: opacity 1s;
     }`;
 
-const _editable = `
+const _draggable = `
     text {
         user-select: none;
         pointer-events: none;
@@ -262,3 +263,25 @@ const _editable = `
         cursor: copy;
     }
     `;
+
+const _panel = `
+    .container {
+        display: flex;
+    }
+    .panel {
+        display: flex;
+        flex-direction: column;
+        border: solid 2px black;
+        padding: 8px;
+    }
+    .title {
+        margin: 0 0 4px;
+        font-size: 1.2rem;
+    }
+    .block {
+        display: block;
+    }
+    .target-input, .controls-input, .display-input {
+        margin-bottom: 8px;
+    }
+`;

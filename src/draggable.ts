@@ -27,7 +27,6 @@ interface Context {
  * @param onCircuitChange   User-provided callback function triggered when circuit is changed
  */
 const extensionDraggable = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
-    console.log('Draggable extension is running');
     const svg = container.querySelector('svg') as SVGElement;
 
     const context: Context = {
@@ -213,15 +212,6 @@ const _equivDataId = (elem: SVGElement) => {
 };
 
 /**
- * Disable contextmenu default behaviors
- */
-const _addContextMenuEvents = (container: HTMLElement) => {
-    container.addEventListener('contextmenu', (ev: MouseEvent) => {
-        ev.preventDefault();
-    });
-};
-
-/**
  * Add events specifically for dropzoneLayer
  */
 const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElement) => {
@@ -260,7 +250,6 @@ const _addEvents = (context: Context) => {
     const { container, operations, renderFn } = context;
     const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
 
-    _addContextMenuEvents(container);
     _addDropzoneLayerEvents(container, dropzoneLayer);
     _addDocumentEvents(context);
 
@@ -542,4 +531,4 @@ const exportedForTesting = {
     _lastIndex,
 };
 
-export { extensionDraggable, Context, _equivOperation, exportedForTesting };
+export { extensionDraggable, Context, _equivOperation, _equivGateElem, exportedForTesting };

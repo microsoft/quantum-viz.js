@@ -99,38 +99,36 @@ export class Sqore {
      *
      * @param container HTML element for rendering visualization into.
      * @param circuit Circuit object to be rendered.
-     * @param isEditable Optional value enabling/disabling editable feature
-     * @param onCircuitChange Optional function to trigger when changing elements in circuit
      */
-    private renderCircuit(container: HTMLElement): void {
+    private renderCircuit(container: HTMLElement, circuit?: Circuit): void {
         // Create copy of circuit to prevent mutation
-        const circuit: Circuit = JSON.parse(JSON.stringify(this.circuit));
+        const _circuit: Circuit = circuit ?? JSON.parse(JSON.stringify(this.circuit));
         const renderDepth = this.renderDepth;
 
         // Assign unique IDs to each operation
-        circuit.operations.forEach((op, i) => this.fillGateRegistry(op, i.toString()));
+        _circuit.operations.forEach((op, i) => this.fillGateRegistry(op, i.toString()));
 
         // Render operations at starting at given depth
-        circuit.operations = this.selectOpsAtDepth(circuit.operations, renderDepth);
+        _circuit.operations = this.selectOpsAtDepth(_circuit.operations, renderDepth);
 
         // If only one top-level operation, expand automatically:
         if (
-            circuit.operations.length == 1 &&
-            circuit.operations[0].dataAttributes != null &&
-            circuit.operations[0].dataAttributes.hasOwnProperty('id')
+            _circuit.operations.length == 1 &&
+            _circuit.operations[0].dataAttributes != null &&
+            _circuit.operations[0].dataAttributes.hasOwnProperty('id')
         ) {
-            const id: string = circuit.operations[0].dataAttributes['id'];
-            this.expandOperation(circuit.operations, id);
+            const id: string = _circuit.operations[0].dataAttributes['id'];
+            this.expandOperation(_circuit.operations, id);
         }
 
         // Create visualization components
-        const composedSqore: ComposedSqore = this.compose(circuit);
+        const composedSqore: ComposedSqore = this.compose(_circuit);
         const svg: SVGElement = this.generateSvg(composedSqore);
         const previousSvg = container.querySelector('svg');
         previousSvg == null //
             ? container.appendChild(svg)
             : container.replaceChild(svg, previousSvg);
-        this.addGateClickHandlers(container, circuit);
+        this.addGateClickHandlers(container, _circuit);
 
         // Run extensions after every render or re-render
         const extensions = this.extensions;
@@ -328,7 +326,7 @@ export class Sqore {
                     } else if (ctrl.classList.contains('gate-expand')) {
                         this.expandOperation(circuit.operations, gateId);
                     }
-                    this.renderCircuit(container);
+                    this.renderCircuit(container, circuit);
                     ev.stopPropagation();
                 }
             });

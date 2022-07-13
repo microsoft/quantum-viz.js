@@ -43,7 +43,8 @@ const reducer =
 
         switch (action.type) {
             case 'TARGET': {
-                operation.targets = action.payload as Register[];
+                const payload = action.payload as Register[];
+                operation.targets = payload;
                 break;
             }
             case 'CONTROLS': {
@@ -66,6 +67,7 @@ const _panel = (qubitSize: number, dispatch: Dispatch, operation?: Operation) =>
     const panelElem = _elem('div');
     panelElem.className = 'panel';
     _children(panelElem, [
+        _title('EDIT'),
         _select('Target', 'target-input', options, target || 0, dispatch, operation),
         _checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
         _text('Display', 'display-input', dispatch, operation),
@@ -82,6 +84,13 @@ const _elem = (tag: string): HTMLElement => document.createElement(tag);
 const _children = (parentElem: HTMLElement, childElems: HTMLElement[]) => {
     childElems.map((elem) => parentElem.appendChild(elem));
     return parentElem;
+};
+
+const _title = (text: string) => {
+    const elem = _elem('h1');
+    elem.className = 'title';
+    elem.innerText = text;
+    return elem;
 };
 
 interface Option {
@@ -108,6 +117,7 @@ const _select = (
     selectElem.selectedIndex = selectedIndex;
 
     const labelElem = _elem('label') as HTMLLabelElement;
+    labelElem.className = 'block';
     labelElem.textContent = label;
 
     const divElem = _elem('div') as HTMLDivElement;
@@ -154,6 +164,7 @@ const _checkboxes = (
     });
 
     const labelElem = _elem('label');
+    labelElem.className = 'block';
     labelElem.textContent = label;
 
     const divElem = _elem('div') as HTMLDivElement;
@@ -176,6 +187,7 @@ const _checkbox = (value: string, text: string) => {
 
 const _text = (label: string, className: string, dispatch: Dispatch, operation?: Operation) => {
     const labelElem = _elem('label') as HTMLLabelElement;
+    labelElem.className = 'block';
     labelElem.textContent = label;
 
     const textElem = _elem('input') as HTMLInputElement;
