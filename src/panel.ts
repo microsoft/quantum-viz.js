@@ -33,7 +33,7 @@ const extensionPanel = (container: HTMLElement, sqore: Sqore, useRender: () => v
 
 interface Action {
     type: string;
-    payload: Register[];
+    payload: unknown;
 }
 
 const reducer =
@@ -43,11 +43,15 @@ const reducer =
 
         switch (action.type) {
             case 'TARGET': {
-                operation.targets = action.payload;
+                operation.targets = action.payload as Register[];
                 break;
             }
             case 'CONTROLS': {
-                operation.controls = action.payload;
+                operation.controls = action.payload as Register[];
+                break;
+            }
+            case 'DISPLAY_ARGS': {
+                operation.displayArgs = action.payload as string;
                 break;
             }
         }
@@ -64,7 +68,7 @@ const _panel = (qubitSize: number, dispatch: Dispatch, operation?: Operation) =>
     _children(panelElem, [
         _select('Target', 'target-input', options, target || 0, dispatch, operation),
         _checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
-        _text('Display', 'display-input', 'display-arg'),
+        _text('Display', 'display-input', dispatch, operation),
     ]);
 
     return panelElem;
@@ -86,7 +90,7 @@ interface Option {
 }
 
 interface Dispatch {
-    (initial: Operation | undefined, action: Action): void;
+    (operation: Operation | undefined, action: Action): void;
 }
 
 const _select = (
@@ -170,13 +174,19 @@ const _checkbox = (value: string, text: string) => {
     return labelElem;
 };
 
-const _text = (label: string, className: string, value: string) => {
+const _text = (label: string, className: string, dispatch: Dispatch, operation?: Operation) => {
     const labelElem = _elem('label') as HTMLLabelElement;
     labelElem.textContent = label;
 
     const textElem = _elem('input') as HTMLInputElement;
+    operation == undefined && textElem.setAttribute('disabled', 'true');
     textElem.type = 'text';
-    textElem.value = value;
+    textElem.value = operation?.displayArgs || '';
+    textElem.setAttribute('autofocus', 'true');
+
+    textElem.onchange = () => {
+        dispatch(operation, { type: 'DISPLAY_ARGS', payload: textElem.value });
+    };
 
     const divElem = _elem('div');
     divElem.className = className;
