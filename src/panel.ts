@@ -1,9 +1,9 @@
 import range from 'lodash/range';
 import { Operation } from './circuit';
-import { _equivOperation } from './editable';
+import { _equivOperation } from './draggable';
 import { Sqore } from './sqore';
 
-const addPanel = (container: HTMLElement, sqore: Sqore): void => {
+const extensionPanel = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
     const elems = container.querySelectorAll<SVGElement>('[data-id]');
     elems.forEach((elem) =>
         elem.addEventListener('mousedown', () => {
@@ -14,10 +14,11 @@ const addPanel = (container: HTMLElement, sqore: Sqore): void => {
             panelElem = newPanelElem;
         }),
     );
-    const dispatch = reducer(container, sqore);
+    const dispatch = reducer(container, sqore, useRender);
     const qubitSize = sqore.circuit.qubits.length;
     let panelElem = _panel(qubitSize, dispatch);
-    container.prepend(panelElem);
+    const prevPanelElem = document.querySelector('.panel');
+    prevPanelElem ? container.replaceChild(panelElem, prevPanelElem) : container.prepend(panelElem);
 };
 
 interface Action {
@@ -25,19 +26,21 @@ interface Action {
     payload: unknown;
 }
 
-const reducer = (container: HTMLElement, sqore: Sqore) => (initial: Operation | undefined, action: Action) => {
-    if (initial == null) return;
+const reducer =
+    (container: HTMLElement, sqore: Sqore, useRender: () => void) =>
+    (initial: Operation | undefined, action: Action) => {
+        if (initial == null) return;
 
-    switch (action.type) {
-        case 'TARGET': {
-            Object.assign(initial, { ...initial, targets: action.payload });
+        switch (action.type) {
+            case 'TARGET': {
+                Object.assign(initial, { ...initial, targets: action.payload });
+            }
+            case 'CONTROLS': {
+                Object.assign(initial, { ...initial, controls: action.payload });
+            }
         }
-        case 'CONTROLS': {
-            Object.assign(initial, { ...initial, controls: action.payload });
-        }
-    }
-    sqore.draw(container);
-};
+        useRender();
+    };
 
 const _panel = (qubitSize: number, dispatch: Dispatch, operation?: Operation) => {
     const options = range(qubitSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
@@ -170,4 +173,4 @@ const _text = (label: string, className: string, value: string) => {
     return divElem;
 };
 
-export { addPanel };
+export { extensionPanel };

@@ -3,7 +3,8 @@
 
 import { Circuit, ConditionalRender, Operation } from './circuit';
 import { svgNS } from './constants';
-import { addEditable } from './editable';
+import { extensionDraggable } from './draggable';
+import { extensionPanel } from './panel';
 import { formatGates } from './formatters/gateFormatter';
 import { formatInputs } from './formatters/inputFormatter';
 import { formatRegisters } from './formatters/registerFormatter';
@@ -32,6 +33,10 @@ type GateRegistry = {
     [id: string]: Operation;
 };
 
+type Extension = {
+    (container: HTMLElement, sqore: Sqore, useRender: () => void): void;
+};
+
 /**
  * Entrypoint class for rendering circuit visualizations.
  */
@@ -39,6 +44,8 @@ export class Sqore {
     circuit: Circuit;
     style: StyleConfig = {};
     gateRegistry: GateRegistry = {};
+    extensions: Extension[] = [];
+    renderDepth = 0;
 
     /**
      * Initializes Sqore object with custom styles.
@@ -49,6 +56,7 @@ export class Sqore {
     constructor(circuit: Circuit, style: StyleConfig | string = {}) {
         this.circuit = circuit;
         this.style = this.getStyle(style);
+        this.extensions = [];
     }
 
     /**
@@ -56,37 +64,15 @@ export class Sqore {
      *
      * @param container HTML element for rendering visualization into.
      * @param renderDepth Initial layer depth at which to render gates.
-     * @param isEditable Optional value enabling/disabling editable feature
-     * @param onCircuitChange Optional function to trigger when changing elements in circuit
      */
-    draw(
-        container: HTMLElement,
-        renderDepth = 0,
-        isEditable?: boolean,
-        onCircuitChange?: (circuit: Circuit) => void,
-    ): void {
+    draw(container: HTMLElement, renderDepth = 0): Sqore {
         // Inject into container
         if (container == null) throw new Error(`Container not provided.`);
 
-        // Create copy of circuit to prevent mutation
-        const circuit: Circuit = JSON.parse(JSON.stringify(this.circuit));
+        this.renderDepth = renderDepth;
+        this.renderCircuit(container);
 
-        // Assign unique IDs to each operation
-        circuit.operations.forEach((op, i) => this.fillGateRegistry(op, i.toString()));
-
-        // Render operations at starting at given depth
-        circuit.operations = this.selectOpsAtDepth(circuit.operations, renderDepth);
-
-        // If only one top-level operation, expand automatically:
-        if (
-            circuit.operations.length == 1 &&
-            circuit.operations[0].dataAttributes != null &&
-            circuit.operations[0].dataAttributes.hasOwnProperty('id')
-        ) {
-            const id: string = circuit.operations[0].dataAttributes['id'];
-            this.expandOperation(circuit.operations, id);
-        }
-        this.renderCircuit(container, circuit, isEditable, onCircuitChange);
+        return this;
     }
 
     /**
@@ -116,12 +102,27 @@ export class Sqore {
      * @param isEditable Optional value enabling/disabling editable feature
      * @param onCircuitChange Optional function to trigger when changing elements in circuit
      */
-    private renderCircuit(
-        container: HTMLElement,
-        circuit: Circuit,
-        isEditable?: boolean,
-        onCircuitChange?: (circuit: Circuit) => void,
-    ): void {
+    private renderCircuit(container: HTMLElement): void {
+        // Create copy of circuit to prevent mutation
+        const circuit: Circuit = JSON.parse(JSON.stringify(this.circuit));
+        const renderDepth = this.renderDepth;
+
+        // Assign unique IDs to each operation
+        circuit.operations.forEach((op, i) => this.fillGateRegistry(op, i.toString()));
+
+        // Render operations at starting at given depth
+        circuit.operations = this.selectOpsAtDepth(circuit.operations, renderDepth);
+
+        // If only one top-level operation, expand automatically:
+        if (
+            circuit.operations.length == 1 &&
+            circuit.operations[0].dataAttributes != null &&
+            circuit.operations[0].dataAttributes.hasOwnProperty('id')
+        ) {
+            const id: string = circuit.operations[0].dataAttributes['id'];
+            this.expandOperation(circuit.operations, id);
+        }
+
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(circuit);
         const svg: SVGElement = this.generateSvg(composedSqore);
@@ -129,9 +130,12 @@ export class Sqore {
         previousSvg == null //
             ? container.appendChild(svg)
             : container.replaceChild(svg, previousSvg);
-        this.addGateClickHandlers(container, circuit, isEditable, onCircuitChange);
+        this.addGateClickHandlers(container, circuit);
 
-        isEditable && addEditable(container, this, onCircuitChange);
+        // Run extensions after every render or re-render
+        const extensions = this.extensions;
+        extensions != null &&
+            extensions.map((extension) => extension(container, this, () => this.renderCircuit(container)));
     }
 
     /**
@@ -251,14 +255,9 @@ export class Sqore {
      * @param onCircuitChange Optional function to trigger when changing elements in circuit
      *
      */
-    private addGateClickHandlers(
-        container: HTMLElement,
-        circuit: Circuit,
-        isEditable?: boolean,
-        onCircuitChange?: (circuit: Circuit) => void,
-    ): void {
+    private addGateClickHandlers(container: HTMLElement, circuit: Circuit): void {
         this.addClassicalControlHandlers(container);
-        this.addZoomHandlers(container, circuit, isEditable, onCircuitChange);
+        this.addZoomHandlers(container, circuit);
     }
 
     /**
@@ -318,12 +317,7 @@ export class Sqore {
      * @param onCircuitChange Optional function to trigger when changing elements in circuit
      *
      */
-    private addZoomHandlers(
-        container: HTMLElement,
-        circuit: Circuit,
-        isEditable?: boolean,
-        onCircuitChange?: (circuit: Circuit) => void,
-    ): void {
+    private addZoomHandlers(container: HTMLElement, circuit: Circuit): void {
         container.querySelectorAll('.gate .gate-control').forEach((ctrl) => {
             // Zoom in on clicked gate
             ctrl.addEventListener('click', (ev: Event) => {
@@ -334,7 +328,7 @@ export class Sqore {
                     } else if (ctrl.classList.contains('gate-expand')) {
                         this.expandOperation(circuit.operations, gateId);
                     }
-                    this.renderCircuit(container, circuit, isEditable, onCircuitChange);
+                    this.renderCircuit(container);
                     ev.stopPropagation();
                 }
             });
@@ -378,5 +372,25 @@ export class Sqore {
                 delete op.dataAttributes['expanded'];
             }
         });
+    }
+
+    public useDraggable(): Sqore {
+        this.extensions.push(extensionDraggable);
+        return this;
+    }
+
+    public usePanel(): Sqore {
+        this.extensions.push(extensionPanel);
+        return this;
+    }
+
+    public useOnCircuitChange(callback: (circuit: Circuit) => void): Sqore {
+        const extensionOnCircuitChange = (
+            _container: HTMLElement, //
+            _sqore: Sqore,
+            _useRender: () => void,
+        ) => callback(this.circuit);
+        this.extensions.push(extensionOnCircuitChange);
+        return this;
     }
 }

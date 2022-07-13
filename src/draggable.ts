@@ -3,7 +3,7 @@
 
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
-import { Circuit, Operation } from './circuit';
+import { Operation } from './circuit';
 import { box } from './formatters/formatUtils';
 import { Register } from './register';
 import { Sqore } from './sqore';
@@ -26,7 +26,8 @@ interface Context {
  * @param sqore             Sqore object
  * @param onCircuitChange   User-provided callback function triggered when circuit is changed
  */
-const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (circuit: Circuit) => void): void => {
+const extensionDraggable = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
+    console.log('Draggable extension is running');
     const svg = container.querySelector('svg') as SVGElement;
 
     const context: Context = {
@@ -34,7 +35,7 @@ const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (ci
         svg,
         operations: sqore.circuit.operations,
         wireData: _wireData(container),
-        renderFn: _renderFn(container, sqore, onCircuitChange),
+        renderFn: useRender,
         paddingY: 20,
         selectedId: null,
         selectedWire: null,
@@ -519,20 +520,6 @@ const _lastIndex = (dataId: string): number | undefined => {
 };
 
 /**
- * Return a render function with the onCircuitChange callback attached to it
- */
-const _renderFn = (
-    container: HTMLElement,
-    sqore: Sqore,
-    onCircuitChange?: (circuit: Circuit) => void,
-): (() => void) => {
-    return () => {
-        sqore.draw(container, 0, true, onCircuitChange);
-        if (onCircuitChange) onCircuitChange(sqore.circuit);
-    };
-};
-
-/**
  * Object exported for unit testing
  */
 const exportedForTesting = {
@@ -555,4 +542,4 @@ const exportedForTesting = {
     _lastIndex,
 };
 
-export { addEditable, Context, _equivOperation, exportedForTesting };
+export { extensionDraggable, Context, _equivOperation, exportedForTesting };
