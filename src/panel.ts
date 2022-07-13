@@ -1,6 +1,7 @@
 import range from 'lodash/range';
 import { Operation } from './circuit';
 import { _equivOperation } from './draggable';
+import { Register } from './register';
 import { Sqore } from './sqore';
 
 const extensionPanel = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
@@ -23,7 +24,7 @@ const extensionPanel = (container: HTMLElement, sqore: Sqore, useRender: () => v
 
 interface Action {
     type: string;
-    payload: unknown;
+    payload: Register[];
 }
 
 const reducer =
@@ -33,10 +34,12 @@ const reducer =
 
         switch (action.type) {
             case 'TARGET': {
-                Object.assign(initial, { ...initial, targets: action.payload });
+                initial.targets = action.payload;
+                break;
             }
             case 'CONTROLS': {
-                Object.assign(initial, { ...initial, controls: action.payload });
+                initial.controls = action.payload;
+                break;
             }
         }
         useRender();
@@ -99,7 +102,7 @@ const _select = (
     _children(divElem, [labelElem, selectElem]);
 
     selectElem.onchange = () => {
-        dispatch(operation, { type: 'TARGET', payload: [{ qId: selectElem.value }] });
+        dispatch(operation, { type: 'TARGET', payload: [{ qId: parseInt(selectElem.value) }] });
     };
 
     return divElem;
@@ -129,7 +132,7 @@ const _checkboxes = (
         inputElem.onchange = () => {
             const checkedElems = Array.from(divElem.querySelectorAll<HTMLInputElement>('input:checked'));
             const newControls = checkedElems.map((elem) => ({
-                qId: elem.value,
+                qId: parseInt(elem.value),
             }));
             dispatch(operation, { type: 'CONTROLS', payload: newControls });
         };
