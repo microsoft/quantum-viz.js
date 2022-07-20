@@ -6,29 +6,35 @@ import { Sqore } from './sqore';
 
 interface Context {
     operation: Operation | undefined;
+    registerSize: number;
 }
 
 const context: Context = {
     operation: undefined,
+    registerSize: 0,
 };
 
-const extensionPanel = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
+const extensionPanel = (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void => {
     const elems = container.querySelectorAll<SVGElement>('[data-id]');
     elems.forEach((elem) =>
         elem.addEventListener('mousedown', () => {
             const dataId = elem.getAttribute('data-id');
             const operation = _equivOperation(dataId, sqore.circuit.operations);
             context.operation = operation || undefined;
-            const newPanelElem = _panel(qubitSize, dispatch, context.operation);
+            context.registerSize = sqore.circuit.qubits.length;
+            const newPanelElem = _panel(dispatch, context);
             container.replaceChild(newPanelElem, panelElem);
             panelElem = newPanelElem;
         }),
     );
-    const dispatch = reducer(container, sqore, useRender);
-    const qubitSize = sqore.circuit.qubits.length;
-    let panelElem = _panel(qubitSize, dispatch, context.operation);
+
+    const dispatch = update(context, useRefresh);
+
+    let panelElem = _panel(dispatch, context);
     const prevPanelElem = container.querySelector('.panel');
-    prevPanelElem ? container.replaceChild(panelElem, prevPanelElem) : container.prepend(panelElem);
+    prevPanelElem //
+        ? container.replaceChild(panelElem, prevPanelElem)
+        : container.prepend(panelElem);
 };
 
 interface Action {
@@ -36,44 +42,49 @@ interface Action {
     payload: unknown;
 }
 
-const reducer =
-    (_container: HTMLElement, _sqore: Sqore, useRender: () => void) =>
-    (operation: Operation | undefined, action: Action) => {
-        if (operation == undefined) return;
-
-        switch (action.type) {
-            case 'TARGET': {
-                const payload = action.payload as Register[];
-                operation.targets = payload;
-                break;
-            }
-            case 'CONTROLS': {
-                operation.controls = action.payload as Register[];
-                break;
-            }
-            case 'DISPLAY_ARGS': {
-                operation.displayArgs = action.payload as string;
-                break;
-            }
+const update = (context: Context, useRefresh: () => void) => (action: Action) => {
+    switch (action.type) {
+        case 'TARGET': {
+            const { operation } = context;
+            const payload = action.payload as Register[];
+            operation && (operation.targets = payload);
+            break;
         }
-        useRender();
-    };
+        case 'CONTROLS': {
+            const { operation } = context;
+            operation && (operation.controls = action.payload as Register[]);
+            break;
+        }
+        case 'DISPLAY_ARGS': {
+            const { operation } = context;
+            operation && (operation.displayArgs = action.payload as string);
+            break;
+        }
+    }
+    useRefresh();
+};
 
-const _panel = (qubitSize: number, dispatch: Dispatch, operation?: Operation) => {
-    const options = range(qubitSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
-    const target = operation?.targets[0].qId;
-    const controls = operation?.controls?.map((control) => control.qId);
-
+const _panel = (dispatch: Dispatch, context: Context) => {
     const panelElem = _elem('div');
     panelElem.className = 'panel';
-    _children(panelElem, [
+    _children(panelElem, editPanel(dispatch, context));
+
+    return panelElem;
+};
+
+// const addPanel = () => {};
+
+const editPanel = (dispatch: Dispatch, context: Context) => {
+    const { operation, registerSize } = context;
+    const options = range(registerSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
+    const target = operation?.targets[0].qId;
+    const controls = operation?.controls?.map((control) => control.qId);
+    return [
         _title('EDIT'),
         _select('Target', 'target-input', options, target || 0, dispatch, operation),
         _checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
         _text('Display', 'display-input', dispatch, operation),
-    ]);
-
-    return panelElem;
+    ];
 };
 
 const _elem = (tag: string): HTMLElement => document.createElement(tag);
@@ -99,7 +110,7 @@ interface Option {
 }
 
 interface Dispatch {
-    (operation: Operation | undefined, action: Action): void;
+    (action: Action): void;
 }
 
 const _select = (
@@ -125,7 +136,7 @@ const _select = (
     _children(divElem, [labelElem, selectElem]);
 
     selectElem.onchange = () => {
-        dispatch(operation, { type: 'TARGET', payload: [{ qId: parseInt(selectElem.value) }] });
+        dispatch({ type: 'TARGET', payload: [{ qId: parseInt(selectElem.value) }] });
     };
 
     return divElem;
@@ -157,7 +168,7 @@ const _checkboxes = (
             const newControls = checkedElems.map((elem) => ({
                 qId: parseInt(elem.value),
             }));
-            dispatch(operation, { type: 'CONTROLS', payload: newControls });
+            dispatch({ type: 'CONTROLS', payload: newControls });
         };
 
         return elem;
@@ -197,7 +208,7 @@ const _text = (label: string, className: string, dispatch: Dispatch, operation?:
     textElem.setAttribute('autofocus', 'true');
 
     textElem.onchange = () => {
-        dispatch(operation, { type: 'DISPLAY_ARGS', payload: textElem.value });
+        dispatch({ type: 'DISPLAY_ARGS', payload: textElem.value });
     };
 
     const divElem = _elem('div');
