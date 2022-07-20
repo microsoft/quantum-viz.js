@@ -5,40 +5,57 @@ import { Register } from './register';
 import { Sqore } from './sqore';
 
 interface Context {
+    addMode: boolean;
     operations: Operation[];
     operation: Operation | undefined;
     registerSize: number;
 }
 
-let context: Context = {
+const context: Context = {
+    addMode: true,
     operations: [],
     operation: undefined,
     registerSize: 0,
 };
 
 const extensionPanel = (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void => {
+    const dispatch = (action: Action) => {
+        update(action, context, useRefresh);
+
+        const panelElem = panel(dispatch, context);
+        const prevPanelElem = container.querySelector('.panel');
+
+        prevPanelElem && container.replaceChild(panelElem, prevPanelElem);
+    };
+
+    addEvents(dispatch, container, sqore);
+
+    const panelElem = panel(dispatch, context);
+    const prevPanelElem = container.querySelector('.panel');
+
+    prevPanelElem == null && container.prepend(panelElem);
+};
+
+const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => {
     const elems = container.querySelectorAll<SVGElement>('[data-id]');
     elems.forEach((elem) =>
-        elem.addEventListener('mousedown', () => {
+        elem.addEventListener('mousedown', (ev: MouseEvent) => {
+            ev.stopImmediatePropagation();
             const dataId = elem.getAttribute('data-id');
             const operation = _equivOperation(dataId, sqore.circuit.operations);
-            context.operation = operation || undefined;
-            const newPanelElem = panel(dispatch, context);
-            container.replaceChild(newPanelElem, panelElem);
-            panelElem = newPanelElem;
+            dispatch({ type: 'OPERATION', payload: operation });
+            dispatch({ type: 'ADD_MODE', payload: false });
         }),
     );
+
     container.addEventListener('mouseover', () => {
         context.registerSize = sqore.circuit.qubits.length;
         context.operations = sqore.circuit.operations;
     });
 
-    const dispatch = update(context, useRefresh);
-    let panelElem = panel(dispatch, context);
-    const prevPanelElem = container.querySelector('.panel');
-    prevPanelElem //
-        ? container.replaceChild(panelElem, prevPanelElem)
-        : container.prepend(panelElem);
+    container.addEventListener('mousedown', () => {
+        dispatch({ type: 'ADD_MODE', payload: true });
+    });
 };
 
 interface Action {
@@ -46,10 +63,15 @@ interface Action {
     payload: unknown;
 }
 
-const update = (context: Context, useRefresh: () => void) => (action: Action) => {
+const update = (action: Action, context: Context, useRefresh: () => void) => {
     switch (action.type) {
+        case 'ADD_MODE': {
+            context.addMode = action.payload as boolean;
+            break;
+        }
         case 'OPERATION': {
             context.operation = action.payload as Operation;
+            break;
         }
         case 'TARGET': {
             const { operation } = context;
@@ -81,22 +103,35 @@ const update = (context: Context, useRefresh: () => void) => (action: Action) =>
 const panel = (dispatch: Dispatch, context: Context) => {
     const panelElem = elem('div');
     panelElem.className = 'panel';
-    children(panelElem, addPanel(dispatch, context));
-    // _children(panelElem, editPanel(dispatch, context));
+    children(
+        panelElem,
+        context.addMode //
+            ? addPanel(dispatch, context)
+            : editPanel(dispatch, context),
+    );
     return panelElem;
 };
 
 const addPanel = (dispatch: Dispatch, context: Context) => {
-    const buttonElem = elem('button') as HTMLButtonElement;
-    buttonElem.textContent = 'H';
-    buttonElem.addEventListener('mouseup', () => {
+    const hElem = elem('button') as HTMLButtonElement;
+    hElem.textContent = 'H';
+    const xElem = elem('button') as HTMLButtonElement;
+    xElem.textContent = 'X';
+    hElem.addEventListener('mouseup', () => {
         const operation = {
             gate: 'H',
             targets: [{ qId: 0 }],
         };
         dispatch({ type: 'ADD_OPERATION', payload: operation });
     });
-    return [title('ADD'), buttonElem];
+    xElem.addEventListener('mouseup', () => {
+        const operation = {
+            gate: 'X',
+            targets: [{ qId: 1 }],
+        };
+        dispatch({ type: 'ADD_OPERATION', payload: operation });
+    });
+    return [title('ADD'), hElem, xElem];
 };
 
 const editPanel = (dispatch: Dispatch, context: Context) => {
@@ -106,9 +141,9 @@ const editPanel = (dispatch: Dispatch, context: Context) => {
     const controls = operation?.controls?.map((control) => control.qId);
     return [
         title('EDIT'),
-        _select('Target', 'target-input', options, target || 0, dispatch, operation),
-        _checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
-        _text('Display', 'display-input', dispatch, operation),
+        select('Target', 'target-input', options, target || 0, dispatch, operation),
+        checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
+        text('Display', 'display-input', dispatch, operation),
     ];
 };
 
@@ -138,7 +173,7 @@ interface Dispatch {
     (action: Action): void;
 }
 
-const _select = (
+const select = (
     label: string,
     className: string,
     options: Option[],
@@ -146,7 +181,7 @@ const _select = (
     dispatch: Dispatch,
     operation?: Operation,
 ): HTMLElement => {
-    const optionElems = options.map(({ value, text }) => _option(value, text));
+    const optionElems = options.map(({ value, text }) => option(value, text));
     const selectElem = elem('select') as HTMLSelectElement;
     children(selectElem, optionElems);
     operation == undefined && selectElem.setAttribute('disabled', 'true');
@@ -167,14 +202,14 @@ const _select = (
     return divElem;
 };
 
-const _option = (value: string, text: string) => {
+const option = (value: string, text: string) => {
     const optionElem = elem('option') as HTMLOptionElement;
     optionElem.value = value;
     optionElem.textContent = text;
     return optionElem;
 };
 
-const _checkboxes = (
+const checkboxes = (
     label: string,
     className: string,
     options: Option[],
@@ -183,16 +218,19 @@ const _checkboxes = (
     operation?: Operation,
 ) => {
     const checkboxElems = options.map((option, index) => {
-        const elem = _checkbox(option.value, option.text);
+        const elem = checkbox(option.value, option.text);
         const inputElem = elem.querySelector('input') as HTMLInputElement;
         selectedIndexes.includes(index) && inputElem.setAttribute('checked', 'true');
         operation == undefined && inputElem.setAttribute('disabled', 'true');
 
         inputElem.onchange = () => {
+            // Get all checked options
             const checkedElems = Array.from(divElem.querySelectorAll<HTMLInputElement>('input:checked'));
+            // Generate new controls from checked options
             const newControls = checkedElems.map((elem) => ({
                 qId: parseInt(elem.value),
             }));
+            // Dispatch new controls
             dispatch({ type: 'CONTROLS', payload: newControls });
         };
 
@@ -210,7 +248,7 @@ const _checkboxes = (
     return divElem;
 };
 
-const _checkbox = (value: string, text: string) => {
+const checkbox = (value: string, text: string) => {
     const inputElem = elem('input') as HTMLInputElement;
     inputElem.type = 'checkbox';
     inputElem.value = value;
@@ -221,7 +259,7 @@ const _checkbox = (value: string, text: string) => {
     return labelElem;
 };
 
-const _text = (label: string, className: string, dispatch: Dispatch, operation?: Operation) => {
+const text = (label: string, className: string, dispatch: Dispatch, operation?: Operation) => {
     const labelElem = elem('label') as HTMLLabelElement;
     labelElem.className = 'block';
     labelElem.textContent = label;
