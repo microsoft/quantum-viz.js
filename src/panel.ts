@@ -5,11 +5,13 @@ import { Register } from './register';
 import { Sqore } from './sqore';
 
 interface Context {
+    operations: Operation[];
     operation: Operation | undefined;
     registerSize: number;
 }
 
-const context: Context = {
+let context: Context = {
+    operations: [],
     operation: undefined,
     registerSize: 0,
 };
@@ -21,16 +23,18 @@ const extensionPanel = (container: HTMLElement, sqore: Sqore, useRefresh: () => 
             const dataId = elem.getAttribute('data-id');
             const operation = _equivOperation(dataId, sqore.circuit.operations);
             context.operation = operation || undefined;
-            context.registerSize = sqore.circuit.qubits.length;
-            const newPanelElem = _panel(dispatch, context);
+            const newPanelElem = panel(dispatch, context);
             container.replaceChild(newPanelElem, panelElem);
             panelElem = newPanelElem;
         }),
     );
+    container.addEventListener('mouseover', () => {
+        context.registerSize = sqore.circuit.qubits.length;
+        context.operations = sqore.circuit.operations;
+    });
 
     const dispatch = update(context, useRefresh);
-
-    let panelElem = _panel(dispatch, context);
+    let panelElem = panel(dispatch, context);
     const prevPanelElem = container.querySelector('.panel');
     prevPanelElem //
         ? container.replaceChild(panelElem, prevPanelElem)
@@ -44,35 +48,56 @@ interface Action {
 
 const update = (context: Context, useRefresh: () => void) => (action: Action) => {
     switch (action.type) {
+        case 'OPERATION': {
+            context.operation = action.payload as Operation;
+        }
         case 'TARGET': {
             const { operation } = context;
             const payload = action.payload as Register[];
             operation && (operation.targets = payload);
+            useRefresh();
             break;
         }
         case 'CONTROLS': {
             const { operation } = context;
             operation && (operation.controls = action.payload as Register[]);
+            useRefresh();
             break;
         }
         case 'DISPLAY_ARGS': {
             const { operation } = context;
             operation && (operation.displayArgs = action.payload as string);
+            useRefresh();
+            break;
+        }
+        case 'ADD_OPERATION': {
+            context.operations.push(action.payload as Operation);
+            useRefresh();
             break;
         }
     }
-    useRefresh();
 };
 
-const _panel = (dispatch: Dispatch, context: Context) => {
-    const panelElem = _elem('div');
+const panel = (dispatch: Dispatch, context: Context) => {
+    const panelElem = elem('div');
     panelElem.className = 'panel';
-    _children(panelElem, editPanel(dispatch, context));
-
+    children(panelElem, addPanel(dispatch, context));
+    // _children(panelElem, editPanel(dispatch, context));
     return panelElem;
 };
 
-// const addPanel = () => {};
+const addPanel = (dispatch: Dispatch, context: Context) => {
+    const buttonElem = elem('button') as HTMLButtonElement;
+    buttonElem.textContent = 'H';
+    buttonElem.addEventListener('mouseup', () => {
+        const operation = {
+            gate: 'H',
+            targets: [{ qId: 0 }],
+        };
+        dispatch({ type: 'ADD_OPERATION', payload: operation });
+    });
+    return [title('ADD'), buttonElem];
+};
 
 const editPanel = (dispatch: Dispatch, context: Context) => {
     const { operation, registerSize } = context;
@@ -80,28 +105,28 @@ const editPanel = (dispatch: Dispatch, context: Context) => {
     const target = operation?.targets[0].qId;
     const controls = operation?.controls?.map((control) => control.qId);
     return [
-        _title('EDIT'),
+        title('EDIT'),
         _select('Target', 'target-input', options, target || 0, dispatch, operation),
         _checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
         _text('Display', 'display-input', dispatch, operation),
     ];
 };
 
-const _elem = (tag: string): HTMLElement => document.createElement(tag);
+const elem = (tag: string): HTMLElement => document.createElement(tag);
 
 /**
  * Append all child elements to a parent element
  */
-const _children = (parentElem: HTMLElement, childElems: HTMLElement[]) => {
+const children = (parentElem: HTMLElement, childElems: HTMLElement[]) => {
     childElems.map((elem) => parentElem.appendChild(elem));
     return parentElem;
 };
 
-const _title = (text: string) => {
-    const elem = _elem('h1');
-    elem.className = 'title';
-    elem.innerText = text;
-    return elem;
+const title = (text: string) => {
+    const titleElem = elem('h2');
+    titleElem.className = 'title';
+    titleElem.innerText = text;
+    return titleElem;
 };
 
 interface Option {
@@ -122,18 +147,18 @@ const _select = (
     operation?: Operation,
 ): HTMLElement => {
     const optionElems = options.map(({ value, text }) => _option(value, text));
-    const selectElem = _elem('select') as HTMLSelectElement;
-    _children(selectElem, optionElems);
+    const selectElem = elem('select') as HTMLSelectElement;
+    children(selectElem, optionElems);
     operation == undefined && selectElem.setAttribute('disabled', 'true');
     selectElem.selectedIndex = selectedIndex;
 
-    const labelElem = _elem('label') as HTMLLabelElement;
+    const labelElem = elem('label') as HTMLLabelElement;
     labelElem.className = 'block';
     labelElem.textContent = label;
 
-    const divElem = _elem('div') as HTMLDivElement;
+    const divElem = elem('div') as HTMLDivElement;
     divElem.className = className;
-    _children(divElem, [labelElem, selectElem]);
+    children(divElem, [labelElem, selectElem]);
 
     selectElem.onchange = () => {
         dispatch({ type: 'TARGET', payload: [{ qId: parseInt(selectElem.value) }] });
@@ -143,10 +168,10 @@ const _select = (
 };
 
 const _option = (value: string, text: string) => {
-    const elem = _elem('option') as HTMLOptionElement;
-    elem.value = value;
-    elem.textContent = text;
-    return elem;
+    const optionElem = elem('option') as HTMLOptionElement;
+    optionElem.value = value;
+    optionElem.textContent = text;
+    return optionElem;
 };
 
 const _checkboxes = (
@@ -174,34 +199,34 @@ const _checkboxes = (
         return elem;
     });
 
-    const labelElem = _elem('label');
+    const labelElem = elem('label');
     labelElem.className = 'block';
     labelElem.textContent = label;
 
-    const divElem = _elem('div') as HTMLDivElement;
+    const divElem = elem('div') as HTMLDivElement;
     divElem.className = className;
-    _children(divElem, [labelElem, ...checkboxElems]);
+    children(divElem, [labelElem, ...checkboxElems]);
 
     return divElem;
 };
 
 const _checkbox = (value: string, text: string) => {
-    const inputElem = _elem('input') as HTMLInputElement;
+    const inputElem = elem('input') as HTMLInputElement;
     inputElem.type = 'checkbox';
     inputElem.value = value;
 
-    const labelElem = _elem('label') as HTMLLabelElement;
+    const labelElem = elem('label') as HTMLLabelElement;
     labelElem.textContent = text;
     labelElem.prepend(inputElem);
     return labelElem;
 };
 
 const _text = (label: string, className: string, dispatch: Dispatch, operation?: Operation) => {
-    const labelElem = _elem('label') as HTMLLabelElement;
+    const labelElem = elem('label') as HTMLLabelElement;
     labelElem.className = 'block';
     labelElem.textContent = label;
 
-    const textElem = _elem('input') as HTMLInputElement;
+    const textElem = elem('input') as HTMLInputElement;
     operation == undefined && textElem.setAttribute('disabled', 'true');
     textElem.type = 'text';
     textElem.value = operation?.displayArgs || '';
@@ -211,9 +236,9 @@ const _text = (label: string, className: string, dispatch: Dispatch, operation?:
         dispatch({ type: 'DISPLAY_ARGS', payload: textElem.value });
     };
 
-    const divElem = _elem('div');
+    const divElem = elem('div');
     divElem.className = className;
-    _children(divElem, [labelElem, textElem]);
+    children(divElem, [labelElem, textElem]);
 
     return divElem;
 };

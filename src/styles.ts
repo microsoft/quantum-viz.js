@@ -269,9 +269,10 @@ const _panel = `
         display: flex;
     }
     .panel {
+        min-width: 96px;
         display: flex;
         flex-direction: column;
-        border: solid 2px black;
+        border: solid 1.5px black;
         padding: 8px;
     }
     .title {
