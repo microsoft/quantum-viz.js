@@ -269,7 +269,7 @@ const _panel = `
         display: flex;
     }
     .panel {
-        min-width: 96px;
+        width: 144px;
         display: flex;
         flex-direction: column;
         border: solid 1.5px black;
@@ -284,5 +284,17 @@ const _panel = `
     }
     .target-input, .controls-input, .display-input {
         margin-bottom: 8px;
+    }
+    .panel-gate {
+        width: 40px;
+        height: 40px;
+        border: solid 1px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+    }
+    .panel-gate.gate-H {
+        background-color: #D9F1FA;
     }
 `;

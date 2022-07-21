@@ -124,7 +124,7 @@ export class Sqore {
         // Create visualization components
         const composedSqore: ComposedSqore = this.compose(_circuit);
         const svg: SVGElement = this.generateSvg(composedSqore);
-        const previousSvg = container.querySelector('svg');
+        const previousSvg = container.querySelector('svg[id]');
         previousSvg == null //
             ? container.appendChild(svg)
             : container.replaceChild(svg, previousSvg);

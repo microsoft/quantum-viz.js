@@ -53,9 +53,11 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
         context.operations = sqore.circuit.operations;
     });
 
-    container.addEventListener('mousedown', () => {
-        dispatch({ type: 'ADD_MODE', payload: true });
-    });
+    const svgElem = container.querySelector('svg[id]');
+    svgElem &&
+        svgElem.addEventListener('mousedown', () => {
+            dispatch({ type: 'ADD_MODE', payload: true });
+        });
 };
 
 interface Action {
@@ -82,7 +84,11 @@ const update = (action: Action, context: Context, useRefresh: () => void) => {
         }
         case 'CONTROLS': {
             const { operation } = context;
-            operation && (operation.controls = action.payload as Register[]);
+            if (operation) {
+                const payload = action.payload as Register[];
+                operation.controls = payload;
+                operation.isControlled = payload.length > 0 ? true : false;
+            }
             useRefresh();
             break;
         }
@@ -113,25 +119,10 @@ const panel = (dispatch: Dispatch, context: Context) => {
 };
 
 const addPanel = (dispatch: Dispatch, context: Context) => {
-    const hElem = elem('button') as HTMLButtonElement;
-    hElem.textContent = 'H';
-    const xElem = elem('button') as HTMLButtonElement;
-    xElem.textContent = 'X';
-    hElem.addEventListener('mouseup', () => {
-        const operation = {
-            gate: 'H',
-            targets: [{ qId: 0 }],
-        };
-        dispatch({ type: 'ADD_OPERATION', payload: operation });
-    });
-    xElem.addEventListener('mouseup', () => {
-        const operation = {
-            gate: 'X',
-            targets: [{ qId: 1 }],
-        };
-        dispatch({ type: 'ADD_OPERATION', payload: operation });
-    });
-    return [title('ADD'), hElem, xElem];
+    const hGate = gate(dispatch, 'H');
+    const xGate = gate(dispatch, 'X');
+    const zzGate = gate(dispatch, 'ZZ');
+    return [title('ADD'), hGate, xGate, zzGate];
 };
 
 const editPanel = (dispatch: Dispatch, context: Context) => {
@@ -147,7 +138,11 @@ const editPanel = (dispatch: Dispatch, context: Context) => {
     ];
 };
 
-const elem = (tag: string): HTMLElement => document.createElement(tag);
+const elem = (tag: string, className?: string): HTMLElement => {
+    const _elem = document.createElement(tag);
+    _elem.className = className || '';
+    return _elem;
+};
 
 /**
  * Append all child elements to a parent element
@@ -279,6 +274,44 @@ const text = (label: string, className: string, dispatch: Dispatch, operation?: 
     children(divElem, [labelElem, textElem]);
 
     return divElem;
+};
+
+/**
+ * Generate gate element for Add Panel based on type of gate
+ * @param dispatch
+ * @param type i.e. 'H' or 'X'
+ */
+const gate = (dispatch: Dispatch, type: string) => {
+    const operation = defaultGates[type];
+    if (operation == null) throw new Error(`Gate ${type} not available`);
+    const divElem = elem('div', `panel-gate gate-${type}`);
+    divElem.addEventListener('mousedown', () => {
+        dispatch({ type: 'ADD_OPERATION', payload: operation });
+    });
+    divElem.textContent = type;
+    return divElem;
+};
+
+interface DefaultGates {
+    [index: string]: Operation;
+}
+
+const defaultGates: DefaultGates = {
+    H: {
+        gate: 'H',
+        targets: [{ qId: 0 }],
+    },
+    X: {
+        gate: 'X',
+        isControlled: true,
+        controls: [{ qId: 0 }],
+        targets: [{ qId: 1 }],
+    },
+    ZZ: {
+        gate: 'ZZ',
+        targets: [{ qId: 0 }, { qId: 1 }],
+        isControlled: true,
+    },
 };
 
 export { extensionPanel };
