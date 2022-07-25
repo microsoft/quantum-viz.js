@@ -531,4 +531,12 @@ const exportedForTesting = {
     _lastIndex,
 };
 
-export { extensionDraggable, Context, _equivOperation, _equivGateElem, exportedForTesting };
+export {
+    extensionDraggable,
+    Context,
+    _equivOperation,
+    _equivGateElem,
+    _equivParentArray,
+    _lastIndex,
+    exportedForTesting,
+};

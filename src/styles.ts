@@ -270,10 +270,12 @@ const _panel = `
     }
     .panel {
         width: 144px;
+        border: solid 1px black;
+        padding: 8px;
+    }
+    .edit-panel {
         display: flex;
         flex-direction: column;
-        border: solid 1.5px black;
-        padding: 8px;
     }
     .title {
         margin: 0 0 4px;
@@ -285,16 +287,9 @@ const _panel = `
     .target-input, .controls-input, .display-input {
         margin-bottom: 8px;
     }
-    .panel-gate {
+    .add-panel-gate {
         width: 40px;
         height: 40px;
-        border: solid 1px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 14px;
-    }
-    .panel-gate.gate-H {
-        background-color: #D9F1FA;
+        border: 1px solid black;
     }
 `;
