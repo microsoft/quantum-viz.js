@@ -7,6 +7,7 @@ import { Operation } from './circuit';
 import { box } from './formatters/formatUtils';
 import { Register } from './register';
 import { Sqore } from './sqore';
+import { panelContext } from './panel';
 
 interface Context {
     container: HTMLElement;
@@ -225,7 +226,7 @@ const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElem
  * Add events for document
  */
 const _addDocumentEvents = (context: Context) => {
-    const { container, svg } = context;
+    const { container } = context;
 
     document.addEventListener('keydown', (ev: KeyboardEvent) => {
         if (ev.ctrlKey && context.selectedId) {
@@ -244,14 +245,15 @@ const _addDocumentEvents = (context: Context) => {
     document.addEventListener('mouseup', () => {
         container.classList.remove('moving', 'copying');
     });
+};
 
-    document.addEventListener(
-        'contextmenu',
-        (ev: Event) => {
-            ev.preventDefault();
-        },
-        false,
-    );
+/**
+ * Disable contextmenu default behaviors
+ */
+const _addContextMenuEvent = (container: HTMLElement) => {
+    container.addEventListener('contextmenu', (ev: MouseEvent) => {
+        ev.preventDefault();
+    });
 };
 
 /**
@@ -261,6 +263,7 @@ const _addEvents = (context: Context) => {
     const { container, operations, renderFn } = context;
     const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
 
+    _addContextMenuEvent(container);
     _addDropzoneLayerEvents(container, dropzoneLayer);
     _addDocumentEvents(context);
 

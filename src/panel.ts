@@ -86,7 +86,7 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
 
 interface Action {
     type: string;
-    payload: unknown;
+    payload?: unknown;
 }
 
 const update = (action: Action, context: Context, useRefresh: () => void) => {
@@ -136,14 +136,17 @@ const update = (action: Action, context: Context, useRefresh: () => void) => {
             useRefresh();
             break;
         }
-        case 'DROPZONE_LAYER': {
-            const isVisible = action.payload as boolean;
+        case 'DISPLAY_DROPZONE_LAYER': {
             const { container } = context;
             if (container) {
                 const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
-                dropzoneLayer.style.display = isVisible ? 'block' : 'none';
+                dropzoneLayer.style.display = 'block';
             }
             break;
+        }
+        case 'DISPLAY_CURSOR_MOVING': {
+            const { container } = context;
+            container && container.classList.add('moving');
         }
     }
 };
@@ -386,7 +389,8 @@ const gate = (dispatch: Dispatch, type: string, x: number, y: number) => {
     gateElem.addEventListener('mousedown', () => {
         // dispatch({ type: 'ADD_OPERATION', payload: operation });
         dispatch({ type: 'OPERATION', payload: cloneDeep(operation) });
-        dispatch({ type: 'DROPZONE_LAYER', payload: true });
+        dispatch({ type: 'DISPLAY_DROPZONE_LAYER' });
+        dispatch({ type: 'DISPLAY_CURSOR_MOVING', payload: true });
     });
     return gateElem;
 };
@@ -412,4 +416,4 @@ const defaultGates: DefaultGates = {
     },
 };
 
-export { extensionPanel };
+export { extensionPanel, context as panelContext };
