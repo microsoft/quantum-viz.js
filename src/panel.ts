@@ -416,4 +416,4 @@ const defaultGates: DefaultGates = {
     },
 };
 
-export { extensionPanel, context as panelContext };
+export { extensionPanel };

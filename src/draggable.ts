@@ -7,7 +7,6 @@ import { Operation } from './circuit';
 import { box } from './formatters/formatUtils';
 import { Register } from './register';
 import { Sqore } from './sqore';
-import { panelContext } from './panel';
 
 interface Context {
     container: HTMLElement;
