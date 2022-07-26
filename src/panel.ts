@@ -335,9 +335,9 @@ const text = (label: string, className: string, dispatch: Dispatch, operation?: 
 const toMetadata = (operation: Operation | undefined, x: number, y: number): Metadata => {
     const metadata: Metadata = {
         type: GateType.Invalid,
-        x: x + minGateWidth / 2,
+        x: x + 1 + minGateWidth / 2, // offset by 1 for left padding
         controlsY: [],
-        targetsY: [y + gateHeight / 2],
+        targetsY: [y + 1 + gateHeight / 2], // offset by 1 for top padding
         label: '',
         width: -1,
     };
@@ -367,7 +367,8 @@ const toMetadata = (operation: Operation | undefined, x: number, y: number): Met
     } else {
         metadata.type = GateType.Unitary;
         metadata.label = gate;
-        metadata.targetsY = [[y + gateHeight / 2]];
+        metadata.targetsY = [[y + 1 + gateHeight / 2]];
+        // GateType.Unitary wants matrix array. Also, offset by 1 for top padding
     }
 
     if (displayArgs != null) metadata.displayArgs = displayArgs;
