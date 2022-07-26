@@ -27,7 +27,7 @@ interface Context {
  * @param onCircuitChange   User-provided callback function triggered when circuit is changed
  */
 const extensionDraggable = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
-    const svg = container.querySelector('svg') as SVGElement;
+    const svg = container.querySelector('svg[id]') as SVGElement;
 
     const context: Context = {
         container: container,
@@ -80,11 +80,14 @@ const _wireYs = (elem: SVGGraphicsElement, wireData: number[]): number[] => {
  * Get list of host elements that dropzones can be attached to
  */
 const _hostElems = (container: HTMLElement): SVGGraphicsElement[] => {
-    return Array.from(
-        container.querySelectorAll<SVGGraphicsElement>(
-            '[class^="gate-"]:not(.gate-control, .gate-swap), .control-dot, .oplus, .cross',
-        ),
-    );
+    const svgElem = container.querySelector('svg[id]');
+    return svgElem != null
+        ? Array.from(
+              svgElem.querySelectorAll<SVGGraphicsElement>(
+                  '[class^="gate-"]:not(.gate-control, .gate-swap), .control-dot, .oplus, .cross',
+              ),
+          )
+        : [];
 };
 
 /**
@@ -137,7 +140,7 @@ const _dropzoneLayer = (context: Context) => {
 
         // Check to prevent group gates creating dropzones between wires
         if (wirePrefix) {
-            const prefixX = wirePrefix.prefixX;
+            const { prefixX } = wirePrefix;
             const elemDropzone = box(prefixX, cY - paddingY, cX - prefixX, paddingY * 2, 'dropzone');
             elemDropzone.setAttribute('data-dropzone-id', _equivDataId(elem) || '');
             elemDropzone.setAttribute('data-dropzone-wire', `${wirePrefix.index}`);
@@ -153,7 +156,7 @@ const _dropzoneLayer = (context: Context) => {
             wireYs.map((wireY) => {
                 const wirePrefix = wirePrefixes.find((item) => item.wireY === wireY);
                 if (wirePrefix) {
-                    const prefixX = wirePrefix.prefixX;
+                    const { prefixX } = wirePrefix;
                     const elemDropzone = box(prefixX, wireY - paddingY, x - prefixX, paddingY * 2, 'dropzone');
                     elemDropzone.setAttribute('data-dropzone-id', _equivDataId(elem) || '');
                     elemDropzone.setAttribute('data-dropzone-wire', `${wirePrefix.index}`);
@@ -222,7 +225,7 @@ const _addDropzoneLayerEvents = (container: HTMLElement, dropzoneLayer: SVGGElem
  * Add events for document
  */
 const _addDocumentEvents = (context: Context) => {
-    const { container } = context;
+    const { container, svg } = context;
 
     document.addEventListener('keydown', (ev: KeyboardEvent) => {
         if (ev.ctrlKey && context.selectedId) {
@@ -241,6 +244,14 @@ const _addDocumentEvents = (context: Context) => {
     document.addEventListener('mouseup', () => {
         container.classList.remove('moving', 'copying');
     });
+
+    document.addEventListener(
+        'contextmenu',
+        (ev: Event) => {
+            ev.preventDefault();
+        },
+        false,
+    );
 };
 
 /**

@@ -1,9 +1,13 @@
-import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
+import range from 'lodash/range';
 import { Operation } from './circuit';
+import { gateHeight, minGateWidth } from './constants';
 import { _equivOperation, _equivParentArray, _lastIndex } from './draggable';
+import { _formatGate } from './formatters/gateFormatter';
+import { GateType, Metadata } from './metadata';
 import { Register } from './register';
 import { Sqore } from './sqore';
+import { getGateWidth } from './utils';
 
 interface Context {
     addMode: boolean;
@@ -129,7 +133,6 @@ const update = (action: Action, context: Context, useRefresh: () => void) => {
             ) {
                 targetOperationParent.splice(targetLastIndex, 0, context.operation);
             }
-            // context.operations.push(action.payload as Operation);
             useRefresh();
             break;
         }
@@ -138,7 +141,7 @@ const update = (action: Action, context: Context, useRefresh: () => void) => {
             const { container } = context;
             if (container) {
                 const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
-                isVisible ? (dropzoneLayer.style.display = 'block') : 'none';
+                dropzoneLayer.style.display = isVisible ? 'block' : 'none';
             }
             break;
         }
@@ -158,8 +161,17 @@ const panel = (dispatch: Dispatch, context: Context) => {
 
 const addPanel = (dispatch: Dispatch, context: Context) => {
     const addPanelElem = elem('div', 'add-panel');
-    const hGate = gate(dispatch, 'H');
-    children(addPanelElem, [title('ADD'), hGate]);
+    const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgElem.setAttribute('width', '144px');
+    svgElem.setAttribute('height', '100%');
+    const hGate = gate(dispatch, 'H', 0, 0);
+    const xGate = gate(dispatch, 'X', 50, 0);
+    const x2Gate = gate(dispatch, 'X', 100, 0);
+    svgElem.appendChild(hGate);
+    svgElem.appendChild(xGate);
+    svgElem.appendChild(x2Gate);
+    children(addPanelElem, [title('ADD')]);
+    addPanelElem.appendChild(svgElem);
     return addPanelElem;
 };
 
@@ -316,22 +328,67 @@ const text = (label: string, className: string, dispatch: Dispatch, operation?: 
 
     return divElem;
 };
+
+const toMetadata = (operation: Operation | undefined, x: number, y: number): Metadata => {
+    const metadata: Metadata = {
+        type: GateType.Invalid,
+        x: x + minGateWidth / 2,
+        controlsY: [],
+        targetsY: [y + gateHeight / 2],
+        label: '',
+        width: -1,
+    };
+
+    if (operation == null) return metadata;
+
+    const {
+        gate,
+        displayArgs,
+        isMeasurement,
+        // isConditional,
+        isControlled,
+        // isAdjoint,
+        // conditionalRender,
+    } = operation;
+
+    if (isMeasurement) {
+        metadata.type = GateType.Measure;
+    } else if (gate === 'SWAP') {
+        metadata.type = GateType.Swap;
+    } else if (isControlled) {
+        metadata.type = gate === 'X' ? GateType.Cnot : GateType.ControlledUnitary;
+        metadata.label = gate;
+    } else if (gate === 'X') {
+        metadata.type = GateType.X;
+        metadata.label = gate;
+    } else {
+        metadata.type = GateType.Unitary;
+        metadata.label = gate;
+        metadata.targetsY = [[y + gateHeight / 2]];
+    }
+
+    if (displayArgs != null) metadata.displayArgs = displayArgs;
+    metadata.width = getGateWidth(metadata);
+
+    return metadata;
+};
+
 /**
  * Generate gate element for Add Panel based on type of gate
  * @param dispatch
  * @param type i.e. 'H' or 'X'
  */
-const gate = (dispatch: Dispatch, type: string) => {
+const gate = (dispatch: Dispatch, type: string, x: number, y: number) => {
     const operation = defaultGates[type];
     if (operation == null) throw new Error(`Gate ${type} not available`);
-    const divElem = elem('div', `add-panel-gate`);
-    divElem.addEventListener('mousedown', () => {
+    const metadata = toMetadata(operation, x, y);
+    const gateElem = _formatGate(metadata).cloneNode(true);
+    gateElem.addEventListener('mousedown', () => {
         // dispatch({ type: 'ADD_OPERATION', payload: operation });
         dispatch({ type: 'OPERATION', payload: cloneDeep(operation) });
         dispatch({ type: 'DROPZONE_LAYER', payload: true });
     });
-    divElem.textContent = type;
-    return divElem;
+    return gateElem;
 };
 
 interface DefaultGates {
@@ -346,8 +403,7 @@ const defaultGates: DefaultGates = {
     X: {
         gate: 'X',
         isControlled: true,
-        controls: [{ qId: 0 }],
-        targets: [{ qId: 1 }],
+        targets: [{ qId: 0 }],
     },
     ZZ: {
         gate: 'ZZ',
