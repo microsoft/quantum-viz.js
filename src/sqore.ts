@@ -4,7 +4,7 @@
 import { Circuit, ConditionalRender, Operation } from './circuit';
 import { svgNS } from './constants';
 import { extensionDraggable } from './draggable';
-import { extensionPanel } from './panel';
+import { extensionPanel, PanelOptions } from './panel';
 import { formatGates } from './formatters/gateFormatter';
 import { formatInputs } from './formatters/inputFormatter';
 import { formatRegisters } from './formatters/registerFormatter';
@@ -373,12 +373,12 @@ export class Sqore {
     }
 
     public useDraggable(): Sqore {
-        this.extensions.push(extensionDraggable);
+        this.extensions = [...this.extensions, extensionDraggable];
         return this;
     }
 
-    public usePanel(): Sqore {
-        this.extensions.push(extensionPanel);
+    public usePanel(options?: PanelOptions): Sqore {
+        this.extensions = [...this.extensions, extensionPanel(options)];
         return this;
     }
 
@@ -388,7 +388,7 @@ export class Sqore {
             _sqore: Sqore,
             _useRender: () => void,
         ) => callback(this.circuit);
-        this.extensions.push(extensionOnCircuitChange);
+        this.extensions = [...this.extensions, extensionOnCircuitChange];
         return this;
     }
 }

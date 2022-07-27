@@ -25,23 +25,30 @@ const context: Context = {
     container: undefined,
 };
 
-const extensionPanel = (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void => {
-    const dispatch = (action: Action) => {
-        update(action, context, useRefresh);
+interface PanelOptions {
+    gateDictionary?: GateDictionary;
+    displaySize?: number;
+}
 
-        const panelElem = panel(dispatch, context);
+const extensionPanel =
+    (options?: PanelOptions) =>
+    (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void => {
+        const dispatch = (action: Action) => {
+            update(action, context, useRefresh);
+
+            const panelElem = panel(dispatch, context, options);
+            const prevPanelElem = container.querySelector('.panel');
+
+            prevPanelElem && container.replaceChild(panelElem, prevPanelElem);
+        };
+
+        addEvents(dispatch, container, sqore);
+
+        const panelElem = panel(dispatch, context, options);
         const prevPanelElem = container.querySelector('.panel');
 
-        prevPanelElem && container.replaceChild(panelElem, prevPanelElem);
+        prevPanelElem == null && container.prepend(panelElem);
     };
-
-    addEvents(dispatch, container, sqore);
-
-    const panelElem = panel(dispatch, context);
-    const prevPanelElem = container.querySelector('.panel');
-
-    prevPanelElem == null && container.prepend(panelElem);
-};
 
 const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => {
     const elems = container.querySelectorAll<SVGElement>('[data-id]');
@@ -151,18 +158,18 @@ const update = (action: Action, context: Context, useRefresh: () => void) => {
     }
 };
 
-const panel = (dispatch: Dispatch, context: Context) => {
+const panel = (dispatch: Dispatch, context: Context, options?: PanelOptions) => {
     const panelElem = elem('div');
     panelElem.className = 'panel';
     children(panelElem, [
         context.addMode //
-            ? addPanel(dispatch, context)
+            ? addPanel(dispatch, context, options)
             : editPanel(dispatch, context),
     ]);
     return panelElem;
 };
 
-const addPanel = (dispatch: Dispatch, context: Context) => {
+const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions) => {
     const addPanelElem = elem('div', 'add-panel');
     const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgElem.setAttribute('width', '144px');
@@ -383,7 +390,7 @@ const toMetadata = (operation: Operation | undefined, x: number, y: number): Met
  * @param type i.e. 'H' or 'X'
  */
 const gate = (dispatch: Dispatch, type: string, x: number, y: number) => {
-    const operation = defaultGates[type];
+    const operation = gateDictionary[type];
     if (operation == null) throw new Error(`Gate ${type} not available`);
     const metadata = toMetadata(operation, x, y);
     const gateElem = _formatGate(metadata).cloneNode(true);
@@ -396,11 +403,11 @@ const gate = (dispatch: Dispatch, type: string, x: number, y: number) => {
     return gateElem;
 };
 
-interface DefaultGates {
+interface GateDictionary {
     [index: string]: Operation;
 }
 
-const defaultGates: DefaultGates = {
+const gateDictionary: GateDictionary = {
     H: {
         gate: 'H',
         targets: [{ qId: 0 }],
@@ -417,4 +424,4 @@ const defaultGates: DefaultGates = {
     },
 };
 
-export { extensionPanel };
+export { extensionPanel, PanelOptions };
