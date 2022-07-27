@@ -34,7 +34,7 @@ type GateRegistry = {
 };
 
 type Extension = {
-    (container: HTMLElement, sqore: Sqore, useRender: () => void): void;
+    (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void;
 };
 
 /**
@@ -130,7 +130,7 @@ export class Sqore {
             : container.replaceChild(svg, previousSvg);
         this.addGateClickHandlers(container, _circuit);
 
-        // Run extensions after every render or re-render
+        // Run extensions after every render or refresh
         const extensions = this.extensions;
         extensions != null &&
             extensions.map((extension) => extension(container, this, () => this.renderCircuit(container)));
@@ -386,7 +386,7 @@ export class Sqore {
         const extensionOnCircuitChange = (
             _container: HTMLElement, //
             _sqore: Sqore,
-            _useRender: () => void,
+            _useRefresh: () => void,
         ) => callback(this.circuit);
         this.extensions = [...this.extensions, extensionOnCircuitChange];
         return this;

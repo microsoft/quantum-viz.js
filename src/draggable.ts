@@ -26,7 +26,7 @@ interface Context {
  * @param sqore             Sqore object
  * @param onCircuitChange   User-provided callback function triggered when circuit is changed
  */
-const extensionDraggable = (container: HTMLElement, sqore: Sqore, useRender: () => void): void => {
+const extensionDraggable = (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void => {
     const svg = container.querySelector('svg[id]') as SVGElement;
 
     const context: Context = {
@@ -34,7 +34,7 @@ const extensionDraggable = (container: HTMLElement, sqore: Sqore, useRender: () 
         svg,
         operations: sqore.circuit.operations,
         wireData: _wireData(container),
-        renderFn: useRender,
+        renderFn: useRefresh,
         paddingY: 20,
         selectedId: null,
         selectedWire: null,
