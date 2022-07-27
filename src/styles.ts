@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import { gateHeight, minGateWidth } from './constants';
+
 /**
  * Provides configuration for CSS styles of visualization.
  */
@@ -280,6 +282,7 @@ const _panel = `
     .title {
         margin: 0 0 4px;
         font-size: 1.2rem;
+        user-select: none;
     }
     .block {
         display: block;
@@ -291,5 +294,12 @@ const _panel = `
         width: 40px;
         height: 40px;
         border: 1px solid black;
+    }
+    .ghost {
+        width: ${minGateWidth}px;
+        height: ${gateHeight}px;
+        position: absolute;
+        z-index: 1;
+        pointer-events: none;
     }
 `;

@@ -89,6 +89,10 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
             }
         }),
     );
+
+    document.addEventListener('mouseup', () => {
+        dispatch({ type: 'REMOVE_GHOST_ELEMENT' });
+    });
 };
 
 interface Action {
@@ -154,6 +158,44 @@ const update = (action: Action, context: Context, useRefresh: () => void) => {
         case 'DISPLAY_CURSOR_MOVING': {
             const { container } = context;
             container && container.classList.add('moving');
+            break;
+        }
+        case 'DISPLAY_GHOST_ELEMENT': {
+            const handleMouseMove = (ev: MouseEvent) => {
+                divElem.style.left = `${ev.clientX - minGateWidth / 2}px`;
+                divElem.style.top = `${ev.clientY - gateHeight / 2}px`;
+            };
+
+            const { container } = context;
+            const { ghostElem, initX, initY } = action.payload as {
+                ghostElem: SVGGraphicsElement;
+                initX: number;
+                initY: number;
+            };
+
+            // Generate svg element to wrap around ghost element
+            const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svgElem.append(ghostElem);
+
+            // Generate div element to wrap around svg element
+            const divElem = elem('div', 'ghost');
+            divElem.style.left = `${initX - minGateWidth / 2}px`;
+            divElem.style.top = `${initY - gateHeight / 2}px`;
+            divElem.appendChild(svgElem);
+
+            if (container) {
+                container.appendChild(divElem);
+                container.addEventListener('mousemove', handleMouseMove);
+            }
+
+            break;
+        }
+        case 'REMOVE_GHOST_ELEMENT': {
+            const { container } = context;
+            if (container) {
+                const ghostElem = container.querySelector('.ghost');
+                ghostElem && container.removeChild(ghostElem);
+            }
         }
     }
 };
@@ -393,13 +435,21 @@ const gate = (dispatch: Dispatch, type: string, x: number, y: number) => {
     const operation = gateDictionary[type];
     if (operation == null) throw new Error(`Gate ${type} not available`);
     const metadata = toMetadata(operation, x, y);
-    const gateElem = _formatGate(metadata).cloneNode(true);
-    gateElem.addEventListener('mousedown', () => {
-        // dispatch({ type: 'ADD_OPERATION', payload: operation });
+    const gateElem = _formatGate(metadata).cloneNode(true) as SVGElement;
+    gateElem.addEventListener('mousedown', (ev: MouseEvent) => {
+        // Generate equivalent ghost element with x and y at 0
+        const ghostMetadata = toMetadata(operation, 0, 0);
+        const ghostElem = _formatGate(ghostMetadata).cloneNode(true);
+        // Get initial x and y position from 'mousedown' event
+        const { clientX: initX, clientY: initY } = ev;
+
+        // Dispatch relevant events
         dispatch({ type: 'OPERATION', payload: cloneDeep(operation) });
         dispatch({ type: 'DISPLAY_DROPZONE_LAYER' });
         dispatch({ type: 'DISPLAY_CURSOR_MOVING', payload: true });
+        dispatch({ type: 'DISPLAY_GHOST_ELEMENT', payload: { ghostElem, initX, initY } });
     });
+
     return gateElem;
 };
 
