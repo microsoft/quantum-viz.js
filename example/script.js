@@ -9,16 +9,12 @@ if (typeof qviz != 'undefined') {
     if (entangleDiv != null) {
         qviz.create(entangle) //
             .useDraggable()
-            .usePanel()
+            .usePanel({ displaySize: 3 })
             .draw(entangleDiv);
     }
 
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
-        /* Pass in isEditable = true to allow circuit to be editable */
-        /* Pass in onCircuitChange to trigger callback function
-           whenever there is a change in circuit */
-        // qviz.draw(sample, sampleDiv, qviz.STYLES['Default'], 0, isEditable, onCircuitChange);
         qviz.create(sample) //
             .useDraggable()
             .usePanel()

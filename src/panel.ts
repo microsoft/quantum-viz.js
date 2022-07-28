@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import range from 'lodash/range';
 import { Operation } from './circuit';
-import { gateHeight, minGateWidth } from './constants';
+import { gateGap, gateHeight, minGateWidth, panelWidth } from './constants';
 import { _equivOperation, _equivParentArray, _lastIndex } from './draggable';
 import { _formatGate } from './formatters/gateFormatter';
 import { GateType, Metadata } from './metadata';
@@ -26,8 +26,8 @@ const context: Context = {
 };
 
 interface PanelOptions {
-    gateDictionary?: GateDictionary;
     displaySize?: number;
+    gateDictionary?: GateDictionary;
 }
 
 const extensionPanel =
@@ -90,9 +90,10 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
         }),
     );
 
-    document.addEventListener('mouseup', () => {
-        dispatch({ type: 'REMOVE_GHOST_ELEMENT' });
-    });
+    svgElem &&
+        svgElem.addEventListener('mouseup', () => {
+            dispatch({ type: 'REMOVE_GHOST_ELEMENT' });
+        });
 };
 
 interface Action {
@@ -212,18 +213,37 @@ const panel = (dispatch: Dispatch, context: Context, options?: PanelOptions) => 
 };
 
 const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions) => {
-    const addPanelElem = elem('div', 'add-panel');
+    let gateDictionary = defaultGateDictionary;
+    let objectKeys = Object.keys(gateDictionary);
+    if (options != null) {
+        const { displaySize, gateDictionary: optionGateDictionary } = options;
+        displaySize && (objectKeys = objectKeys.slice(0, displaySize));
+        optionGateDictionary && (gateDictionary = optionGateDictionary);
+    }
+
+    let prefixX = 0;
+    let prefixY = 0;
+    const gateElems = objectKeys.map((key) => {
+        const gateElem = gate(dispatch, gateDictionary, key.toString(), prefixX, prefixY);
+        if (prefixX + gateGap > panelWidth) {
+            prefixX = 0;
+            prefixY += gateGap;
+        } else {
+            prefixX += gateGap;
+        }
+        return gateElem;
+    });
+
+    // Generate svg container to store gate elements
     const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svgElem.setAttribute('width', '144px');
-    svgElem.setAttribute('height', '100%');
-    const hGate = gate(dispatch, 'H', 0, 0);
-    const xGate = gate(dispatch, 'X', 50, 0);
-    const x2Gate = gate(dispatch, 'X', 100, 0);
-    svgElem.appendChild(hGate);
-    svgElem.appendChild(xGate);
-    svgElem.appendChild(x2Gate);
+    svgElem.classList.add('add-panel-svg');
+    childrenSvg(svgElem, gateElems);
+
+    // Generate add panel
+    const addPanelElem = elem('div', 'add-panel');
     children(addPanelElem, [title('ADD')]);
     addPanelElem.appendChild(svgElem);
+
     return addPanelElem;
 };
 
@@ -253,6 +273,11 @@ const elem = (tag: string, className?: string): HTMLElement => {
  * Append all child elements to a parent element
  */
 const children = (parentElem: HTMLElement, childElems: HTMLElement[]) => {
+    childElems.map((elem) => parentElem.appendChild(elem));
+    return parentElem;
+};
+
+const childrenSvg = (parentElem: SVGElement, childElems: SVGElement[]) => {
     childElems.map((elem) => parentElem.appendChild(elem));
     return parentElem;
 };
@@ -431,7 +456,7 @@ const toMetadata = (operation: Operation | undefined, x: number, y: number): Met
  * @param dispatch
  * @param type i.e. 'H' or 'X'
  */
-const gate = (dispatch: Dispatch, type: string, x: number, y: number) => {
+const gate = (dispatch: Dispatch, gateDictionary: GateDictionary, type: string, x: number, y: number) => {
     const operation = gateDictionary[type];
     if (operation == null) throw new Error(`Gate ${type} not available`);
     const metadata = toMetadata(operation, x, y);
@@ -457,20 +482,22 @@ interface GateDictionary {
     [index: string]: Operation;
 }
 
-const gateDictionary: GateDictionary = {
+const defaultGateDictionary: GateDictionary = {
+    RX: {
+        gate: 'RX',
+        targets: [{ qId: 0 }],
+    },
     H: {
         gate: 'H',
         targets: [{ qId: 0 }],
     },
     X: {
         gate: 'X',
-        isControlled: true,
         targets: [{ qId: 0 }],
     },
     ZZ: {
         gate: 'ZZ',
-        targets: [{ qId: 0 }, { qId: 1 }],
-        isControlled: true,
+        targets: [{ qId: 0 }],
     },
 };
 
