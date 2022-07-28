@@ -187,7 +187,7 @@ const _dropzoneLayer = (context: Context) => {
  */
 const _wireData = (container: HTMLElement): number[] => {
     // elems include qubit wires and lines of measure gates
-    const elems = container.querySelectorAll<SVGGElement>('svg > g:nth-child(3) > g');
+    const elems = container.querySelectorAll<SVGGElement>('svg[id] > g:nth-child(3) > g');
     // filter out <g> elements having more than 2 elements because
     // qubit wires contain only 2 elements: <line> and <text>
     // lines of measure gates contain 4 <line> elements
