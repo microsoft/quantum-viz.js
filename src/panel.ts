@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import range from 'lodash/range';
 import { Operation } from './circuit';
-import { gateGap, gateHeight, minGateWidth, panelWidth } from './constants';
+import { gateHeight, horizontalGap, minGateWidth, panelWidth, verticalGap } from './constants';
 import { _equivOperation, _equivParentArray, _lastIndex } from './draggable';
 import { _formatGate } from './formatters/gateFormatter';
 import { GateType, Metadata } from './metadata';
@@ -229,13 +229,13 @@ const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions) 
     let prefixX = 0;
     let prefixY = 0;
     const gateElems = objectKeys.map((key) => {
-        const gateElem = gate(dispatch, gateDictionary, key.toString(), prefixX, prefixY);
-        if (prefixX + gateGap > panelWidth) {
+        const { width: gateWidth } = toMetadata(gateDictionary[key], 0, 0);
+        if (prefixX + gateWidth + horizontalGap > panelWidth) {
             prefixX = 0;
-            prefixY += gateGap;
-        } else {
-            prefixX += gateGap;
+            prefixY += gateHeight + verticalGap;
         }
+        const gateElem = gate(dispatch, gateDictionary, key.toString(), prefixX, prefixY);
+        prefixX += gateWidth + horizontalGap;
         return gateElem;
     });
 
@@ -451,7 +451,9 @@ const toMetadata = (operation: Operation | undefined, x: number, y: number): Met
     }
 
     if (displayArgs != null) metadata.displayArgs = displayArgs;
+
     metadata.width = getGateWidth(metadata);
+    metadata.x = x + 1 + metadata.width / 2; // offset by 1 for left padding
 
     return metadata;
 };
@@ -488,6 +490,10 @@ interface GateDictionary {
 }
 
 const defaultGateDictionary: GateDictionary = {
+    Entangle: {
+        gate: 'Entangle',
+        targets: [{ qId: 0 }],
+    },
     RX: {
         gate: 'RX',
         targets: [{ qId: 0 }],

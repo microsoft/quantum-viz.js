@@ -42,4 +42,5 @@ export const regLineStart = 40;
 /** Panel width */
 export const panelWidth = 144;
 /** Gap between gates in Add Panel */
-export const gateGap = 50;
+export const horizontalGap = 10;
+export const verticalGap = 10;
