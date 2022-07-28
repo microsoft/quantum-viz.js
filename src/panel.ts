@@ -492,12 +492,36 @@ const defaultGateDictionary: GateDictionary = {
         gate: 'RX',
         targets: [{ qId: 0 }],
     },
+    RY: {
+        gate: 'RY',
+        targets: [{ qId: 0 }],
+    },
+    RZ: {
+        gate: 'RZ',
+        targets: [{ qId: 0 }],
+    },
     H: {
         gate: 'H',
         targets: [{ qId: 0 }],
     },
     X: {
         gate: 'X',
+        targets: [{ qId: 0 }],
+    },
+    S: {
+        gate: 'S',
+        targets: [{ qId: 0 }],
+    },
+    T: {
+        gate: 'T',
+        targets: [{ qId: 0 }],
+    },
+    Y: {
+        gate: 'Y',
+        targets: [{ qId: 0 }],
+    },
+    Z: {
+        gate: 'Z',
         targets: [{ qId: 0 }],
     },
     ZZ: {
