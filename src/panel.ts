@@ -58,7 +58,7 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
             const dataId = elem.getAttribute('data-id');
             const operation = _equivOperation(dataId, sqore.circuit.operations);
             dispatch({ type: 'OPERATION', payload: operation });
-            dispatch({ type: 'ADD_MODE', payload: false });
+            dispatch({ type: 'EDIT_MODE' });
         }),
     );
 
@@ -69,10 +69,9 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
     });
 
     const svgElem = container.querySelector('svg[id]');
-    svgElem &&
-        svgElem.addEventListener('mousedown', () => {
-            dispatch({ type: 'ADD_MODE', payload: true });
-        });
+    svgElem?.addEventListener('mousedown', () => {
+        dispatch({ type: 'ADD_MODE' });
+    });
 
     const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
     const dropzoneElems = dropzoneLayer.querySelectorAll<SVGRectElement>('.dropzone');
@@ -90,10 +89,12 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
         }),
     );
 
-    svgElem &&
-        svgElem.addEventListener('mouseup', () => {
-            dispatch({ type: 'REMOVE_GHOST_ELEMENT' });
-        });
+    svgElem?.addEventListener('mouseup', () => {
+        dispatch({ type: 'REMOVE_GHOST_ELEMENT' });
+    });
+    container.querySelector('.add-panel')?.addEventListener('mouseup', () => {
+        dispatch({ type: 'REMOVE_GHOST_ELEMENT' });
+    });
 };
 
 interface Action {
@@ -104,7 +105,11 @@ interface Action {
 const update = (action: Action, context: Context, useRefresh: () => void) => {
     switch (action.type) {
         case 'ADD_MODE': {
-            context.addMode = action.payload as boolean;
+            context.addMode = true;
+            break;
+        }
+        case 'EDIT_MODE': {
+            context.addMode = false;
             break;
         }
         case 'OPERATION': {
