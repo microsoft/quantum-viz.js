@@ -206,7 +206,7 @@ const update = (action: Action, context: Context, useRefresh: () => void) => {
     }
 };
 
-const panel = (dispatch: Dispatch, context: Context, options?: PanelOptions) => {
+const panel = (dispatch: Dispatch, context: Context, options?: PanelOptions): HTMLElement => {
     const panelElem = elem('div');
     panelElem.className = 'panel';
     children(panelElem, [
@@ -217,7 +217,7 @@ const panel = (dispatch: Dispatch, context: Context, options?: PanelOptions) => 
     return panelElem;
 };
 
-const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions) => {
+const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions): HTMLElement => {
     let gateDictionary = defaultGateDictionary;
     let objectKeys = Object.keys(gateDictionary);
     if (options != null) {
@@ -252,7 +252,7 @@ const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions) 
     return addPanelElem;
 };
 
-const editPanel = (dispatch: Dispatch, context: Context) => {
+const editPanel = (dispatch: Dispatch, context: Context): HTMLElement => {
     const { operation, registerSize } = context;
     const options = range(registerSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
     const target = operation?.targets[0].qId;
@@ -277,17 +277,17 @@ const elem = (tag: string, className?: string): HTMLElement => {
 /**
  * Append all child elements to a parent element
  */
-const children = (parentElem: HTMLElement, childElems: HTMLElement[]) => {
+const children = (parentElem: HTMLElement, childElems: HTMLElement[]): HTMLElement => {
     childElems.map((elem) => parentElem.appendChild(elem));
     return parentElem;
 };
 
-const childrenSvg = (parentElem: SVGElement, childElems: SVGElement[]) => {
+const childrenSvg = (parentElem: SVGElement, childElems: SVGElement[]): SVGElement => {
     childElems.map((elem) => parentElem.appendChild(elem));
     return parentElem;
 };
 
-const title = (text: string) => {
+const title = (text: string): HTMLElement => {
     const titleElem = elem('h2');
     titleElem.className = 'title';
     titleElem.innerText = text;
@@ -332,7 +332,7 @@ const select = (
     return divElem;
 };
 
-const option = (value: string, text: string) => {
+const option = (value: string, text: string): HTMLOptionElement => {
     const optionElem = elem('option') as HTMLOptionElement;
     optionElem.value = value;
     optionElem.textContent = text;
@@ -346,7 +346,7 @@ const checkboxes = (
     selectedIndexes: number[],
     dispatch: Dispatch,
     operation?: Operation,
-) => {
+): HTMLDivElement => {
     const checkboxElems = options.map((option, index) => {
         const elem = checkbox(option.value, option.text);
         const inputElem = elem.querySelector('input') as HTMLInputElement;
@@ -378,7 +378,7 @@ const checkboxes = (
     return divElem;
 };
 
-const checkbox = (value: string, text: string) => {
+const checkbox = (value: string, text: string): HTMLLabelElement => {
     const inputElem = elem('input') as HTMLInputElement;
     inputElem.type = 'checkbox';
     inputElem.value = value;
@@ -389,7 +389,7 @@ const checkbox = (value: string, text: string) => {
     return labelElem;
 };
 
-const text = (label: string, className: string, dispatch: Dispatch, operation?: Operation) => {
+const text = (label: string, className: string, dispatch: Dispatch, operation?: Operation): HTMLElement => {
     const labelElem = elem('label') as HTMLLabelElement;
     labelElem.className = 'block';
     labelElem.textContent = label;
@@ -463,7 +463,7 @@ const toMetadata = (operation: Operation | undefined, x: number, y: number): Met
  * @param dispatch
  * @param type i.e. 'H' or 'X'
  */
-const gate = (dispatch: Dispatch, gateDictionary: GateDictionary, type: string, x: number, y: number) => {
+const gate = (dispatch: Dispatch, gateDictionary: GateDictionary, type: string, x: number, y: number): SVGElement => {
     const operation = gateDictionary[type];
     if (operation == null) throw new Error(`Gate ${type} not available`);
     const metadata = toMetadata(operation, x, y);
