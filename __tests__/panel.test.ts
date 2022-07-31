@@ -3,6 +3,7 @@ import { PanelContext, PanelOptions } from '../src/panel';
 import { Action, Dispatch, exportedForTesting } from '../src/panel';
 
 const {
+    panel,
     addPanel,
     editPanel,
     elem,
@@ -330,5 +331,37 @@ describe('Test addPanel', () => {
         };
         const options: PanelOptions = { displaySize: 2 };
         expect(addPanel(emptyDispatch, context, options)).toMatchSnapshot();
+    });
+});
+
+describe('Test panel', () => {
+    const emptyDispatch: Dispatch = (action: Action) => {
+        action;
+    };
+    test('Should return panel with addPanel visible', () => {
+        const context: PanelContext = {
+            addMode: true,
+            operations: [],
+            operation: {
+                gate: 'X',
+                targets: [{ qId: 0 }],
+            },
+            registerSize: 2,
+            container: undefined,
+        };
+        expect(panel(emptyDispatch, context)).toMatchSnapshot();
+    });
+    test('Should return panel with editPanel visible', () => {
+        const context: PanelContext = {
+            addMode: false,
+            operations: [],
+            operation: {
+                gate: 'X',
+                targets: [{ qId: 0 }],
+            },
+            registerSize: 2,
+            container: undefined,
+        };
+        expect(panel(emptyDispatch, context)).toMatchSnapshot();
     });
 });
