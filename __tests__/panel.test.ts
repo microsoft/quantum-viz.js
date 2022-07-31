@@ -1,8 +1,9 @@
 import range from 'lodash/range';
-import { PanelContext } from '../src/panel';
+import { PanelContext, PanelOptions } from '../src/panel';
 import { Action, Dispatch, exportedForTesting } from '../src/panel';
 
 const {
+    addPanel,
     editPanel,
     elem,
     children,
@@ -284,7 +285,7 @@ describe('Test editPanel', () => {
     const emptyDispatch: Dispatch = (action: Action) => {
         action;
     };
-    test('', () => {
+    test('Should return editPanel editing X gate', () => {
         const context: PanelContext = {
             addMode: false,
             operations: [],
@@ -296,5 +297,38 @@ describe('Test editPanel', () => {
             container: undefined,
         };
         expect(editPanel(emptyDispatch, context)).toMatchSnapshot();
+    });
+});
+
+describe('Test addPanel', () => {
+    const emptyDispatch: Dispatch = (action: Action) => {
+        action;
+    };
+    test('Should return default addPanel', () => {
+        const context: PanelContext = {
+            addMode: true,
+            operations: [],
+            operation: {
+                gate: 'X',
+                targets: [{ qId: 0 }],
+            },
+            registerSize: 2,
+            container: undefined,
+        };
+        expect(addPanel(emptyDispatch, context)).toMatchSnapshot();
+    });
+    test('Should return default addPanel with displaySize 2', () => {
+        const context: PanelContext = {
+            addMode: true,
+            operations: [],
+            operation: {
+                gate: 'X',
+                targets: [{ qId: 0 }],
+            },
+            registerSize: 2,
+            container: undefined,
+        };
+        const options: PanelOptions = { displaySize: 2 };
+        expect(addPanel(emptyDispatch, context, options)).toMatchSnapshot();
     });
 });
