@@ -1,6 +1,5 @@
 import range from 'lodash/range';
-import { PanelContext, PanelOptions } from '../src/panel';
-import { Action, Dispatch, exportedForTesting } from '../src/panel';
+import { Action, Dispatch, exportedForTesting, PanelContext, PanelOptions } from '../src/panel';
 
 const {
     panel,
