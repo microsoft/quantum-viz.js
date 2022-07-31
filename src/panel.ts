@@ -270,7 +270,7 @@ const editPanel = (dispatch: Dispatch, context: Context): HTMLElement => {
 
 const elem = (tag: string, className?: string): HTMLElement => {
     const _elem = document.createElement(tag);
-    _elem.className = className || '';
+    className && (_elem.className = className);
     return _elem;
 };
 
@@ -290,7 +290,7 @@ const childrenSvg = (parentElem: SVGElement, childElems: SVGElement[]): SVGEleme
 const title = (text: string): HTMLElement => {
     const titleElem = elem('h2');
     titleElem.className = 'title';
-    titleElem.innerText = text;
+    titleElem.textContent = text;
     return titleElem;
 };
 
@@ -536,4 +536,25 @@ const defaultGateDictionary: GateDictionary = {
     },
 };
 
-export { extensionPanel, PanelOptions };
+/**
+ * Object exported for unit testing
+ */
+const exportedForTesting = {
+    panel,
+    addPanel,
+    editPanel,
+    elem,
+    children,
+    childrenSvg,
+    title,
+    select,
+    option,
+    checkboxes,
+    checkbox,
+    text,
+    toMetadata,
+    gate,
+    defaultGateDictionary,
+};
+
+export { extensionPanel, PanelOptions, exportedForTesting, Dispatch, Action, Context as PanelContext };
