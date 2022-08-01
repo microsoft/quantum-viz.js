@@ -253,9 +253,14 @@ export class Sqore {
      * @param onCircuitChange Optional function to trigger when changing elements in circuit
      *
      */
-    private addGateClickHandlers(container: HTMLElement, circuit: Circuit): void {
+    private addGateClickHandlers(
+        container: HTMLElement,
+        circuit: Circuit,
+        isEditable?: boolean,
+        onCircuitChange?: (circuit: Circuit) => void,
+    ): void {
         this.addClassicalControlHandlers(container);
-        this.addZoomHandlers(container, circuit);
+        this.addZoomHandlers(container, circuit, isEditable, onCircuitChange);
     }
 
     /**
@@ -315,7 +320,12 @@ export class Sqore {
      * @param onCircuitChange Optional function to trigger when changing elements in circuit
      *
      */
-    private addZoomHandlers(container: HTMLElement, circuit: Circuit): void {
+    private addZoomHandlers(
+        container: HTMLElement,
+        circuit: Circuit,
+        isEditable?: boolean,
+        onCircuitChange?: (circuit: Circuit) => void,
+    ): void {
         container.querySelectorAll('.gate .gate-control').forEach((ctrl) => {
             // Zoom in on clicked gate
             ctrl.addEventListener('click', (ev: Event) => {
