@@ -12,6 +12,9 @@ import { Register } from './register';
 import { Sqore } from './sqore';
 import { getGateWidth } from './utils';
 
+/**
+ * Interface for context
+ */
 interface Context {
     addMode: boolean;
     operations: Operation[];
@@ -20,6 +23,9 @@ interface Context {
     container: HTMLElement | undefined;
 }
 
+/**
+ * Object to maintain global state of extensionPanel
+ */
 const context: Context = {
     addMode: true,
     operations: [],
@@ -28,13 +34,34 @@ const context: Context = {
     container: undefined,
 };
 
+/**
+ * Interface for options provided through usePanel()
+ */
 interface PanelOptions {
     displaySize?: number;
     gateDictionary?: GateDictionary;
 }
 
+/**
+ * Interface for dispatch
+ */
+interface Dispatch {
+    (action: Action): void;
+}
+
+/**
+ * Entry point to run extensionPanel
+ * @param options   User-provided object to customize extensionPanel
+ * @returns         Curried function of entry point to run extensionPanel
+ */
 const extensionPanel =
     (options?: PanelOptions) =>
+    /**
+     * Curried function of entry point to run extensionPanel
+     * @param container     HTML element for rendering visualization into
+     * @param sqore         Sqore object
+     * @param useRefresh    Function to trigger circuit re-rendering
+     */
     (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void => {
         const dispatch = (action: Action) => {
             update(action, context, useRefresh);
@@ -53,7 +80,14 @@ const extensionPanel =
         prevPanelElem == null && container.prepend(panelElem);
     };
 
-const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => {
+/**
+ * Function to handle all event listeners
+ * @param dispatch      Function to update state and trigger panel re-rendering
+ * @param container     HTML element for rendering visualization into
+ * @param sqore         Sqore object
+ */
+const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore): void => {
+    // Gates in SVG circuit are selectable
     const elems = container.querySelectorAll<SVGElement>('[data-id]');
     elems.forEach((elem) =>
         elem.addEventListener('mousedown', (ev: MouseEvent) => {
@@ -65,17 +99,20 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
         }),
     );
 
+    // Context is updated when mouse is over container
     container.addEventListener('mouseover', () => {
         context.registerSize = sqore.circuit.qubits.length;
         context.operations = sqore.circuit.operations;
         context.container = container;
     });
 
+    // addMode triggers
     const svgElem = container.querySelector('svg[id]');
     svgElem?.addEventListener('mousedown', () => {
         dispatch({ type: 'ADD_MODE' });
     });
 
+    // Drag and drop
     const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
     const dropzoneElems = dropzoneLayer.querySelectorAll<SVGRectElement>('.dropzone');
     dropzoneElems.forEach((dropzoneElem) =>
@@ -92,20 +129,32 @@ const addEvents = (dispatch: Dispatch, container: HTMLElement, sqore: Sqore) => 
         }),
     );
 
+    // Remove ghost element if drops gate in svgElement
     svgElem?.addEventListener('mouseup', () => {
         dispatch({ type: 'REMOVE_GHOST_ELEMENT' });
     });
+
+    // Remove ghost element if drops gate in addPanel
     container.querySelector('.add-panel')?.addEventListener('mouseup', () => {
         dispatch({ type: 'REMOVE_GHOST_ELEMENT' });
     });
 };
 
+/**
+ * Interface for action
+ */
 interface Action {
     type: string;
     payload?: unknown;
 }
 
-const update = (action: Action, context: Context, useRefresh: () => void) => {
+/**
+ * Primary function for state management
+ * @param action        Object to have type and payload
+ * @param context       Context object to manage extension state
+ * @param useRefresh    Function to trigger circuit re-rendering
+ */
+const update = (action: Action, context: Context, useRefresh: () => void): void => {
     switch (action.type) {
         case 'ADD_MODE': {
             context.addMode = true;
@@ -209,6 +258,13 @@ const update = (action: Action, context: Context, useRefresh: () => void) => {
     }
 };
 
+/**
+ * Function to produce panel element
+ * @param dispatch      Function to update state and trigger panel re-rendering
+ * @param context       Context object to manage extension state
+ * @param options       User-provided object to customize extensionPanel
+ * @returns             HTML element for panel
+ */
 const panel = (dispatch: Dispatch, context: Context, options?: PanelOptions): HTMLElement => {
     const panelElem = elem('div');
     panelElem.className = 'panel';
@@ -220,6 +276,13 @@ const panel = (dispatch: Dispatch, context: Context, options?: PanelOptions): HT
     return panelElem;
 };
 
+/**
+ * Function to produce addPanel element
+ * @param dispatch      Function to update state and trigger panel re-rendering
+ * @param context       Context object to manage extension state
+ * @param options       User-provided object to customize extensionPanel
+ * @returns             HTML element for addPanel
+ */
 const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions): HTMLElement => {
     let gateDictionary = defaultGateDictionary;
     let objectKeys = Object.keys(gateDictionary);
@@ -255,6 +318,12 @@ const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions):
     return addPanelElem;
 };
 
+/**
+ * Function to produce editPanel element
+ * @param dispatch      Function to update state and trigger panel re-rendering
+ * @param context       Context object to manage extension state
+ * @returns             HTML element for editPanel
+ */
 const editPanel = (dispatch: Dispatch, context: Context): HTMLElement => {
     const { operation, registerSize } = context;
     const options = range(registerSize).map((i) => ({ value: `${i}`, text: `q${i}` }));
@@ -271,6 +340,12 @@ const editPanel = (dispatch: Dispatch, context: Context): HTMLElement => {
     return editPanelElem;
 };
 
+/**
+ * Factory function to produce HTML element
+ * @param tag       Tag name
+ * @param className Class name
+ * @returns         HTML element
+ */
 const elem = (tag: string, className?: string): HTMLElement => {
     const _elem = document.createElement(tag);
     className && (_elem.className = className);
@@ -278,18 +353,32 @@ const elem = (tag: string, className?: string): HTMLElement => {
 };
 
 /**
- * Append all child elements to a parent element
+ * Append all child elements to a parent HTML element
+ * @param parentElem    Parent HTML element
+ * @param childElems    Array of HTML child elements
+ * @returns             Parent HTML element with all children appended
  */
 const children = (parentElem: HTMLElement, childElems: HTMLElement[]): HTMLElement => {
     childElems.map((elem) => parentElem.appendChild(elem));
     return parentElem;
 };
 
+/**
+ * Append all child elements to a parent SVG element
+ * @param parentElem    Parent SVG element
+ * @param childElems    Array of SVG child elements
+ * @returns             Parent SVG element with all children appended
+ */
 const childrenSvg = (parentElem: SVGElement, childElems: SVGElement[]): SVGElement => {
     childElems.map((elem) => parentElem.appendChild(elem));
     return parentElem;
 };
 
+/**
+ * Function to produce title element
+ * @param text  Text
+ * @returns     Title element
+ */
 const title = (text: string): HTMLElement => {
     const titleElem = elem('h2');
     titleElem.className = 'title';
@@ -297,15 +386,24 @@ const title = (text: string): HTMLElement => {
     return titleElem;
 };
 
+/**
+ * Interface for option element
+ */
 interface Option {
     value: string;
     text: string;
 }
 
-interface Dispatch {
-    (action: Action): void;
-}
-
+/**
+ * Function to produce select element
+ * @param label         Label
+ * @param className     Class name
+ * @param options       Array of Option objects contain value and text
+ * @param selectedIndex Index of current selected option
+ * @param dispatch      Function to update state and trigger panel re-rendering
+ * @param operation     Optional Operation object
+ * @returns             Select element
+ */
 const select = (
     label: string,
     className: string,
@@ -335,6 +433,12 @@ const select = (
     return divElem;
 };
 
+/**
+ * Function to produce option element
+ * @param value Value
+ * @param text  Text
+ * @returns     Option element
+ */
 const option = (value: string, text: string): HTMLOptionElement => {
     const optionElem = elem('option') as HTMLOptionElement;
     optionElem.value = value;
@@ -342,6 +446,16 @@ const option = (value: string, text: string): HTMLOptionElement => {
     return optionElem;
 };
 
+/**
+ * Function to produce checkbox elements
+ * @param label             Label
+ * @param className         Class name
+ * @param options           Array of Option objects contain value and text
+ * @param selectedIndexes   Array of indexes of current selected options
+ * @param dispatch          Function to update state and trigger panel re-rendering
+ * @param operation         Optional Operation object
+ * @returns                 Parent div containing checkbox elements
+ */
 const checkboxes = (
     label: string,
     className: string,
@@ -381,6 +495,12 @@ const checkboxes = (
     return divElem;
 };
 
+/**
+ * Function to produce checkbox element
+ * @param value Value
+ * @param text  Text
+ * @returns     Checkbox element
+ */
 const checkbox = (value: string, text: string): HTMLLabelElement => {
     const inputElem = elem('input') as HTMLInputElement;
     inputElem.type = 'checkbox';
@@ -392,6 +512,14 @@ const checkbox = (value: string, text: string): HTMLLabelElement => {
     return labelElem;
 };
 
+/**
+ * Function to produce input text element
+ * @param label     Label
+ * @param className Class name
+ * @param dispatch  Function to update state and trigger panel re-rendering
+ * @param operation Optional Operation object
+ * @returns         Parent div containing input text element
+ */
 const text = (label: string, className: string, dispatch: Dispatch, operation?: Operation): HTMLElement => {
     const labelElem = elem('label') as HTMLLabelElement;
     labelElem.className = 'block';
@@ -414,6 +542,13 @@ const text = (label: string, className: string, dispatch: Dispatch, operation?: 
     return divElem;
 };
 
+/**
+ * Wrapper to generate metadata based on _opToMetadata with mock registers and limited support
+ * @param operation     Operation object
+ * @param x             x coordinate at starting point from the left
+ * @param y             y coordinate at starting point from the top
+ * @returns             Metata object
+ */
 const toMetadata = (operation: Operation | undefined, x: number, y: number): Metadata => {
     const metadata: Metadata = {
         type: GateType.Invalid,
@@ -463,8 +598,8 @@ const toMetadata = (operation: Operation | undefined, x: number, y: number): Met
 
 /**
  * Generate gate element for Add Panel based on type of gate
- * @param dispatch
- * @param type i.e. 'H' or 'X'
+ * @param dispatch  Function to update state and trigger panel re-rendering
+ * @param type      Type of gate. Example: 'H' or 'X'
  */
 const gate = (dispatch: Dispatch, gateDictionary: GateDictionary, type: string, x: number, y: number): SVGElement => {
     const operation = gateDictionary[type];
@@ -488,10 +623,16 @@ const gate = (dispatch: Dispatch, gateDictionary: GateDictionary, type: string, 
     return gateElem;
 };
 
+/**
+ * Interface for gate dictionary
+ */
 interface GateDictionary {
     [index: string]: Operation;
 }
 
+/**
+ * Object for default gate dictionary
+ */
 const defaultGateDictionary: GateDictionary = {
     Entangle: {
         gate: 'Entangle',
