@@ -22,9 +22,9 @@ interface Context {
 /**
  * Add editable elements and events.
  *
- * @param container         HTML element for rendering visualization into.
- * @param sqore             Sqore object
- * @param onCircuitChange   User-provided callback function triggered when circuit is changed
+ * @param Container     HTML element for rendering visualization into.
+ * @param sqore         Sqore object
+ * @param useRefresh    Function to trigger circuit re-rendering
  */
 const extensionDraggable = (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void => {
     const svg = container.querySelector('svg[id]') as SVGElement;

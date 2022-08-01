@@ -4,11 +4,11 @@
 import { Circuit, ConditionalRender, Operation } from './circuit';
 import { svgNS } from './constants';
 import { extensionDraggable } from './draggable';
-import { extensionPanel, PanelOptions } from './panel';
 import { formatGates } from './formatters/gateFormatter';
 import { formatInputs } from './formatters/inputFormatter';
 import { formatRegisters } from './formatters/registerFormatter';
 import { GateType, Metadata } from './metadata';
+import { extensionPanel, PanelOptions } from './panel';
 import { processOperations } from './process';
 import { style, StyleConfig, STYLES } from './styles';
 import { createUUID } from './utils';
@@ -249,18 +249,11 @@ export class Sqore {
      *
      * @param container HTML element containing visualized circuit.
      * @param circuit Circuit to be visualized.
-     * @param isEditable Optional value enabling/disabling editable feature
-     * @param onCircuitChange Optional function to trigger when changing elements in circuit
      *
      */
-    private addGateClickHandlers(
-        container: HTMLElement,
-        circuit: Circuit,
-        isEditable?: boolean,
-        onCircuitChange?: (circuit: Circuit) => void,
-    ): void {
+    private addGateClickHandlers(container: HTMLElement, circuit: Circuit): void {
         this.addClassicalControlHandlers(container);
-        this.addZoomHandlers(container, circuit, isEditable, onCircuitChange);
+        this.addZoomHandlers(container, circuit);
     }
 
     /**
@@ -320,12 +313,7 @@ export class Sqore {
      * @param onCircuitChange Optional function to trigger when changing elements in circuit
      *
      */
-    private addZoomHandlers(
-        container: HTMLElement,
-        circuit: Circuit,
-        isEditable?: boolean,
-        onCircuitChange?: (circuit: Circuit) => void,
-    ): void {
+    private addZoomHandlers(container: HTMLElement, circuit: Circuit): void {
         container.querySelectorAll('.gate .gate-control').forEach((ctrl) => {
             // Zoom in on clicked gate
             ctrl.addEventListener('click', (ev: Event) => {
