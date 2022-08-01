@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import cloneDeep from 'lodash/cloneDeep';
 import range from 'lodash/range';
 import { Operation } from './circuit';

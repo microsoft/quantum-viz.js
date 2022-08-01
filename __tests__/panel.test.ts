@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import range from 'lodash/range';
 import { Action, Dispatch, exportedForTesting, PanelContext, PanelOptions } from '../src/panel';
 
