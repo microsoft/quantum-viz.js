@@ -109,13 +109,13 @@ exports[`Test addPanel Should return default addPanel 1`] = `
             class="gate-unitary"
             height="40"
             width="40"
-            x="1"
-            y="101"
+            x="101"
+            y="51"
           />
           <text
             font-size="14"
-            x="21"
-            y="121"
+            x="121"
+            y="71"
           >
             H
           </text>
@@ -129,19 +129,19 @@ exports[`Test addPanel Should return default addPanel 1`] = `
         class="oplus"
       >
         <circle
-          cx="71"
+          cx="21"
           cy="121"
           r="15"
         />
         <line
-          x1="71"
-          x2="71"
+          x1="21"
+          x2="21"
           y1="106"
           y2="136"
         />
         <line
-          x1="56"
-          x2="86"
+          x1="6"
+          x2="36"
           y1="121"
           y2="121"
         />
@@ -156,13 +156,13 @@ exports[`Test addPanel Should return default addPanel 1`] = `
             class="gate-unitary"
             height="40"
             width="40"
-            x="1"
-            y="151"
+            x="51"
+            y="101"
           />
           <text
             font-size="14"
-            x="21"
-            y="171"
+            x="71"
+            y="121"
           >
             S
           </text>
@@ -178,13 +178,13 @@ exports[`Test addPanel Should return default addPanel 1`] = `
             class="gate-unitary"
             height="40"
             width="40"
-            x="51"
-            y="151"
+            x="101"
+            y="101"
           />
           <text
             font-size="14"
-            x="71"
-            y="171"
+            x="121"
+            y="121"
           >
             T
           </text>
@@ -201,12 +201,12 @@ exports[`Test addPanel Should return default addPanel 1`] = `
             height="40"
             width="40"
             x="1"
-            y="201"
+            y="151"
           />
           <text
             font-size="14"
             x="21"
-            y="221"
+            y="171"
           >
             Y
           </text>
@@ -223,12 +223,12 @@ exports[`Test addPanel Should return default addPanel 1`] = `
             height="40"
             width="40"
             x="51"
-            y="201"
+            y="151"
           />
           <text
             font-size="14"
             x="71"
-            y="221"
+            y="171"
           >
             Z
           </text>
@@ -244,13 +244,13 @@ exports[`Test addPanel Should return default addPanel 1`] = `
             class="gate-unitary"
             height="40"
             width="40"
-            x="1"
-            y="251"
+            x="101"
+            y="151"
           />
           <text
             font-size="14"
-            x="21"
-            y="271"
+            x="121"
+            y="171"
           >
             ZZ
           </text>
@@ -736,13 +736,13 @@ exports[`Test panel Should return panel with addPanel visible 1`] = `
               class="gate-unitary"
               height="40"
               width="40"
-              x="1"
-              y="101"
+              x="101"
+              y="51"
             />
             <text
               font-size="14"
-              x="21"
-              y="121"
+              x="121"
+              y="71"
             >
               H
             </text>
@@ -756,19 +756,19 @@ exports[`Test panel Should return panel with addPanel visible 1`] = `
           class="oplus"
         >
           <circle
-            cx="71"
+            cx="21"
             cy="121"
             r="15"
           />
           <line
-            x1="71"
-            x2="71"
+            x1="21"
+            x2="21"
             y1="106"
             y2="136"
           />
           <line
-            x1="56"
-            x2="86"
+            x1="6"
+            x2="36"
             y1="121"
             y2="121"
           />
@@ -783,13 +783,13 @@ exports[`Test panel Should return panel with addPanel visible 1`] = `
               class="gate-unitary"
               height="40"
               width="40"
-              x="1"
-              y="151"
+              x="51"
+              y="101"
             />
             <text
               font-size="14"
-              x="21"
-              y="171"
+              x="71"
+              y="121"
             >
               S
             </text>
@@ -805,13 +805,13 @@ exports[`Test panel Should return panel with addPanel visible 1`] = `
               class="gate-unitary"
               height="40"
               width="40"
-              x="51"
-              y="151"
+              x="101"
+              y="101"
             />
             <text
               font-size="14"
-              x="71"
-              y="171"
+              x="121"
+              y="121"
             >
               T
             </text>
@@ -828,12 +828,12 @@ exports[`Test panel Should return panel with addPanel visible 1`] = `
               height="40"
               width="40"
               x="1"
-              y="201"
+              y="151"
             />
             <text
               font-size="14"
               x="21"
-              y="221"
+              y="171"
             >
               Y
             </text>
@@ -850,12 +850,12 @@ exports[`Test panel Should return panel with addPanel visible 1`] = `
               height="40"
               width="40"
               x="51"
-              y="201"
+              y="151"
             />
             <text
               font-size="14"
               x="71"
-              y="221"
+              y="171"
             >
               Z
             </text>
@@ -871,13 +871,13 @@ exports[`Test panel Should return panel with addPanel visible 1`] = `
               class="gate-unitary"
               height="40"
               width="40"
-              x="1"
-              y="251"
+              x="101"
+              y="151"
             />
             <text
               font-size="14"
-              x="21"
-              y="271"
+              x="121"
+              y="171"
             >
               ZZ
             </text>
