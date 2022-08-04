@@ -330,14 +330,18 @@ const editPanel = (dispatch: Dispatch, context: Context): HTMLElement => {
     const target = operation?.targets[0].qId;
     const controls = operation?.controls?.map((control) => control.qId);
 
-    const shouldDisplayParameters = operation?.gate !== 'X';
+    const shouldDisplayTarget = operation?.gate.toLowerCase() !== 'measure';
+    const shouldDisplayControls = operation?.gate.toLowerCase() !== 'measure';
+    const shouldDisplayParameters = operation?.gate !== 'X' && operation?.gate.toLowerCase() !== 'measure';
 
     const editPanelElem = elem('div', 'edit-panel');
-    children(editPanelElem, [
-        title('EDIT'),
-        select('Target', 'target-input', options, target || 0, dispatch, operation),
-        checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
-    ]);
+    children(editPanelElem, [title('EDIT')]);
+    shouldDisplayTarget &&
+        editPanelElem.appendChild(select('Target', 'target-input', options, target || 0, dispatch, operation));
+    shouldDisplayControls &&
+        editPanelElem.appendChild(
+            checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
+        );
     shouldDisplayParameters && editPanelElem.appendChild(text('Parameters', 'parameters-input', dispatch, operation));
 
     return editPanelElem;
