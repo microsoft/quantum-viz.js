@@ -205,7 +205,6 @@ const update = (action: Action, context: Context, useRefresh: () => void): void 
             ) {
                 targetOperationParent.splice(targetLastIndex, 0, context.operation);
             }
-            useRefresh();
             break;
         }
         case 'DISPLAY_DROPZONE_LAYER': {
@@ -290,10 +289,10 @@ const addPanel = (dispatch: Dispatch, context: Context, options?: PanelOptions):
     let gateDictionary = defaultGateDictionary;
     let objectKeys = Object.keys(gateDictionary);
     if (options != null) {
-        const { displaySize, gateDictionary: optionGateDictionary } = options;
+        const { displaySize, gateDictionary: customGateDictionary } = options;
         displaySize && (objectKeys = objectKeys.slice(0, displaySize));
-        if (optionGateDictionary) {
-            gateDictionary = { ...optionGateDictionary, ...defaultGateDictionary };
+        if (customGateDictionary) {
+            gateDictionary = { ...defaultGateDictionary, ...customGateDictionary };
             objectKeys = Object.keys(gateDictionary);
         }
     }
