@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { gateHeight, minGateWidth, panelWidth } from './constants';
+import { gateHeight, minGateWidth, panelMinHeight, panelWidth } from './constants';
 
 /**
  * Provides configuration for CSS styles of visualization.
@@ -297,7 +297,7 @@ const _panel = `
     }
     .add-panel-svg {
         width: ${panelWidth}px;
-        height: 100%;
+        min-height: ${panelMinHeight}px;
     }
     .ghost {
         width: ${minGateWidth}px;
