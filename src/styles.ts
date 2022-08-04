@@ -287,7 +287,7 @@ const _panel = `
     .block {
         display: block;
     }
-    .target-input, .controls-input, .display-input {
+    .target-input, .controls-input, .parameters-input {
         margin-bottom: 8px;
     }
     .add-panel-gate {

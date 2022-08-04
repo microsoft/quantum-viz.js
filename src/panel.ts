@@ -335,7 +335,7 @@ const editPanel = (dispatch: Dispatch, context: Context): HTMLElement => {
         title('EDIT'),
         select('Target', 'target-input', options, target || 0, dispatch, operation),
         checkboxes('Controls', 'controls-input', options, controls || [], dispatch, operation),
-        text('Display', 'display-input', dispatch, operation),
+        text('Parameters', 'parameters-input', dispatch, operation),
     ]);
     return editPanelElem;
 };
