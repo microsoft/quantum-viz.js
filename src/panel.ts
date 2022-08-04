@@ -171,7 +171,15 @@ const update = (action: Action, context: Context, useRefresh: () => void): void 
         case 'TARGET': {
             const { operation } = context;
             const payload = action.payload as Register[];
-            operation && (operation.targets = payload);
+            if (operation) {
+                const difference = payload[0].qId - operation.targets[0].qId;
+                const newTargets = operation.targets.map((target) => {
+                    const { qId } = target;
+                    const newQId = qId + difference;
+                    return { qId: newQId };
+                });
+                operation.targets = newTargets;
+            }
             useRefresh();
             break;
         }
@@ -643,7 +651,31 @@ interface GateDictionary {
 const defaultGateDictionary: GateDictionary = {
     Entangle: {
         gate: 'Entangle',
-        targets: [{ qId: 0 }],
+        targets: [{ qId: 0 }, { qId: 1 }],
+        children: [
+            {
+                gate: 'H',
+                targets: [
+                    {
+                        qId: 0,
+                    },
+                ],
+            },
+            {
+                gate: 'X',
+                isControlled: true,
+                controls: [
+                    {
+                        qId: 0,
+                    },
+                ],
+                targets: [
+                    {
+                        qId: 1,
+                    },
+                ],
+            },
+        ],
     },
     RX: {
         gate: 'RX',

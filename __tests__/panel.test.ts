@@ -237,7 +237,31 @@ describe('Test defaulGateDictionary', () => {
         const expected = {
             Entangle: {
                 gate: 'Entangle',
-                targets: [{ qId: 0 }],
+                targets: [{ qId: 0 }, { qId: 1 }],
+                children: [
+                    {
+                        gate: 'H',
+                        targets: [
+                            {
+                                qId: 0,
+                            },
+                        ],
+                    },
+                    {
+                        gate: 'X',
+                        isControlled: true,
+                        controls: [
+                            {
+                                qId: 0,
+                            },
+                        ],
+                        targets: [
+                            {
+                                qId: 1,
+                            },
+                        ],
+                    },
+                ],
             },
             RX: {
                 gate: 'RX',
