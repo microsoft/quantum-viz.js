@@ -496,19 +496,6 @@ exports[`Test editPanel Should return editPanel editing X gate 1`] = `
       q1
     </label>
   </div>
-  <div
-    class="parameters-input"
-  >
-    <label
-      class="block"
-    >
-      Parameters
-    </label>
-    <input
-      autofocus="true"
-      type="text"
-    />
-  </div>
 </div>
 `;
 
@@ -944,19 +931,6 @@ exports[`Test panel Should return panel with editPanel visible 1`] = `
         />
         q1
       </label>
-    </div>
-    <div
-      class="parameters-input"
-    >
-      <label
-        class="block"
-      >
-        Parameters
-      </label>
-      <input
-        autofocus="true"
-        type="text"
-      />
     </div>
   </div>
 </div>
