@@ -553,5 +553,6 @@ export {
     _equivGateElem,
     _equivParentArray,
     _lastIndex,
+    _offsetRecursively,
     exportedForTesting,
 };

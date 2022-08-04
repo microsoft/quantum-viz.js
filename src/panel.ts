@@ -5,7 +5,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import range from 'lodash/range';
 import { Operation } from './circuit';
 import { gateHeight, horizontalGap, minGateWidth, panelWidth, verticalGap } from './constants';
-import { _equivOperation, _equivParentArray, _lastIndex } from './draggable';
+import { _equivOperation, _equivParentArray, _lastIndex, _offsetRecursively } from './draggable';
 import { _formatGate } from './formatters/gateFormatter';
 import { GateType, Metadata } from './metadata';
 import { Register } from './register';
@@ -173,12 +173,7 @@ const update = (action: Action, context: Context, useRefresh: () => void): void 
             const payload = action.payload as Register[];
             if (operation) {
                 const difference = payload[0].qId - operation.targets[0].qId;
-                const newTargets = operation.targets.map((target) => {
-                    const { qId } = target;
-                    const newQId = qId + difference;
-                    return { qId: newQId };
-                });
-                operation.targets = newTargets;
+                _offsetRecursively(operation, difference, context.registerSize);
             }
             useRefresh();
             break;
