@@ -271,7 +271,7 @@ const _panel = `
         display: flex;
     }
     .panel {
-        width: ${panelWidth};
+        width: ${panelWidth}px;
         border: solid 1px black;
         padding: 8px;
     }
