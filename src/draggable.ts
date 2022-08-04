@@ -271,14 +271,16 @@ const _addEvents = (context: Context) => {
     elems.forEach((elem) => {
         elem.addEventListener('mousedown', () => {
             context.selectedWire = elem.getAttribute('data-wire');
-            container.classList.add('moving');
         });
 
         const gateElem = _equivGateElem(elem);
         gateElem?.addEventListener('mousedown', (ev: MouseEvent) => {
             ev.stopPropagation();
-            context.selectedId = _equivDataId(elem);
-            dropzoneLayer.style.display = 'block';
+            if (gateElem.getAttribute('data-expanded') !== 'true') {
+                context.selectedId = _equivDataId(elem);
+                container.classList.add('moving');
+                dropzoneLayer.style.display = 'block';
+            }
         });
     });
 
