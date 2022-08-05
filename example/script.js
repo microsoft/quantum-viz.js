@@ -8,20 +8,31 @@ if (typeof qviz != 'undefined') {
     const entangleDiv = document.getElementById('entangle');
     if (entangleDiv != null) {
         qviz.create(entangle) //
-            .useDraggable()
-            .usePanel({ displaySize: 3 })
+            .useOnCircuitChange((circuit) => {
+                console.log('New circuit ↓');
+                console.log(circuit);
+            })
             .draw(entangleDiv);
+    }
+
+    const entangleUDDiv = document.getElementById('entangle-usedraggable');
+    if (entangleUDDiv != null) {
+        qviz.create(entangle) //
+            .useDraggable()
+            .draw(entangleUDDiv);
+    }
+
+    const entangleUDUPDiv = document.getElementById('entangle-usedraggable-usepanel');
+    if (entangleUDUPDiv != null) {
+        qviz.create(entangle) //
+            .useDraggable()
+            .usePanel()
+            .draw(entangleUDUPDiv);
     }
 
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
         qviz.create(sample) //
-            .useDraggable()
-            .usePanel()
-            .useOnCircuitChange((circuit) => {
-                console.log('New circuit ↓');
-                console.log(circuit);
-            })
             .draw(sampleDiv);
     }
 
