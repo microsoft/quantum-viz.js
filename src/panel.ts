@@ -480,7 +480,11 @@ const checkboxes = (
         const elem = checkbox(option.value, option.text);
         const inputElem = elem.querySelector('input') as HTMLInputElement;
         selectedIndexes.includes(index) && inputElem.setAttribute('checked', 'true');
-        operation == undefined && inputElem.setAttribute('disabled', 'true');
+        // Disable control checkboxes if already in targets
+        if (operation) {
+            const targetIndexes = operation.targets.map((register) => register.qId);
+            targetIndexes.includes(index) && inputElem.setAttribute('disabled', 'true');
+        }
 
         inputElem.onchange = () => {
             // Get all checked options
