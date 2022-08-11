@@ -340,6 +340,7 @@ exports[`Test checkboxes Test with gate X with 1 control 1`] = `
   </label>
   <label>
     <input
+      disabled="true"
       type="checkbox"
       value="0"
     />
@@ -375,6 +376,7 @@ exports[`Test checkboxes Test with gate X with 2 controls 1`] = `
   </label>
   <label>
     <input
+      disabled="true"
       type="checkbox"
       value="1"
     />
@@ -461,6 +463,7 @@ exports[`Test editPanel Should return editPanel editing X gate 1`] = `
     </label>
     <label>
       <input
+        disabled="true"
         type="checkbox"
         value="0"
       />
@@ -875,6 +878,7 @@ exports[`Test panel Should return panel with editPanel visible 1`] = `
       </label>
       <label>
         <input
+          disabled="true"
           type="checkbox"
           value="0"
         />
