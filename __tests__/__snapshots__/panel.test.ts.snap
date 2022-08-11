@@ -1,0 +1,996 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test addPanel Should return default addPanel 1`] = `
+<div
+  class="add-panel"
+>
+  <h2
+    class="title"
+  >
+    ADD
+  </h2>
+  <svg
+    class="add-panel-svg"
+  >
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="1"
+            y="1"
+          />
+          <text
+            font-size="14"
+            x="21"
+            y="21"
+          >
+            RX
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="51"
+            y="1"
+          />
+          <text
+            font-size="14"
+            x="71"
+            y="21"
+          >
+            RY
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="101"
+            y="1"
+          />
+          <text
+            font-size="14"
+            x="121"
+            y="21"
+          >
+            RZ
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="1"
+            y="51"
+          />
+          <text
+            font-size="14"
+            x="21"
+            y="71"
+          >
+            H
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g
+        class="oplus"
+      >
+        <circle
+          cx="71"
+          cy="71"
+          r="15"
+        />
+        <line
+          x1="71"
+          x2="71"
+          y1="56"
+          y2="86"
+        />
+        <line
+          x1="56"
+          x2="86"
+          y1="71"
+          y2="71"
+        />
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="101"
+            y="51"
+          />
+          <text
+            font-size="14"
+            x="121"
+            y="71"
+          >
+            S
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="1"
+            y="101"
+          />
+          <text
+            font-size="14"
+            x="21"
+            y="121"
+          >
+            T
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="51"
+            y="101"
+          />
+          <text
+            font-size="14"
+            x="71"
+            y="121"
+          >
+            Y
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="101"
+            y="101"
+          />
+          <text
+            font-size="14"
+            x="121"
+            y="121"
+          >
+            Z
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="1"
+            y="151"
+          />
+          <text
+            font-size="14"
+            x="21"
+            y="171"
+          >
+            ZZ
+          </text>
+        </g>
+      </g>
+    </g>
+  </svg>
+</div>
+`;
+
+exports[`Test addPanel Should return default addPanel with displaySize 2 1`] = `
+<div
+  class="add-panel"
+>
+  <h2
+    class="title"
+  >
+    ADD
+  </h2>
+  <svg
+    class="add-panel-svg"
+  >
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="1"
+            y="1"
+          />
+          <text
+            font-size="14"
+            x="21"
+            y="21"
+          >
+            RX
+          </text>
+        </g>
+      </g>
+    </g>
+    <g
+      class="gate"
+    >
+      <g>
+        <g>
+          <rect
+            class="gate-unitary"
+            height="40"
+            width="40"
+            x="51"
+            y="1"
+          />
+          <text
+            font-size="14"
+            x="71"
+            y="21"
+          >
+            RY
+          </text>
+        </g>
+      </g>
+    </g>
+  </svg>
+</div>
+`;
+
+exports[`Test checkbox Should return checkbox q0 1`] = `
+<label>
+  <input
+    type="checkbox"
+    value="0"
+  />
+  q0
+</label>
+`;
+
+exports[`Test checkbox Should return checkbox q1 1`] = `
+<label>
+  <input
+    type="checkbox"
+    value="1"
+  />
+  q1
+</label>
+`;
+
+exports[`Test checkbox Should return checkbox q2 1`] = `
+<label>
+  <input
+    type="checkbox"
+    value="2"
+  />
+  q2
+</label>
+`;
+
+exports[`Test checkboxes Test with gate X with 1 control 1`] = `
+<div
+  class="controls-input"
+>
+  <label
+    class="block"
+  >
+    Controls
+  </label>
+  <label>
+    <input
+      disabled="true"
+      type="checkbox"
+      value="0"
+    />
+    q0
+  </label>
+  <label>
+    <input
+      checked="true"
+      type="checkbox"
+      value="1"
+    />
+    q1
+  </label>
+</div>
+`;
+
+exports[`Test checkboxes Test with gate X with 2 controls 1`] = `
+<div
+  class="controls-input"
+>
+  <label
+    class="block"
+  >
+    Controls
+  </label>
+  <label>
+    <input
+      checked="true"
+      type="checkbox"
+      value="0"
+    />
+    q0
+  </label>
+  <label>
+    <input
+      disabled="true"
+      type="checkbox"
+      value="1"
+    />
+    q1
+  </label>
+  <label>
+    <input
+      checked="true"
+      type="checkbox"
+      value="2"
+    />
+    q2
+  </label>
+</div>
+`;
+
+exports[`Test children Add 0 with class to parent 1`] = `<div />`;
+
+exports[`Test children Add 1 child to parent 1`] = `
+<div>
+  <p />
+</div>
+`;
+
+exports[`Test children Add 2 children to parent 1`] = `
+<div>
+  <p />
+  <div />
+</div>
+`;
+
+exports[`Test childrenSvg Add 0 child to parent 1`] = `<svg />`;
+
+exports[`Test childrenSvg Add 1 child to parent 1`] = `
+<svg>
+  <rect />
+</svg>
+`;
+
+exports[`Test childrenSvg Add 2 children to parent 1`] = `
+<svg>
+  <rect />
+  <circle />
+</svg>
+`;
+
+exports[`Test editPanel Should return editPanel editing X gate 1`] = `
+<div
+  class="edit-panel"
+>
+  <h2
+    class="title"
+  >
+    EDIT
+  </h2>
+  <div
+    class="target-input"
+  >
+    <label
+      class="block"
+    >
+      Target
+    </label>
+    <select>
+      <option
+        value="0"
+      >
+        q0
+      </option>
+      <option
+        value="1"
+      >
+        q1
+      </option>
+    </select>
+  </div>
+  <div
+    class="controls-input"
+  >
+    <label
+      class="block"
+    >
+      Controls
+    </label>
+    <label>
+      <input
+        disabled="true"
+        type="checkbox"
+        value="0"
+      />
+      q0
+    </label>
+    <label>
+      <input
+        type="checkbox"
+        value="1"
+      />
+      q1
+    </label>
+  </div>
+</div>
+`;
+
+exports[`Test elem Should return <div> 1`] = `<div />`;
+
+exports[`Test elem Should return <div> with className "panel" 1`] = `
+<div
+  class="panel"
+/>
+`;
+
+exports[`Test elem Should return <p> 1`] = `<p />`;
+
+exports[`Test gate Should return gate H 1`] = `
+<g
+  class="gate"
+>
+  <g>
+    <g>
+      <rect
+        class="gate-unitary"
+        height="40"
+        width="40"
+        x="1"
+        y="1"
+      />
+      <text
+        font-size="14"
+        x="21"
+        y="21"
+      >
+        H
+      </text>
+    </g>
+  </g>
+</g>
+`;
+
+exports[`Test gate Should return gate RX 1`] = `
+<g
+  class="gate"
+>
+  <g>
+    <g>
+      <rect
+        class="gate-unitary"
+        height="40"
+        width="40"
+        x="1"
+        y="1"
+      />
+      <text
+        font-size="14"
+        x="21"
+        y="21"
+      >
+        RX
+      </text>
+    </g>
+  </g>
+</g>
+`;
+
+exports[`Test gate Should return gate X 1`] = `
+<g
+  class="gate"
+>
+  <g
+    class="oplus"
+  >
+    <circle
+      cx="21"
+      cy="21"
+      r="15"
+    />
+    <line
+      x1="21"
+      x2="21"
+      y1="6"
+      y2="36"
+    />
+    <line
+      x1="6"
+      x2="36"
+      y1="21"
+      y2="21"
+    />
+  </g>
+</g>
+`;
+
+exports[`Test option Should return option q0 1`] = `
+<option
+  value="0"
+>
+  q0
+</option>
+`;
+
+exports[`Test option Should return option q1 1`] = `
+<option
+  value="1"
+>
+  q1
+</option>
+`;
+
+exports[`Test option Should return option q2 1`] = `
+<option
+  value="2"
+>
+  q2
+</option>
+`;
+
+exports[`Test panel Should return panel with addPanel visible 1`] = `
+<div
+  class="panel"
+>
+  <div
+    class="add-panel"
+  >
+    <h2
+      class="title"
+    >
+      ADD
+    </h2>
+    <svg
+      class="add-panel-svg"
+    >
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="1"
+              y="1"
+            />
+            <text
+              font-size="14"
+              x="21"
+              y="21"
+            >
+              RX
+            </text>
+          </g>
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="51"
+              y="1"
+            />
+            <text
+              font-size="14"
+              x="71"
+              y="21"
+            >
+              RY
+            </text>
+          </g>
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="101"
+              y="1"
+            />
+            <text
+              font-size="14"
+              x="121"
+              y="21"
+            >
+              RZ
+            </text>
+          </g>
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="1"
+              y="51"
+            />
+            <text
+              font-size="14"
+              x="21"
+              y="71"
+            >
+              H
+            </text>
+          </g>
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g
+          class="oplus"
+        >
+          <circle
+            cx="71"
+            cy="71"
+            r="15"
+          />
+          <line
+            x1="71"
+            x2="71"
+            y1="56"
+            y2="86"
+          />
+          <line
+            x1="56"
+            x2="86"
+            y1="71"
+            y2="71"
+          />
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="101"
+              y="51"
+            />
+            <text
+              font-size="14"
+              x="121"
+              y="71"
+            >
+              S
+            </text>
+          </g>
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="1"
+              y="101"
+            />
+            <text
+              font-size="14"
+              x="21"
+              y="121"
+            >
+              T
+            </text>
+          </g>
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="51"
+              y="101"
+            />
+            <text
+              font-size="14"
+              x="71"
+              y="121"
+            >
+              Y
+            </text>
+          </g>
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="101"
+              y="101"
+            />
+            <text
+              font-size="14"
+              x="121"
+              y="121"
+            >
+              Z
+            </text>
+          </g>
+        </g>
+      </g>
+      <g
+        class="gate"
+      >
+        <g>
+          <g>
+            <rect
+              class="gate-unitary"
+              height="40"
+              width="40"
+              x="1"
+              y="151"
+            />
+            <text
+              font-size="14"
+              x="21"
+              y="171"
+            >
+              ZZ
+            </text>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
+</div>
+`;
+
+exports[`Test panel Should return panel with editPanel visible 1`] = `
+<div
+  class="panel"
+>
+  <div
+    class="edit-panel"
+  >
+    <h2
+      class="title"
+    >
+      EDIT
+    </h2>
+    <div
+      class="target-input"
+    >
+      <label
+        class="block"
+      >
+        Target
+      </label>
+      <select>
+        <option
+          value="0"
+        >
+          q0
+        </option>
+        <option
+          value="1"
+        >
+          q1
+        </option>
+      </select>
+    </div>
+    <div
+      class="controls-input"
+    >
+      <label
+        class="block"
+      >
+        Controls
+      </label>
+      <label>
+        <input
+          disabled="true"
+          type="checkbox"
+          value="0"
+        />
+        q0
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          value="1"
+        />
+        q1
+      </label>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Test text Should return gate H without display-args 1`] = `
+<div
+  class="display-input"
+>
+  <label
+    class="block"
+  >
+    Display
+  </label>
+  <input
+    autofocus="true"
+    type="text"
+  />
+</div>
+`;
+
+exports[`Test text Should return gate RX with display-args 1`] = `
+<div
+  class="display-input"
+>
+  <label
+    class="block"
+  >
+    Display
+  </label>
+  <input
+    autofocus="true"
+    type="text"
+  />
+</div>
+`;
+
+exports[`Test title Should return title "ADD" 1`] = `
+<h2
+  class="title"
+>
+  ADD
+</h2>
+`;
+
+exports[`Test title Should return title "EDIT" 1`] = `
+<h2
+  class="title"
+>
+  EDIT
+</h2>
+`;
+
+exports[`Test title Should return title "PANEL" 1`] = `
+<h2
+  class="title"
+>
+  PANEL
+</h2>
+`;
+
+exports[`Test toMetadata Should return metadata of gate H 1`] = `
+Object {
+  "controlsY": Array [],
+  "label": "H",
+  "targetsY": Array [
+    Array [
+      21,
+    ],
+  ],
+  "type": 4,
+  "width": 40,
+  "x": 21,
+}
+`;
+
+exports[`Test toMetadata Should return metadata of gate RX 1`] = `
+Object {
+  "controlsY": Array [],
+  "label": "H",
+  "targetsY": Array [
+    Array [
+      21,
+    ],
+  ],
+  "type": 4,
+  "width": 40,
+  "x": 21,
+}
+`;
+
+exports[`Test toMetadata Should return metadata of gate X 1`] = `
+Object {
+  "controlsY": Array [],
+  "label": "X",
+  "targetsY": Array [
+    21,
+  ],
+  "type": 3,
+  "width": 40,
+  "x": 21,
+}
+`;

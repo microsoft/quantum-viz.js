@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Circuit, Operation } from './circuit';
+import cloneDeep from 'lodash/cloneDeep';
+import isEqual from 'lodash/isEqual';
+import { Operation } from './circuit';
 import { box } from './formatters/formatUtils';
 import { Register } from './register';
 import { Sqore } from './sqore';
@@ -20,24 +22,23 @@ interface Context {
 /**
  * Add editable elements and events.
  *
- * @param container         HTML element for rendering visualization into.
- * @param sqore             Sqore object
- * @param onCircuitChange   User-provided callback function triggered when circuit is changed
+ * @param Container     HTML element for rendering visualization into.
+ * @param sqore         Sqore object
+ * @param useRefresh    Function to trigger circuit re-rendering
  */
-const addEditable = (container: HTMLElement, sqore: Sqore, onCircuitChange?: (circuit: Circuit) => void): void => {
-    const svg = container.querySelector('svg') as SVGElement;
+const extensionDraggable = (container: HTMLElement, sqore: Sqore, useRefresh: () => void): void => {
+    const svg = container.querySelector('svg[id]') as SVGElement;
 
     const context: Context = {
         container: container,
         svg,
         operations: sqore.circuit.operations,
         wireData: _wireData(container),
-        renderFn: _renderFn(container, sqore, onCircuitChange),
+        renderFn: useRefresh,
         paddingY: 20,
         selectedId: null,
         selectedWire: null,
     };
-
     _addStyles(container, _wireData(container));
     _addDataWires(container);
     svg.appendChild(_dropzoneLayer(context));
@@ -79,11 +80,14 @@ const _wireYs = (elem: SVGGraphicsElement, wireData: number[]): number[] => {
  * Get list of host elements that dropzones can be attached to
  */
 const _hostElems = (container: HTMLElement): SVGGraphicsElement[] => {
-    return Array.from(
-        container.querySelectorAll<SVGGraphicsElement>(
-            '[class^="gate-"]:not(.gate-control, .gate-swap), .control-dot, .oplus, .cross',
-        ),
-    );
+    const svgElem = container.querySelector('svg[id]');
+    return svgElem != null
+        ? Array.from(
+              svgElem.querySelectorAll<SVGGraphicsElement>(
+                  '[class^="gate-"]:not(.gate-control, .gate-swap), .control-dot, .oplus, .cross',
+              ),
+          )
+        : [];
 };
 
 /**
@@ -136,7 +140,7 @@ const _dropzoneLayer = (context: Context) => {
 
         // Check to prevent group gates creating dropzones between wires
         if (wirePrefix) {
-            const prefixX = wirePrefix.prefixX;
+            const { prefixX } = wirePrefix;
             const elemDropzone = box(prefixX, cY - paddingY, cX - prefixX, paddingY * 2, 'dropzone');
             elemDropzone.setAttribute('data-dropzone-id', _equivDataId(elem) || '');
             elemDropzone.setAttribute('data-dropzone-wire', `${wirePrefix.index}`);
@@ -152,7 +156,7 @@ const _dropzoneLayer = (context: Context) => {
             wireYs.map((wireY) => {
                 const wirePrefix = wirePrefixes.find((item) => item.wireY === wireY);
                 if (wirePrefix) {
-                    const prefixX = wirePrefix.prefixX;
+                    const { prefixX } = wirePrefix;
                     const elemDropzone = box(prefixX, wireY - paddingY, x - prefixX, paddingY * 2, 'dropzone');
                     elemDropzone.setAttribute('data-dropzone-id', _equivDataId(elem) || '');
                     elemDropzone.setAttribute('data-dropzone-wire', `${wirePrefix.index}`);
@@ -183,7 +187,7 @@ const _dropzoneLayer = (context: Context) => {
  */
 const _wireData = (container: HTMLElement): number[] => {
     // elems include qubit wires and lines of measure gates
-    const elems = container.querySelectorAll<SVGGElement>('svg > g:nth-child(3) > g');
+    const elems = container.querySelectorAll<SVGGElement>('svg[id] > g:nth-child(3) > g');
     // filter out <g> elements having more than 2 elements because
     // qubit wires contain only 2 elements: <line> and <text>
     // lines of measure gates contain 4 <line> elements
@@ -208,15 +212,6 @@ const _equivGateElem = (elem: SVGElement): SVGElement | null => {
 const _equivDataId = (elem: SVGElement) => {
     const gateElem = _equivGateElem(elem);
     return gateElem != null ? gateElem.getAttribute('data-id') : null;
-};
-
-/**
- * Disable contextmenu default behaviors
- */
-const _addContextMenuEvents = (container: HTMLElement) => {
-    container.addEventListener('contextmenu', (ev: MouseEvent) => {
-        ev.preventDefault();
-    });
 };
 
 /**
@@ -248,8 +243,15 @@ const _addDocumentEvents = (context: Context) => {
 
     document.addEventListener('mouseup', () => {
         container.classList.remove('moving', 'copying');
-        context.selectedId = null;
-        context.selectedWire = null;
+    });
+};
+
+/**
+ * Disable contextmenu default behaviors
+ */
+const _addContextMenuEvent = (container: HTMLElement) => {
+    container.addEventListener('contextmenu', (ev: MouseEvent) => {
+        ev.preventDefault();
     });
 };
 
@@ -260,7 +262,7 @@ const _addEvents = (context: Context) => {
     const { container, operations, renderFn } = context;
     const dropzoneLayer = container.querySelector('.dropzone-layer') as SVGGElement;
 
-    _addContextMenuEvents(container);
+    _addContextMenuEvent(container);
     _addDropzoneLayerEvents(container, dropzoneLayer);
     _addDocumentEvents(context);
 
@@ -269,14 +271,16 @@ const _addEvents = (context: Context) => {
     elems.forEach((elem) => {
         elem.addEventListener('mousedown', () => {
             context.selectedWire = elem.getAttribute('data-wire');
-            container.classList.add('moving');
         });
 
         const gateElem = _equivGateElem(elem);
         gateElem?.addEventListener('mousedown', (ev: MouseEvent) => {
             ev.stopPropagation();
-            context.selectedId = _equivDataId(elem);
-            dropzoneLayer.style.display = 'block';
+            if (gateElem.getAttribute('data-expanded') !== 'true') {
+                context.selectedId = _equivDataId(elem);
+                container.classList.add('moving');
+                dropzoneLayer.style.display = 'block';
+            }
         });
     });
 
@@ -284,6 +288,7 @@ const _addEvents = (context: Context) => {
     const dropzoneElems = dropzoneLayer.querySelectorAll<SVGRectElement>('.dropzone');
     dropzoneElems.forEach((dropzoneElem) => {
         dropzoneElem.addEventListener('mouseup', (ev: MouseEvent) => {
+            const originalOperations = cloneDeep(operations);
             const targetId = dropzoneElem.getAttribute('data-dropzone-id');
             const targetWire = dropzoneElem.getAttribute('data-dropzone-wire');
             if (
@@ -301,12 +306,11 @@ const _addEvents = (context: Context) => {
             if (newSourceOperation != null) {
                 _moveY(context.selectedWire, targetWire, newSourceOperation, context.wireData.length);
                 const parentOperation = _equivParentOperation(context.selectedId, operations);
-                if (parentOperation) {
+                if (parentOperation != null) {
                     parentOperation.targets = _targets(parentOperation);
                 }
             }
-
-            renderFn();
+            if (isEqual(originalOperations, operations) === false) renderFn();
         });
     });
 };
@@ -520,20 +524,6 @@ const _lastIndex = (dataId: string): number | undefined => {
 };
 
 /**
- * Return a render function with the onCircuitChange callback attached to it
- */
-const _renderFn = (
-    container: HTMLElement,
-    sqore: Sqore,
-    onCircuitChange?: (circuit: Circuit) => void,
-): (() => void) => {
-    return () => {
-        sqore.draw(container, 0, true, onCircuitChange);
-        if (onCircuitChange) onCircuitChange(sqore.circuit);
-    };
-};
-
-/**
  * Object exported for unit testing
  */
 const exportedForTesting = {
@@ -556,4 +546,13 @@ const exportedForTesting = {
     _lastIndex,
 };
 
-export { addEditable, exportedForTesting };
+export {
+    extensionDraggable,
+    Context,
+    _equivOperation,
+    _equivGateElem,
+    _equivParentArray,
+    _lastIndex,
+    _offsetRecursively,
+    exportedForTesting,
+};

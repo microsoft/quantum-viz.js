@@ -7,30 +7,45 @@ if (typeof qviz != 'undefined') {
     /* These examples shows how to draw circuits into containers. */
     const entangleDiv = document.getElementById('entangle');
     if (entangleDiv != null) {
-        qviz.draw(entangle, entangleDiv, qviz.STYLES['Default'], 0, true);
+        qviz.create(entangle) //
+            .useOnCircuitChange((circuit) => {
+                console.log('New circuit ↓');
+                console.log(circuit);
+            })
+            .draw(entangleDiv);
+    }
+
+    const entangleUDDiv = document.getElementById('entangle-usedraggable');
+    if (entangleUDDiv != null) {
+        qviz.create(entangle) //
+            .useDraggable()
+            .draw(entangleUDDiv);
+    }
+
+    const entangleUDUPDiv = document.getElementById('entangle-usedraggable-usepanel');
+    if (entangleUDUPDiv != null) {
+        qviz.create(entangle) //
+            .useDraggable()
+            .usePanel()
+            .draw(entangleUDUPDiv);
     }
 
     const sampleDiv = document.getElementById('sample');
     if (sampleDiv != null) {
-        const isEditable = true;
-        const onCircuitChange = (circuit) => {
-            console.log('New circuit ↓');
-            console.log(circuit);
-        };
-        /* Pass in isEditable = true to allow circuit to be editable */
-        /* Pass in onCircuitChange to trigger callback function
-           whenever there is a change in circuit */
-        qviz.draw(sample, sampleDiv, qviz.STYLES['Default'], 0, isEditable, onCircuitChange);
+        qviz.create(sample) //
+            .draw(sampleDiv);
     }
 
     const teleportDiv = document.getElementById('teleport');
     if (teleportDiv != null) {
-        qviz.draw(teleport, teleportDiv, qviz.STYLES['Default'], 0, true);
+        qviz.create(teleport) //
+            .draw(teleportDiv);
     }
 
     const groverDiv = document.getElementById('grover');
     if (groverDiv != null) {
-        qviz.draw(grover, groverDiv, qviz.STYLES['Default']);
+        qviz.create(grover) //
+            .draw(groverDiv);
     }
 } else {
     document.getElementById('group').remove();

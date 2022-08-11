@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { exportedForTesting } from '../src/editable';
-import { Circuit, draw, Operation, STYLES } from '../src/index';
+import { exportedForTesting } from '../src/draggable';
+import { Circuit, create, Operation } from '../src/index';
 
 const {
     _wireYs,
@@ -49,7 +49,7 @@ describe('Test _hostElems', () => {
                 },
             ],
         };
-        draw(circuit, container, STYLES['default']);
+        create(circuit).draw(container);
     });
     test('should return 4 elements', () => {
         expect(_hostElems(container)).toMatchSnapshot();
@@ -142,7 +142,7 @@ describe('Test _wireData', () => {
                 },
             ],
         };
-        draw(circuit, container, STYLES['default']);
+        create(circuit).draw(container);
         expect(_wireData(container)).toStrictEqual([40, 100]);
     });
     test('3 wires should return [40,100, 180]', () => {
@@ -168,7 +168,7 @@ describe('Test _wireData', () => {
                 },
             ],
         };
-        draw(circuit, container, STYLES['default']);
+        create(circuit).draw(container);
         expect(_wireData(container)).toStrictEqual([40, 100, 180]);
     });
 });
@@ -198,7 +198,7 @@ describe('Test _equivGateElem', () => {
                 },
             ],
         };
-        draw(circuit, container, STYLES['default']);
+        create(circuit).draw(container);
     });
     test('should return gate H', () => {
         const elem = container.querySelector('[class^="gate-"]') as SVGElement;
