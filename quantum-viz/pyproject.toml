@@ -27,7 +27,7 @@ qiskit-terra = {version = ">=0.19.1, <1", optional = true}
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
 coverage = {extras = ["toml"], version = "^5.4"}
-safety = "^1.10.3"
+safety = "^2.2.0"
 mypy = "^0.910"
 typeguard = "^2.12.1"
 xdoctest = {extras = ["colors"], version = "^0.15.5"}
