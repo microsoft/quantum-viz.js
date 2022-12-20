@@ -83,4 +83,4 @@ display(qc)
 
 ## Contributing
 
-Check out our [contributing guidelines](./CONTRIBUTING.md) to find out how you can contribute to quantum-viz.
+Check out our [contributing guidelines](https://github.com/microsoft/quantum-viz.js/blob/main/quantum-viz/CONTRIBUTING.md) to find out how you can contribute to quantum-viz.
